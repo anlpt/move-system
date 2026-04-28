@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="../css/style.css" />
+  <link rel="stylesheet" href="../css/style.css?v=20260428-sml-framework" />
   <style>
     /* ── smart.html page-local styles ─────────────────────────── */
 
@@ -133,6 +133,111 @@
     /* Facility cards */
     .facility-card{padding:1.4rem}
     .pill-row{display:flex;flex-wrap:wrap;gap:.4rem;margin-top:.8rem}
+
+    /* Smart framework fallback styles. Kept local so the panel does not collapse
+       into plain text if an older shared stylesheet is cached by the static server. */
+    .lab-smart .research-framework{
+      display:grid !important;
+      grid-template-columns:minmax(0,1.35fr) minmax(220px,.75fr);
+      gap:1rem;
+      align-items:stretch;
+    }
+    .lab-smart .rf-streams{display:grid;gap:.75rem}
+    .lab-smart .rf-stream{
+      border:1px solid rgba(245,242,238,.14);
+      background:rgba(245,242,238,.045);
+      border-left:3px solid var(--rf-color,#B89264);
+      padding:1rem 1.05rem;
+      min-height:92px;
+    }
+    .lab-smart .rf-stream-head{
+      display:flex;
+      align-items:baseline;
+      justify-content:space-between;
+      gap:1rem;
+      margin-bottom:.45rem;
+    }
+    .lab-smart .rf-stream h3,
+    .lab-smart .rf-platform h3{
+      margin:0;
+      color:var(--rf-color,#B89264);
+      font-size:.92rem;
+      letter-spacing:.18em;
+      text-transform:uppercase;
+      font-family:var(--font-mono);
+    }
+    .lab-smart .rf-code{
+      flex:0 0 auto;
+      font-family:var(--font-mono);
+      color:rgba(245,242,238,.38);
+      font-size:.68rem;
+      letter-spacing:.12em;
+    }
+    .lab-smart .rf-stream p,
+    .lab-smart .rf-platform p,
+    .lab-smart .rf-output p{
+      margin:0;
+      color:rgba(245,242,238,.55);
+      font-size:.86rem;
+      line-height:1.6;
+    }
+    .lab-smart .rf-platform{
+      border:1px solid rgba(245,242,238,.16);
+      background:linear-gradient(160deg,rgba(122,31,46,.25),rgba(0,0,0,.14));
+      padding:1.2rem;
+      display:flex;
+      flex-direction:column;
+      justify-content:center;
+      position:relative;
+    }
+    .lab-smart .rf-platform::before{
+      content:"";
+      position:absolute;
+      inset:12px;
+      border:1px solid rgba(245,242,238,.08);
+      pointer-events:none;
+    }
+    .lab-smart .rf-platform h3{text-align:center;margin-bottom:.6rem}
+    .lab-smart .rf-platform p{text-align:center}
+    .lab-smart .rf-output-grid{
+      display:grid;
+      grid-template-columns:repeat(3,1fr);
+      gap:.55rem;
+      margin-top:1rem;
+    }
+    .lab-smart .rf-output{
+      border:1px solid rgba(245,242,238,.12);
+      background:rgba(245,242,238,.045);
+      padding:.7rem .55rem;
+      text-align:center;
+    }
+    .lab-smart .rf-output strong{
+      display:block;
+      color:var(--rf-color,#B89264);
+      font-family:var(--font-mono);
+      font-size:.68rem;
+      letter-spacing:.12em;
+      text-transform:uppercase;
+      margin-bottom:.25rem;
+    }
+    .lab-smart .rf-output p{font-size:.72rem;line-height:1.45}
+    .lab-smart .rf-note{
+      margin-top:1rem;
+      text-align:center;
+      font-family:var(--font-mono);
+      font-size:.68rem;
+      letter-spacing:.16em;
+      text-transform:uppercase;
+      color:rgba(245,242,238,.22);
+    }
+    @media(max-width:900px){
+      .lab-smart .research-framework{grid-template-columns:1fr}
+    }
+    @media(max-width:560px){
+      .lab-smart .rf-stream-head,
+      .lab-smart .rf-output-grid{grid-template-columns:1fr}
+      .lab-smart .rf-output-grid{grid-template-columns:1fr}
+    }
   </style>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 </head>
