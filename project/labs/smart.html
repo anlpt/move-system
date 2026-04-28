@@ -1,0 +1,1712 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Smart Mobility Lab — MOVE System</title>
+  <meta name="description" content="Smart Mobility Lab (SML) — MaaS, smart routing, traffic operation, and micro-mobility research for a low-carbon urban future." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../css/style.css" />
+  <style>
+    /* ── smart.html page-local styles ─────────────────────────── */
+
+    /* Site nav (uses <header class="site-nav"> pattern) */
+    .site-nav{
+      position:fixed;top:0;left:0;right:0;z-index:50;height:var(--nav-h);
+      display:flex;align-items:center;justify-content:space-between;
+      padding:0 clamp(1rem,3vw,2rem);
+      background:rgba(245,242,238,.78);
+      backdrop-filter:blur(18px) saturate(1.1);
+      border-bottom:1px solid rgba(122,31,46,.08);
+      gap:1rem;
+    }
+    .site-nav .logo{display:flex;align-items:center;gap:.6rem;text-decoration:none}
+    .site-nav .logo-mark{background:var(--ink);color:var(--cream);padding:5px 9px;font-size:.72rem;letter-spacing:.12em;font-weight:700}
+    .site-nav .logo-wordmark{font-weight:700;font-size:.86rem;color:var(--burgundy)}
+    .site-nav .nav-links{display:flex;gap:clamp(1rem,2.5vw,2rem)}
+    .site-nav .nav-links a{color:var(--ink-soft);font-size:.9rem;font-weight:500;position:relative;padding:4px 0;transition:color .2s}
+    .site-nav .nav-links a:hover{color:var(--burgundy)}
+    .lang-sep{color:var(--muted);font-size:.7rem;align-self:center}
+    @media(max-width:820px){.site-nav .nav-links{display:none}}
+
+    /* Lab hero – SML variant */
+    .lab-hero--sml{
+      padding-top:calc(var(--nav-h) + 3.5rem);padding-bottom:3rem;
+      border-bottom:1px solid var(--grid);position:relative;overflow:hidden;
+    }
+    .lab-hero__bg{
+      position:absolute;top:4vw;right:-3vw;
+      font-size:clamp(10rem,26vw,28rem);font-weight:300;
+      color:rgba(122,31,46,.07);letter-spacing:-.05em;line-height:.8;
+      pointer-events:none;user-select:none;
+    }
+    .lab-hero__inner{position:relative;max-width:var(--max-w);margin:0 auto;padding:0 clamp(1rem,4vw,3rem)}
+    .hero-tags{display:flex;flex-wrap:wrap;gap:.4rem;margin-top:1rem}
+    .tag{display:inline-block;padding:4px 10px;border-radius:999px;font-size:.72rem;letter-spacing:.08em;border:1px solid var(--burgundy);color:var(--burgundy)}
+
+    /* Section layout */
+    .section{padding:clamp(4rem,8vw,7rem) 0;position:relative;max-width:var(--max-w);margin:0 auto;padding-left:clamp(1rem,4vw,3rem);padding-right:clamp(1rem,4vw,3rem)}
+    .section-alt{background:linear-gradient(180deg,transparent,rgba(122,31,46,.03))}
+    .section-sub{font-size:1.05rem;color:var(--ink-soft);margin:.4rem 0 0}
+
+    /* Cards */
+    .card{border:1px solid rgba(122,31,46,.2);background:rgba(255,253,250,.6);padding:1.6rem 1.4rem 1.8rem;transition:all .25s}
+    .card:hover{border-color:var(--burgundy);transform:translateY(-3px);box-shadow:0 20px 40px -20px rgba(122,31,46,.2)}
+    .card-num{font-family:var(--font-mono);font-size:.7rem;color:var(--burgundy);letter-spacing:.18em;margin-bottom:.6rem}
+    .bullets{margin:.7rem 0 0;padding-left:1.2rem;color:var(--ink-soft);font-size:.9rem}
+    .bullets li{margin-bottom:.35rem}
+
+    /* CE-M Program */
+    .cem-grid{gap:clamp(2rem,5vw,4rem);align-items:start}
+    .cem-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-top:1.6rem}
+    .stat-num{font-size:2rem;font-weight:300;color:var(--burgundy);line-height:1}
+    .stat-label{font-size:.76rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-top:.2rem}
+    .cem-pillars{display:flex;flex-direction:column;gap:1.2rem}
+    .pillar{border-left:2px solid var(--burgundy);padding:.8rem 0 .8rem 1.2rem}
+    .pillar-tag{font-family:var(--font-mono);font-size:.68rem;letter-spacing:.18em;color:var(--burgundy);margin-bottom:.3rem}
+
+    /* Projects */
+    .project-card{display:flex;flex-direction:column;gap:.6rem}
+    .proj-head{display:flex;align-items:baseline;justify-content:space-between;gap:.5rem;margin-bottom:.2rem}
+    .proj-code{font-family:var(--font-mono);font-size:.7rem;letter-spacing:.14em;color:var(--burgundy);font-weight:700}
+    .proj-year{font-family:var(--font-mono);font-size:.7rem;color:var(--muted)}
+    .proj-tags{display:flex;flex-wrap:wrap;gap:.3rem;margin-top:.4rem}
+
+    /* Metrics table */
+    .stat-table{border:1px solid var(--grid);overflow:hidden}
+    .stat-row{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;border-top:1px solid var(--grid)}
+    .stat-row--head{background:rgba(122,31,46,.06)}
+    .stat-row--head .stat-cell{font-family:var(--font-mono);font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+    .stat-cell{padding:.75rem 1rem;font-size:.95rem;display:flex;align-items:center}
+    .stat-cell--label{color:var(--ink-soft)}
+    .stat-num{font-size:1.5rem;font-weight:300;color:var(--burgundy)}
+
+    /* Publications */
+    .pub-list{list-style:none;padding:0;margin:0}
+    .pub-item{display:grid;grid-template-columns:72px 1fr;gap:1rem;padding:1rem 0;border-top:1px solid var(--grid)}
+    .pub-item:last-child{border-bottom:1px solid var(--grid)}
+    .pub-year{font-family:var(--font-mono);color:var(--burgundy);font-size:.9rem;letter-spacing:.08em;padding-top:2px}
+    .pub-authors,.pub-title,.pub-venue{margin:.15rem 0;font-size:.9rem;color:var(--ink-soft)}
+    .pub-venue{font-style:italic;color:var(--burgundy)}
+
+    /* Stakeholders */
+    .stake-card{display:flex;flex-direction:column;gap:.5rem}
+    .stake-icon{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,var(--burgundy),var(--burgundy-dark));color:var(--cream);display:grid;place-items:center;font-weight:700;font-size:.9rem;border:2px solid var(--cream);box-shadow:0 0 0 1px var(--burgundy)}
+    .stake-grid{}
+
+    /* Demo legend overlay */
+    .demo-overlay-legend{position:absolute;top:12px;right:12px;background:rgba(245,242,238,.9);padding:10px 14px;border:1px solid var(--grid);font-size:.78rem;display:flex;flex-direction:column;gap:5px}
+    .legend-row{display:flex;align-items:center;gap:7px;color:var(--ink-soft)}
+    .dot{width:9px;height:9px;border-radius:50%;display:inline-block}
+    .dot-stop{background:var(--burgundy)}
+    .dot-bike{background:var(--burgundy-soft)}
+    .dot-origin{background:#2f7d52}
+    .dot-dest{background:#b03040}
+    .swatch{width:22px;height:3px;display:inline-block;border-radius:2px}
+    .swatch-fence{background:rgba(122,31,46,.55)}
+    .control{display:flex;flex-direction:column;gap:.25rem;font-size:.82rem;color:var(--muted)}
+    .control select{border:1px solid var(--grid);padding:5px 8px;background:var(--cream);font-family:inherit;font-size:.85rem;color:var(--ink)}
+    .btn-ghost{background:transparent;border:1px solid var(--grid);padding:6px 14px;color:var(--ink-soft);font-size:.82rem;transition:all .2s}
+    .btn-ghost:hover{border-color:var(--burgundy);color:var(--burgundy)}
+    .status-pill{margin-left:auto;font-family:var(--font-mono);font-size:.78rem;color:var(--muted);align-self:center;text-align:right}
+
+    /* Timeline */
+    .tl-item{position:relative;padding-left:1.8rem;margin-bottom:2rem}
+    .tl-dot{position:absolute;left:0;top:6px;width:12px;height:12px;border-radius:50%;background:var(--cream);border:2px solid var(--burgundy)}
+    .tl-year{font-family:var(--font-mono);font-size:.82rem;color:var(--burgundy);letter-spacing:.08em;font-weight:600;margin-bottom:.2rem}
+
+    /* Footer */
+    .site-footer{border-top:1px solid var(--grid);padding:3rem 0 2rem;color:var(--muted);font-size:.88rem}
+    .footer-grid{max-width:var(--max-w);margin:0 auto;padding:0 clamp(1rem,4vw,3rem);display:grid;grid-template-columns:2fr 1fr 1fr;gap:2rem}
+    .footer-col h5{font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;color:var(--burgundy);margin:0 0 .7rem}
+    .footer-col ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:.35rem}
+    .footer-col a{color:var(--ink-soft);font-size:.88rem}
+    .footer-col a:hover{color:var(--burgundy)}
+    .footer-brand{display:flex;align-items:center;gap:.6rem;margin-bottom:.7rem}
+    .footer-brand .logo-mark{background:var(--ink);color:var(--cream);padding:4px 8px;font-size:.7rem;font-weight:700;letter-spacing:.1em}
+    .footer-tag{font-size:.88rem;color:var(--muted);margin:0}
+    .footer-meta{max-width:var(--max-w);margin:.8rem auto 0;padding:1rem clamp(1rem,4vw,3rem) 0;border-top:1px solid var(--grid);font-size:.78rem;color:var(--muted)}
+    @media(max-width:900px){.footer-grid{grid-template-columns:1fr}}
+
+    /* Facility cards */
+    .facility-card{padding:1.4rem}
+    .pill-row{display:flex;flex-wrap:wrap;gap:.4rem;margin-top:.8rem}
+  </style>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+</head>
+<body class="lab-page lab-smart">
+
+  <!-- ====================================================== NAV -->
+  <header class="site-nav">
+    <a href="../index.html" class="logo" aria-label="MOVE System home">
+      <span class="logo-mark">M</span>
+      <span class="logo-wordmark">MOVE&nbsp;System</span>
+    </a>
+    <nav class="nav-links" aria-label="Primary">
+      <a href="../index.html#about" data-i18n="nav.about">About</a>
+      <a href="../index.html#structure" data-i18n="nav.structure">Structure</a>
+      <a href="../index.html#people" data-i18n="nav.people">People</a>
+      <a href="../index.html#funding" data-i18n="nav.funding">Funding</a>
+      <a href="../index.html#tech" data-i18n="nav.tech">Technology</a>
+    </nav>
+    <div style="display:flex;align-items:center;gap:.8rem">
+      <div class="lang-toggle" role="group" aria-label="Language">
+        <button type="button" data-lang="en" aria-label="English">EN</button>
+        <span class="lang-sep">/</span>
+        <button type="button" data-lang="vi" aria-label="Tiếng Việt">VI</button>
+      </div>
+      <button class="burger" id="burgerSml" aria-label="menu">☰</button>
+    </div>
+  </header>
+
+  <!-- ====================================================== HERO -->
+  <section class="lab-hero lab-hero--sml">
+    <div class="lab-hero__bg" aria-hidden="true">SML</div>
+    <div class="lab-hero__inner">
+      <a class="back-link" href="../index.html" data-i18n="smart.back">Back to MOVE hub</a>
+      <p class="eyebrow">LAB · 02 / SML</p>
+      <h1 data-i18n="smart.h1">Smart Mobility Lab</h1>
+      <p class="lead" data-i18n="smart.lead">
+        A research platform for Mobility-as-a-Service, intelligent traffic operation, and last-mile micro-mobility.
+        We design, prototype, and evaluate digital-physical mobility systems that make Vietnamese cities safer,
+        cleaner, and more inclusive — starting on campus and scaling to the region.
+      </p>
+      <div class="hero-tags" aria-label="focus areas">
+        <span class="tag">MaaS</span>
+        <span class="tag">Adaptive Signals</span>
+        <span class="tag">Micro-mobility</span>
+        <span class="tag">CE-M Program</span>
+        <span class="tag">Low-Carbon Campus</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====================================================== SML INTRODUCTION -->
+  <section style="background:linear-gradient(135deg,#7A1F2E 0%,#4E121C 100%);color:#F5F2EE;padding:4.5rem 0;">
+    <div style="max-width:var(--max-w);margin:0 auto;padding:0 clamp(1rem,4vw,3rem)">
+
+      <!-- A. Mission headline -->
+      <div style="max-width:800px;margin:0 auto 3.5rem;text-align:center">
+        <div style="font-family:var(--font-mono);font-size:.68rem;letter-spacing:.22em;color:rgba(245,242,238,.5);margin-bottom:.6rem;text-transform:uppercase">INTELLIGENT URBAN MOBILITY · ISCM · UEH</div>
+        <h2 style="color:#F5F2EE;margin:0 0 1rem;font-size:clamp(1.7rem,4vw,2.5rem);line-height:1.2">Transit-Oriented Development<br>&amp; Smart Mobility Operations</h2>
+        <p style="font-size:1.06rem;line-height:1.78;color:rgba(245,242,238,.87);margin:0 0 1.2rem">
+          Smart Mobility Lab advances intelligent transportation systems and sustainable urban mobility through three integrated research tracks: TOD-driven urban structure research, smart mobility &amp; traffic operations management, and last-mile micro-mobility systems. Through the Campus EV Micro-Mobility (CE-M) Program, solutions are tested in real-world conditions and scaled across Vietnamese cities.
+        </p>
+        <div style="display:flex;flex-wrap:wrap;gap:.5rem;justify-content:center">
+          <span style="padding:5px 14px;border-radius:999px;border:1px solid rgba(245,242,238,.3);font-size:.75rem;letter-spacing:.08em;color:rgba(245,242,238,.85)">Transit-Oriented Development</span>
+          <span style="padding:5px 14px;border-radius:999px;border:1px solid rgba(245,242,238,.3);font-size:.75rem;letter-spacing:.08em;color:rgba(245,242,238,.85)">MaaS &amp; Smart Routing</span>
+          <span style="padding:5px 14px;border-radius:999px;border:1px solid rgba(245,242,238,.3);font-size:.75rem;letter-spacing:.08em;color:rgba(245,242,238,.85)">Traffic Operations</span>
+          <span style="padding:5px 14px;border-radius:999px;border:1px solid rgba(245,242,238,.3);font-size:.75rem;letter-spacing:.08em;color:rgba(245,242,238,.85)">Last-Mile Micro-mobility</span>
+          <span style="padding:5px 14px;border-radius:999px;border:1px solid rgba(245,242,238,.3);font-size:.75rem;letter-spacing:.08em;color:rgba(245,242,238,.85)">CE-M Program</span>
+        </div>
+      </div>
+
+      <!-- B. 3D TOD City Visualization -->
+      <div style="margin-bottom:3rem">
+        <div style="font-family:var(--font-mono);font-size:.65rem;letter-spacing:.22em;color:rgba(245,242,238,.4);margin-bottom:1rem;text-transform:uppercase;text-align:center">Smart Traffic Operations Center — Adaptive Signals · Live Flow · TOD Corridors — Click Intersections</div>
+        <div style="position:relative;border:1px solid rgba(184,146,100,0.2);border-radius:8px;overflow:hidden;background:#060810">
+          <canvas id="sml3dCanvas" style="width:100%;height:500px;display:block;cursor:grab"></canvas>
+          <div style="position:absolute;top:10px;left:12px;font-family:var(--font-mono);font-size:.65rem;color:rgba(184,146,100,0.7);letter-spacing:.1em">SML · SMART TRAFFIC OPERATIONS CENTER</div>
+          <div style="position:absolute;top:10px;right:12px;display:flex;flex-direction:column;gap:4px;font-family:var(--font-mono);font-size:.63rem;color:rgba(245,242,238,0.5)">
+            <div><span style="display:inline-block;width:10px;height:10px;background:#50DC78;border-radius:50%;margin-right:5px;vertical-align:middle"></span>Signal Green</div>
+            <div><span style="display:inline-block;width:10px;height:10px;background:#E05050;border-radius:50%;margin-right:5px;vertical-align:middle"></span>Signal Red</div>
+            <div><span style="display:inline-block;width:4px;height:10px;background:#B89264;margin-right:5px;vertical-align:middle;border-radius:2px"></span>BRT Corridor</div>
+          </div>
+          <div style="position:absolute;bottom:10px;left:12px;font-family:var(--font-mono);font-size:.62rem;color:rgba(184,146,100,0.45);letter-spacing:.08em">TOD · MaaS · ADAPTIVE SIGNAL CONTROL</div>
+        </div>
+        <div id="sml3dInfo" style="margin-top:.8rem;background:rgba(245,242,238,0.05);border:1px solid rgba(184,146,100,0.2);padding:.9rem 1.2rem;font-family:var(--font-mono);font-size:.75rem;color:rgba(245,242,238,0.65);min-height:48px;border-radius:4px;letter-spacing:.04em">
+          <span style="color:rgba(184,146,100,0.5)">CLICK AN INTERSECTION NODE</span> to see adaptive signal data, throughput metrics, and TOD planning parameters. Drag to orbit.
+        </div>
+      </div>
+
+      <script>
+      (function(){
+        if (typeof THREE === 'undefined') return;
+        var canvas = document.getElementById('sml3dCanvas');
+        if (!canvas) return;
+        var H = 500, W = canvas.offsetWidth || 900;
+        var renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true });
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        renderer.setSize(W, H);
+
+        var scene = new THREE.Scene();
+        scene.background = new THREE.Color(0x060810);
+        scene.fog = new THREE.FogExp2(0x060810, 0.010);
+
+        var camera = new THREE.PerspectiveCamera(38, W / H, 0.1, 280);
+        camera.position.set(0, 68, 55);
+        camera.lookAt(0, 0, 0);
+
+        scene.add(new THREE.AmbientLight(0x6070A0, 0.3));
+        var sun = new THREE.DirectionalLight(0xE0D0FF, 1.2);
+        sun.position.set(20, 50, 20);
+        scene.add(sun);
+        var cityGlow = new THREE.PointLight(0x2040A0, 0.8, 100);
+        cityGlow.position.set(0, 5, 0);
+        scene.add(cityGlow);
+
+        /* ---- Ground plane ---- */
+        var ground = new THREE.Mesh(new THREE.PlaneGeometry(150, 150), new THREE.MeshLambertMaterial({ color: 0x080C18 }));
+        ground.rotation.x = -Math.PI / 2;
+        ground.position.y = -0.1;
+        scene.add(ground);
+
+        /* ---- City grid roads ---- */
+        var roadMat = new THREE.MeshLambertMaterial({ color: 0x0E1020 });
+        var blockMat = new THREE.MeshLambertMaterial({ color: 0x0A0C18 });
+        var GRID = 5, BLOCK = 12, ROAD_W = 4;
+        var STEP = BLOCK + ROAD_W;
+
+        /* Road strips */
+        for (var ri = -GRID; ri <= GRID; ri++) {
+          var hRoad = new THREE.Mesh(new THREE.BoxGeometry(STEP * (GRID * 2 + 1), 0.12, ROAD_W), roadMat);
+          hRoad.position.set(0, 0.05, ri * STEP); scene.add(hRoad);
+          var vRoad = new THREE.Mesh(new THREE.BoxGeometry(ROAD_W, 0.12, STEP * (GRID * 2 + 1)), roadMat);
+          vRoad.position.set(ri * STEP, 0.05, 0); scene.add(vRoad);
+        }
+
+        /* BRT corridor — highlighted */
+        var brtMat = new THREE.MeshLambertMaterial({ color: 0xB89264, emissive: 0xB89264, emissiveIntensity: 0.08 });
+        var brtH = new THREE.Mesh(new THREE.BoxGeometry(STEP * (GRID * 2 + 1), 0.14, 2.4), brtMat);
+        brtH.position.set(0, 0.07, 0); scene.add(brtH);
+        var brtV = new THREE.Mesh(new THREE.BoxGeometry(2.4, 0.14, STEP * (GRID * 2 + 1)), brtMat);
+        brtV.position.set(0, 0.07, 0); scene.add(brtV);
+
+        /* City blocks with buildings */
+        var bCols = [
+          [0x1A1835, 0x1C2040, 0x201C38, 0x181432],
+          [0x1E1A30, 0x22203C, 0x1A1C3A, 0x161230]
+        ];
+        for (var gx = -GRID; gx <= GRID; gx++) {
+          for (var gz = -GRID; gz <= GRID; gz++) {
+            if (gx === 0 && gz === 0) continue; /* keep center clear */
+            var bx = gx * STEP, bz = gz * STEP;
+            var numB = 1 + Math.floor(Math.abs(gx + gz) % 3);
+            for (var nb = 0; nb < numB; nb++) {
+              var tod = Math.max(0, 1 - Math.sqrt(gx*gx+gz*gz)/GRID);
+              var bh = 1.5 + tod * 20 + Math.random() * 4;
+              var bw = 2 + Math.random() * (BLOCK / numB - 3);
+              var col = bCols[0][Math.floor(Math.random()*4)];
+              var bldg = new THREE.Mesh(new THREE.BoxGeometry(bw, bh, bw),
+                new THREE.MeshLambertMaterial({ color: col }));
+              bldg.position.set(bx + (Math.random()-0.5)*(BLOCK-bw-1), bh/2, bz + (Math.random()-0.5)*(BLOCK-bw-1));
+              scene.add(bldg);
+              /* Roof glow */
+              if (tod > 0.5) {
+                var roof = new THREE.Mesh(new THREE.BoxGeometry(bw, 0.2, bw),
+                  new THREE.MeshLambertMaterial({ color: 0x4060C0, emissive: 0x3050A0, emissiveIntensity: 0.3 }));
+                roof.position.set(bx+(Math.random()-0.5)*(BLOCK-bw-1), bh+0.1, bz+(Math.random()-0.5)*(BLOCK-bw-1));
+                scene.add(roof);
+              }
+            }
+          }
+        }
+
+        /* ---- Intersection nodes ---- */
+        var clickMeshes = [], nodeMeshes = [], signalLights = [];
+        var nodeInfos = [
+          { x: 0,    z: 0,    name: 'Central Hub Intersection', vol: 3240, phase: 'N-S GREEN', tod: 'Core Zone', brt: true,
+            desc: 'Central TOD node — highest traffic volume. Adaptive signal phase extends N-S green by 18 s during AM peak (7–9 h). BRT priority signal active. Real-time SCOOT optimisation reduces average delay by 34%.' },
+          { x: STEP, z: 0,    name: 'East Corridor Node', vol: 1870, phase: 'E-W GREEN', tod: 'Inner Ring', brt: false,
+            desc: 'MaaS interchange: bus, shared EV, and bike-share hub. Signal coordination with Central Hub maintains 42 km/h green wave on BRT corridor. AM throughput: 1,870 PCUs/h.' },
+          { x: -STEP,z: 0,    name: 'West Transit Node', vol: 1620, phase: 'N-S RED',   tod: 'Inner Ring', brt: true,
+            desc: 'Pedestrian-priority phase activated 07:30–08:30. TOD planning designates 500m radius as mixed-use medium density. Land value uplift: +28% within 400m of BRT stop.' },
+          { x: 0,    z: STEP, name: 'North Grid Intersection', vol: 980,  phase: 'E-W RED',   tod: 'Outer Zone', brt: false,
+            desc: 'Lower-density outer zone. Signal operates fixed 90-s cycle. SML TOD model recommends rezoning to mid-density mixed use if planned metro extension is approved.' },
+          { x: 0,    z: -STEP,name: 'South Micro-Mobility Hub', vol: 1120, phase: 'N-S GREEN', tod: 'Outer Zone', brt: false,
+            desc: 'CE-M EV micro-mobility pilot station. 24 shared e-scooters + 8 EV bike-share bays. Last-mile coverage radius: 1.8 km. Daily trips served: ~340.' },
+          { x: STEP, z: STEP, name: 'NE Secondary Node', vol: 740, phase: 'E-W GREEN', tod: 'Outer Zone', brt: false,
+            desc: 'Secondary grid node. Passive adaptive timing synced to primary corridor. Vehicle throughput: 740 PCU/h. Walking catchment zone mapped for future TOD rezoning.' }
+        ];
+
+        nodeInfos.forEach(function(nd, i) {
+          var isGreen = nd.phase.includes('GREEN');
+          var nCol = isGreen ? 0x50DC78 : 0xE05050;
+          /* Platform disc */
+          var disc = new THREE.Mesh(new THREE.CylinderGeometry(2.2, 2.5, 0.3, 20),
+            new THREE.MeshLambertMaterial({ color: 0x1A2050 }));
+          disc.position.set(nd.x, 0.15, nd.z);
+          disc.userData = { nd: nd }; scene.add(disc); clickMeshes.push(disc);
+          /* Signal light sphere */
+          var sig = new THREE.Mesh(new THREE.SphereGeometry(0.55, 12, 12),
+            new THREE.MeshLambertMaterial({ color: nCol, emissive: nCol, emissiveIntensity: 0.9 }));
+          sig.position.set(nd.x, 1.2, nd.z);
+          sig.userData = { nd: nd, isGreen: isGreen, phase: Math.random() * Math.PI * 2 };
+          scene.add(sig); clickMeshes.push(sig); signalLights.push(sig);
+          nodeMeshes.push({ disc: disc, sig: sig });
+          /* BRT station tower */
+          if (nd.brt) {
+            var tower = new THREE.Mesh(new THREE.BoxGeometry(1.5, 4, 1.5),
+              new THREE.MeshLambertMaterial({ color: 0xB89264, emissive: 0xB89264, emissiveIntensity: 0.15 }));
+            tower.position.set(nd.x + 3, 2, nd.z + 1.5); scene.add(tower);
+          }
+          /* EV charger for CE-M node */
+          if (nd.name.includes('Micro')) {
+            var evMat2 = new THREE.MeshLambertMaterial({ color: 0x50DC78, emissive: 0x50DC78, emissiveIntensity: 0.5 });
+            [-2, 0, 2].forEach(function(ex) {
+              var ev = new THREE.Mesh(new THREE.BoxGeometry(0.6, 2, 0.4), evMat2);
+              ev.position.set(nd.x + ex, 1, nd.z - 3.5); scene.add(ev);
+            });
+          }
+        });
+
+        /* ---- Animated traffic flow particles ---- */
+        var flowParticles = [];
+        var routes = [
+          { start: new THREE.Vector3(-62, 0.4, 0),  dir: new THREE.Vector3(1,0,0),  speed: 0.32, color: 0xB89264, count: 18 }, /* BRT E→W */
+          { start: new THREE.Vector3(62, 0.4, 0),   dir: new THREE.Vector3(-1,0,0), speed: 0.28, color: 0xB89264, count: 16 }, /* BRT W→E */
+          { start: new THREE.Vector3(0, 0.4, -62),  dir: new THREE.Vector3(0,0,1),  speed: 0.22, color: 0xB89264, count: 12 }, /* BRT S→N */
+          { start: new THREE.Vector3(0, 0.4, 62),   dir: new THREE.Vector3(0,0,-1), speed: 0.18, color: 0xB89264, count: 10 },
+          { start: new THREE.Vector3(-62,0.4,-STEP),dir: new THREE.Vector3(1,0,0),  speed: 0.18, color: 0x4060A0, count: 10 },
+          { start: new THREE.Vector3(62, 0.4, STEP),dir: new THREE.Vector3(-1,0,0), speed: 0.16, color: 0x4060A0, count: 8 },
+          { start: new THREE.Vector3(STEP,0.4,-62), dir: new THREE.Vector3(0,0,1),  speed: 0.15, color: 0x506080, count: 8 },
+          { start: new THREE.Vector3(-STEP,0.4,62), dir: new THREE.Vector3(0,0,-1), speed: 0.14, color: 0x506080, count: 7 }
+        ];
+        routes.forEach(function(rt) {
+          for (var pi = 0; pi < rt.count; pi++) {
+            var pMat = new THREE.MeshLambertMaterial({ color: rt.color, emissive: rt.color, emissiveIntensity: 0.6 });
+            var p = new THREE.Mesh(new THREE.BoxGeometry(2.2, 0.5, 0.9), pMat);
+            p.position.copy(rt.start);
+            /* Spread initial positions */
+            var offset = (pi / rt.count) * 124;
+            p.position.x += rt.dir.x * offset + (Math.random()-0.5) * 1.2;
+            p.position.z += rt.dir.z * offset + (Math.random()-0.5) * 1.2;
+            if (rt.dir.z !== 0) p.rotation.y = Math.PI / 2; /* orient along road */
+            p.userData = { rt: rt };
+            scene.add(p); flowParticles.push(p);
+          }
+        });
+
+        /* ---- Raycaster ---- */
+        var raycaster = new THREE.Raycaster();
+        var mouse2 = new THREE.Vector2();
+        var infoEl = document.getElementById('sml3dInfo');
+        canvas.addEventListener('click', function(e) {
+          var rect = canvas.getBoundingClientRect();
+          mouse2.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+          mouse2.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
+          raycaster.setFromCamera(mouse2, camera);
+          var hits = raycaster.intersectObjects(clickMeshes);
+          if (hits.length && infoEl) {
+            var nd = hits[0].object.userData.nd;
+            if (!nd) return;
+            var col = nd.phase.includes('GREEN') ? '#50DC78' : '#E05050';
+            infoEl.innerHTML = '<strong style="color:#F5F2EE">' + nd.name + '</strong>'
+              + ' &nbsp;|&nbsp; <span style="color:' + col + '">' + nd.phase + '</span>'
+              + ' &nbsp;|&nbsp; Vol: ' + nd.vol + ' PCU/h'
+              + (nd.brt ? ' &nbsp;|&nbsp; <span style="color:#B89264">BRT PRIORITY</span>' : '')
+              + '<br><span style="color:rgba(245,242,238,.7)">' + nd.desc + '</span>';
+          }
+        });
+
+        /* ---- Orbit ---- */
+        var orb = { angle: 0.25, elev: 68, r: 88, drag: false, lx: 0, ly: 0 };
+        function updateCam() { camera.position.set(Math.sin(orb.angle)*orb.r, orb.elev, Math.cos(orb.angle)*orb.r); camera.lookAt(0,0,0); }
+        canvas.addEventListener('mousedown', function(e) { orb.drag=true; orb.lx=e.clientX; orb.ly=e.clientY; canvas.style.cursor='grabbing'; });
+        canvas.addEventListener('mousemove', function(e) {
+          if (!orb.drag) return;
+          orb.angle += (e.clientX - orb.lx) * 0.005;
+          orb.elev = Math.max(20, Math.min(80, orb.elev - (e.clientY - orb.ly) * 0.12));
+          orb.lx=e.clientX; orb.ly=e.clientY; updateCam();
+        });
+        window.addEventListener('mouseup', function() { orb.drag=false; canvas.style.cursor='grab'; });
+
+        /* ---- Animate ---- */
+        var t = 0;
+        function animate() {
+          requestAnimationFrame(animate);
+          t += 0.016;
+
+          /* Move flow particles, wrap */
+          flowParticles.forEach(function(p) {
+            var rt = p.userData.rt;
+            p.position.x += rt.dir.x * rt.speed;
+            p.position.z += rt.dir.z * rt.speed;
+            if (p.position.x > 66)  p.position.x = -62;
+            if (p.position.x < -66) p.position.x = 62;
+            if (p.position.z > 66)  p.position.z = -62;
+            if (p.position.z < -66) p.position.z = 62;
+          });
+
+          /* Signal lights phase-cycle */
+          signalLights.forEach(function(s) {
+            /* Simple 30-s cycle simulation */
+            var cycle = (t + s.userData.phase * 8) % 60;
+            var grn = cycle < 32;
+            var col = grn ? 0x50DC78 : 0xE05050;
+            s.material.color.setHex(col);
+            s.material.emissive.setHex(col);
+            s.material.emissiveIntensity = 0.7 + 0.3 * Math.abs(Math.sin(t * 3));
+          });
+
+          /* City glow breathe */
+          cityGlow.intensity = 0.6 + 0.3 * Math.sin(t * 0.5);
+
+          /* Auto-rotate slowly */
+          if (!orb.drag) { orb.angle += 0.0005; updateCam(); }
+          renderer.render(scene, camera);
+        }
+        animate();
+
+        window.addEventListener('resize', function() {
+          var nw = canvas.offsetWidth;
+          renderer.setSize(nw, H); camera.aspect = nw / H; camera.updateProjectionMatrix();
+        });
+      })();
+      </script>
+
+      <!-- C. Research pillars grid -->
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:1rem;margin-bottom:0">
+
+        <div style="background:rgba(245,242,238,.07);border:1px solid rgba(245,242,238,.12);padding:1.3rem 1.2rem">
+          <div style="font-size:1.4rem;margin-bottom:.6rem">🏙️</div>
+          <div style="font-weight:600;font-size:.95rem;color:#F5F2EE;margin-bottom:.4rem">Transit-Oriented Development</div>
+          <div style="font-size:.82rem;color:rgba(245,242,238,.65);line-height:1.65;margin-bottom:.7rem">Researching urban development models around major transit stations — optimising land use density, mixed-use zoning, and public transport connectivity for sustainable city growth in HCMC.</div>
+          <div style="font-family:var(--font-mono);font-size:.64rem;letter-spacing:.1em;color:#B89264;border-top:1px solid rgba(184,146,100,.2);padding-top:.5rem">GIS · Open Data · Urban Structure Simulation</div>
+        </div>
+
+        <div style="background:rgba(245,242,238,.07);border:1px solid rgba(245,242,238,.12);padding:1.3rem 1.2rem">
+          <div style="font-size:1.4rem;margin-bottom:.6rem">🚦</div>
+          <div style="font-weight:600;font-size:.95rem;color:#F5F2EE;margin-bottom:.4rem">Smart Traffic Operations</div>
+          <div style="font-size:.82rem;color:rgba(245,242,238,.65);line-height:1.65;margin-bottom:.7rem">Adaptive Signal Control for mixed two-wheeler traffic; AI-powered demand forecasting and route optimisation; MaaS platform integrating bus, rail and shared mobility with real-time scheduling and integrated payment.</div>
+          <div style="font-family:var(--font-mono);font-size:.64rem;letter-spacing:.1em;color:#B89264;border-top:1px solid rgba(184,146,100,.2);padding-top:.5rem">VISSIM · AIMSUN · AI Forecasting</div>
+        </div>
+
+        <div style="background:rgba(245,242,238,.07);border:1px solid rgba(245,242,238,.12);padding:1.3rem 1.2rem">
+          <div style="font-size:1.4rem;margin-bottom:.6rem">🛵</div>
+          <div style="font-weight:600;font-size:.95rem;color:#F5F2EE;margin-bottom:.4rem">Last-Mile &amp; Micro-mobility</div>
+          <div style="font-size:.82rem;color:rgba(245,242,238,.65);line-height:1.65;margin-bottom:.7rem">Designing and testing shared micro-mobility systems — e-bikes, scooters — for first- and last-mile urban connectivity. Hub and stop planning with GPS data and vehicle safety analytics.</div>
+          <div style="font-family:var(--font-mono);font-size:.64rem;letter-spacing:.1em;color:#B89264;border-top:1px solid rgba(184,146,100,.2);padding-top:.5rem">GPS Trackers · Field Pilots · CE-M Program</div>
+        </div>
+
+        <div style="background:rgba(245,242,238,.07);border:1px solid rgba(245,242,238,.12);padding:1.3rem 1.2rem">
+          <div style="font-size:1.4rem;margin-bottom:.6rem">⚡</div>
+          <div style="font-weight:600;font-size:.95rem;color:#F5F2EE;margin-bottom:.4rem">CE-M Program — Campus Living Lab</div>
+          <div style="font-size:.82rem;color:rgba(245,242,238,.65);line-height:1.65;margin-bottom:.7rem">Campus Electric Micro-Mobility: e-motorbikes and e-shuttle buses in a geofenced UEH network. Smart booking platform, SYM/Honda partnerships, and campus-first incentive policies forming a full-scale testbed.</div>
+          <div style="font-family:var(--font-mono);font-size:.64rem;letter-spacing:.1em;color:#B89264;border-top:1px solid rgba(184,146,100,.2);padding-top:.5rem">Real-World Testbed · Policy Package</div>
+        </div>
+
+      </div>
+
+    <!-- Smart Mobility Research Framework -->
+    <div style="background:rgba(0,0,0,.70);border:1px solid rgba(184,146,100,.22);border-radius:12px;padding:1.8rem 1.4rem;margin-top:2.5rem;overflow:hidden">
+      <div style="font-size:.68rem;font-weight:700;letter-spacing:.18em;color:rgba(245,242,238,.4);text-align:center;margin-bottom:1.2rem;font-family:'JetBrains Mono',monospace">SMART MOBILITY SYSTEM · SML RESEARCH FRAMEWORK</div>
+      <svg viewBox="0 0 860 300" style="width:100%;height:auto;display:block" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="smlS1" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="rgba(96,144,208,0.16)"/><stop offset="100%" stop-color="rgba(96,144,208,0.03)"/></linearGradient>
+          <linearGradient id="smlS2" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="rgba(242,201,76,0.15)"/><stop offset="100%" stop-color="rgba(242,201,76,0.03)"/></linearGradient>
+          <linearGradient id="smlS3" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="rgba(224,80,112,0.14)"/><stop offset="100%" stop-color="rgba(224,80,112,0.03)"/></linearGradient>
+          <linearGradient id="smlS4" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="rgba(111,207,151,0.14)"/><stop offset="100%" stop-color="rgba(111,207,151,0.03)"/></linearGradient>
+        </defs>
+        <!-- TOD PLANNING -->
+        <rect x="16" y="14" width="528" height="58" rx="6" fill="url(#smlS1)" stroke="rgba(96,144,208,0.28)" stroke-width="1"/>
+        <rect x="38" y="42" width="12" height="22" fill="rgba(96,144,208,0.22)" rx="1"/><rect x="53" y="32" width="16" height="32" fill="rgba(96,144,208,0.28)" rx="1"/>
+        <rect x="72" y="40" width="12" height="24" fill="rgba(96,144,208,0.20)" rx="1"/><rect x="87" y="28" width="14" height="36" fill="rgba(96,144,208,0.25)" rx="1"/>
+        <rect x="104" y="36" width="12" height="28" fill="rgba(96,144,208,0.22)" rx="1"/><rect x="119" y="44" width="10" height="20" fill="rgba(96,144,208,0.18)" rx="1"/>
+        <line x1="30" y1="63" x2="200" y2="63" stroke="rgba(96,144,208,0.55)" stroke-width="2"/>
+        <circle cx="50" cy="63" r="3.5" fill="rgba(96,144,208,0.9)"/><circle cx="90" cy="63" r="3.5" fill="rgba(96,144,208,0.9)"/><circle cx="140" cy="63" r="3.5" fill="rgba(96,144,208,0.7)"/><circle cx="180" cy="63" r="3.5" fill="rgba(96,144,208,0.6)"/>
+        <circle cx="80" cy="45" r="20" fill="none" stroke="rgba(96,144,208,0.16)" stroke-dasharray="3,2" stroke-width="1"/>
+        <circle cx="80" cy="45" r="11" fill="none" stroke="rgba(96,144,208,0.22)" stroke-dasharray="3,2" stroke-width="0.8"/>
+        <text x="216" y="36" fill="#6090d0" font-size="8.5" font-weight="700" letter-spacing="1.8" font-family="monospace">TOD PLANNING · URBAN STRUCTURE RESEARCH</text>
+        <text x="216" y="54" fill="rgba(245,242,238,0.45)" font-size="8">Transit node density · Mixed-use zoning · HCMC corridor analysis · GIS-based urban structure modelling</text>
+        <text x="20" y="65" fill="rgba(96,144,208,0.50)" font-size="7.5" font-style="italic" font-family="monospace">TOD</text>
+        <!-- TRAFFIC OPERATIONS -->
+        <rect x="16" y="80" width="528" height="56" rx="6" fill="url(#smlS2)" stroke="rgba(242,201,76,0.28)" stroke-width="1"/>
+        <rect x="40" y="86" width="24" height="44" rx="4" fill="rgba(242,201,76,0.15)" stroke="rgba(242,201,76,0.4)" stroke-width="0.8"/>
+        <circle cx="52" cy="97" r="6" fill="rgba(224,60,60,0.6)"/><circle cx="52" cy="108" r="6" fill="rgba(242,201,76,0.7)"/><circle cx="52" cy="119" r="6" fill="rgba(60,180,60,0.6)"/>
+        <line x1="80" y1="100" x2="120" y2="100" stroke="rgba(242,201,76,0.55)" stroke-width="1.5"/>
+        <polygon points="120,97 128,100 120,103" fill="rgba(242,201,76,0.55)"/>
+        <line x1="80" y1="110" x2="112" y2="110" stroke="rgba(242,201,76,0.40)" stroke-width="1.2"/>
+        <polygon points="112,107.5 120,110 112,112.5" fill="rgba(242,201,76,0.4)"/>
+        <path d="M 138 112 Q 146 104 154 112 Q 162 120 170 112 Q 178 104 186 112" stroke="rgba(242,201,76,0.50)" stroke-width="1.2" fill="none"/>
+        <text x="216" y="98" fill="#f2c94c" font-size="8.5" font-weight="700" letter-spacing="1.8" font-family="monospace">TRAFFIC OPERATIONS · ADAPTIVE SIGNAL CONTROL</text>
+        <text x="216" y="116" fill="rgba(245,242,238,0.45)" font-size="8">Mixed-flow signal optimisation · VISSIM/AIMSUN simulation · AI demand forecasting · Real-time control</text>
+        <text x="20" y="128" fill="rgba(242,201,76,0.50)" font-size="7.5" font-style="italic" font-family="monospace">Operations</text>
+        <!-- MaaS INTEGRATION -->
+        <rect x="16" y="144" width="528" height="56" rx="6" fill="url(#smlS3)" stroke="rgba(224,80,112,0.22)" stroke-width="1"/>
+        <rect x="38" y="156" width="24" height="16" rx="2" fill="rgba(224,80,112,0.18)" stroke="rgba(224,80,112,0.38)" stroke-width="0.7"/>
+        <circle cx="43" cy="174" r="3.5" fill="rgba(224,80,112,0.45)"/><circle cx="57" cy="174" r="3.5" fill="rgba(224,80,112,0.45)"/>
+        <rect x="40" y="158" width="20" height="6" rx="1" fill="rgba(224,80,112,0.3)"/>
+        <rect x="78" y="154" width="28" height="20" rx="3" fill="rgba(224,80,112,0.15)" stroke="rgba(224,80,112,0.30)" stroke-width="0.7"/>
+        <circle cx="84" cy="177" r="3.5" fill="rgba(224,80,112,0.40)"/><circle cx="100" cy="177" r="3.5" fill="rgba(224,80,112,0.40)"/>
+        <line x1="78" y1="165" x2="106" y2="165" stroke="rgba(224,80,112,0.25)" stroke-width="0.6"/>
+        <circle cx="124" cy="166" r="7" fill="none" stroke="rgba(224,80,112,0.45)" stroke-width="1.2"/>
+        <circle cx="142" cy="166" r="7" fill="none" stroke="rgba(224,80,112,0.45)" stroke-width="1.2"/>
+        <line x1="124" y1="166" x2="133" y2="157" stroke="rgba(224,80,112,0.5)" stroke-width="1"/>
+        <line x1="133" y1="157" x2="142" y2="166" stroke="rgba(224,80,112,0.5)" stroke-width="1"/>
+        <line x1="62" y1="164" x2="78" y2="164" stroke="rgba(224,80,112,0.40)" stroke-width="1" stroke-dasharray="2,1.5"/>
+        <line x1="106" y1="165" x2="117" y2="165" stroke="rgba(224,80,112,0.40)" stroke-width="1" stroke-dasharray="2,1.5"/>
+        <rect x="157" y="154" width="16" height="26" rx="3" fill="rgba(224,80,112,0.12)" stroke="rgba(224,80,112,0.30)" stroke-width="0.6"/>
+        <line x1="160" y1="160" x2="170" y2="160" stroke="rgba(224,80,112,0.35)" stroke-width="0.8"/>
+        <line x1="160" y1="165" x2="170" y2="165" stroke="rgba(224,80,112,0.28)" stroke-width="0.7"/>
+        <circle cx="163" cy="172" r="2.5" fill="rgba(224,80,112,0.45)"/>
+        <text x="216" y="162" fill="#e05070" font-size="8.5" font-weight="700" letter-spacing="1.8" font-family="monospace">MaaS INTEGRATION · MULTI-MODAL ROUTING</text>
+        <text x="216" y="180" fill="rgba(245,242,238,0.45)" font-size="8">Integrated bus · rail · micro-mobility routing · Smart card payment · Real-time scheduling · Trip planning</text>
+        <text x="20" y="192" fill="rgba(224,80,112,0.50)" font-size="7.5" font-style="italic" font-family="monospace">MaaS</text>
+        <!-- CE-M MICRO-MOBILITY -->
+        <rect x="16" y="208" width="528" height="56" rx="6" fill="url(#smlS4)" stroke="rgba(111,207,151,0.28)" stroke-width="1"/>
+        <ellipse cx="55" cy="246" rx="10" ry="10" fill="none" stroke="rgba(111,207,151,0.50)" stroke-width="1.5"/>
+        <ellipse cx="100" cy="246" rx="10" ry="10" fill="none" stroke="rgba(111,207,151,0.50)" stroke-width="1.5"/>
+        <rect x="58" y="228" width="38" height="12" rx="4" fill="rgba(111,207,151,0.18)" stroke="rgba(111,207,151,0.38)" stroke-width="0.8"/>
+        <line x1="65" y1="228" x2="55" y2="236" stroke="rgba(111,207,151,0.45)" stroke-width="1"/>
+        <line x1="90" y1="228" x2="100" y2="236" stroke="rgba(111,207,151,0.45)" stroke-width="1"/>
+        <polygon points="122,222 116,236 124,236 118,252 132,234 122,234 128,222" fill="rgba(111,207,151,0.50)"/>
+        <rect x="145" y="220" width="45" height="38" rx="5" fill="rgba(111,207,151,0.08)" stroke="rgba(111,207,151,0.28)" stroke-dasharray="4,2" stroke-width="1.2"/>
+        <text x="167" y="236" text-anchor="middle" fill="rgba(111,207,151,0.55)" font-size="7" font-family="monospace">UEH</text>
+        <text x="167" y="247" text-anchor="middle" fill="rgba(111,207,151,0.40)" font-size="6.5">CAMPUS</text>
+        <text x="216" y="228" fill="#6fcf97" font-size="8.5" font-weight="700" letter-spacing="1.8" font-family="monospace">LAST-MILE MICRO-MOBILITY · CE-M CAMPUS PROGRAM</text>
+        <text x="216" y="246" fill="rgba(245,242,238,0.45)" font-size="8">E-motorbike fleet · UEH geofenced testbed · Smart booking · SYM partnership · Incentive policy design</text>
+        <text x="20" y="256" fill="rgba(111,207,151,0.50)" font-size="7.5" font-style="italic" font-family="monospace">CE-M</text>
+        <!-- Arrows -->
+        <line x1="546" y1="43"  x2="588" y2="148" stroke="rgba(96,144,208,0.42)"  stroke-width="1.3" stroke-dasharray="4,3"/>
+        <line x1="546" y1="108" x2="588" y2="153" stroke="rgba(242,201,76,0.42)"  stroke-width="1.3" stroke-dasharray="4,3"/>
+        <line x1="546" y1="172" x2="588" y2="160" stroke="rgba(224,80,112,0.38)"  stroke-width="1.3" stroke-dasharray="4,3"/>
+        <line x1="546" y1="236" x2="588" y2="168" stroke="rgba(111,207,151,0.42)" stroke-width="1.3" stroke-dasharray="4,3"/>
+        <polygon points="588,148 582,143 582,153" fill="rgba(96,144,208,0.40)"/>
+        <polygon points="588,153 582,148 582,158" fill="rgba(242,201,76,0.40)"/>
+        <polygon points="588,160 582,155 582,165" fill="rgba(224,80,112,0.35)"/>
+        <polygon points="588,168 582,163 582,173" fill="rgba(111,207,151,0.40)"/>
+        <!-- SML Platform -->
+        <rect x="590" y="118" width="256" height="90" rx="10" fill="rgba(122,31,46,0.15)" stroke="rgba(163,53,74,0.42)" stroke-width="1.5"/>
+        <text x="718" y="143" text-anchor="middle" fill="#C4697A" font-size="9.5" font-weight="700" letter-spacing="1.8" font-family="monospace">SML PLATFORM</text>
+        <line x1="608" y1="150" x2="830" y2="150" stroke="rgba(184,146,100,0.2)" stroke-width="0.8"/>
+        <text x="718" y="164" text-anchor="middle" fill="rgba(245,242,238,0.72)" font-size="8.5">Smart Mobility &amp; Urban Analytics</text>
+        <text x="718" y="178" text-anchor="middle" fill="rgba(245,242,238,0.58)" font-size="8">Simulation · Field Testing · Data Platform</text>
+        <text x="718" y="196" text-anchor="middle" fill="rgba(245,242,238,0.45)" font-size="7.5">TOD Policy · MaaS Integration · CE-M Living Lab</text>
+        <!-- Outputs -->
+        <rect x="594" y="222" width="76" height="60" rx="6" fill="rgba(242,201,76,0.10)" stroke="rgba(242,201,76,0.28)" stroke-width="1"/>
+        <text x="632" y="242" text-anchor="middle" fill="#f2c94c" font-size="8" font-weight="700" letter-spacing="1" font-family="monospace">SIGNAL</text>
+        <text x="632" y="254" text-anchor="middle" fill="#f2c94c" font-size="8" font-weight="700" letter-spacing="1" font-family="monospace">CONTROL</text>
+        <text x="632" y="268" text-anchor="middle" fill="rgba(245,242,238,0.5)" font-size="7.5">adaptive systems</text>
+        <rect x="678" y="222" width="76" height="60" rx="6" fill="rgba(224,80,112,0.10)" stroke="rgba(224,80,112,0.25)" stroke-width="1"/>
+        <text x="716" y="242" text-anchor="middle" fill="#e05070" font-size="8" font-weight="700" letter-spacing="1" font-family="monospace">MaaS APP</text>
+        <text x="716" y="256" text-anchor="middle" fill="rgba(245,242,238,0.5)" font-size="7.5">multi-modal</text>
+        <text x="716" y="268" text-anchor="middle" fill="rgba(245,242,238,0.5)" font-size="7.5">trip planning</text>
+        <rect x="762" y="222" width="80" height="60" rx="6" fill="rgba(96,144,208,0.10)" stroke="rgba(96,144,208,0.25)" stroke-width="1"/>
+        <text x="802" y="240" text-anchor="middle" fill="#6090d0" font-size="8" font-weight="700" letter-spacing="1" font-family="monospace">TOD</text>
+        <text x="802" y="252" text-anchor="middle" fill="#6090d0" font-size="8" font-weight="700" letter-spacing="1" font-family="monospace">POLICY</text>
+        <text x="802" y="266" text-anchor="middle" fill="rgba(245,242,238,0.5)" font-size="7.5">urban planning</text>
+        <line x1="660" y1="208" x2="632" y2="222" stroke="rgba(242,201,76,0.35)" stroke-width="1" stroke-dasharray="2,2"/>
+        <line x1="718" y1="208" x2="716" y2="222" stroke="rgba(224,80,112,0.35)" stroke-width="1" stroke-dasharray="2,2"/>
+        <line x1="775" y1="208" x2="800" y2="222" stroke="rgba(96,144,208,0.35)" stroke-width="1" stroke-dasharray="2,2"/>
+        <text x="430" y="293" text-anchor="middle" fill="rgba(245,242,238,0.22)" font-size="7.5" letter-spacing="1.5" font-family="monospace">SMART MOBILITY INTELLIGENCE FOR VIETNAM'S URBAN FUTURE</text>
+      </svg>
+    </div>
+
+    </div>
+  </section>
+
+  <!-- ====================================================== TOD INTERACTIVE SIM -->
+  <section class="section" id="tod-sim" style="background:linear-gradient(180deg,rgba(122,31,46,0.04),transparent)">
+    <div class="section-head">
+      <p class="eyebrow">TOD · INTERACTIVE SIMULATION</p>
+      <h2>Transit-Oriented Development City Model</h2>
+      <p class="section-sub">An interactive simulation of how smart mobility layers — TOD zoning, traffic signals, EV micro-mobility, and real-time data — integrate around a transit hub. Click elements to explore.</p>
+    </div>
+
+    <div style="position:relative">
+      <canvas id="todCanvas" width="1000" height="480" style="width:100%;height:auto;display:block;background:#F8F6F3;border:1px solid rgba(122,31,46,.12);border-radius:8px;cursor:crosshair"></canvas>
+
+      <!-- Legend -->
+      <div style="position:absolute;top:12px;right:12px;background:rgba(245,242,238,.94);padding:10px 14px;border:1px solid rgba(122,31,46,.15);font-size:.76rem;display:flex;flex-direction:column;gap:5px;border-radius:4px">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:.65rem;letter-spacing:.12em;color:#7A1F2E;margin-bottom:3px">LAYERS</div>
+        <div style="display:flex;align-items:center;gap:7px"><span style="width:12px;height:12px;background:#7A1F2E;border-radius:50%;display:inline-block"></span>Transit Hub</div>
+        <div style="display:flex;align-items:center;gap:7px"><span style="width:12px;height:12px;background:#4a7c59;border-radius:50%;display:inline-block"></span>EV Stations</div>
+        <div style="display:flex;align-items:center;gap:7px"><span style="width:12px;height:12px;background:#2b6896;border-radius:50%;display:inline-block"></span>Smart Signals</div>
+        <div style="display:flex;align-items:center;gap:7px"><span style="width:12px;height:12px;background:#B89264;border-radius:2px;display:inline-block"></span>Mixed-use Zone</div>
+      </div>
+
+      <!-- Info panel -->
+      <div id="todInfo" style="position:absolute;bottom:12px;left:12px;right:12px;background:rgba(245,242,238,.96);padding:.9rem 1.2rem;border:1px solid rgba(122,31,46,.18);border-radius:4px;font-size:.84rem;display:none;max-width:420px">
+        <strong id="todInfoTitle" style="color:#7A1F2E;display:block;margin-bottom:.3rem"></strong>
+        <span id="todInfoBody" style="color:#5A4A42;line-height:1.6"></span>
+      </div>
+    </div>
+
+    <script>
+    (function(){
+      var canvas = document.getElementById('todCanvas');
+      var ctx    = canvas.getContext('2d');
+      var W = canvas.width, H = canvas.height;
+      var t = 0, vehicles = [], signals = [];
+
+      var BURGUNDY = '#7A1F2E', GOLD = '#B89264', GREEN = '#4a7c59', BLUE = '#2b6896';
+
+      // ── Static elements ──
+      var hub = {x:W/2, y:H/2, r:55};
+
+      var zones = [
+        {x:hub.x-210, y:hub.y-120, w:140, h:90,  label:'High-Density\nMixed Use', color:'rgba(184,146,100,.18)'},
+        {x:hub.x+70,  y:hub.y-120, w:140, h:90,  label:'Commercial\nTOD Zone',   color:'rgba(122,31,46,.1)'},
+        {x:hub.x-210, y:hub.y+30,  w:140, h:90,  label:'Residential\nTOD Zone',  color:'rgba(42,90,60,.12)'},
+        {x:hub.x+70,  y:hub.y+30,  w:140, h:90,  label:'Green Walkable\nZone',   color:'rgba(43,104,150,.1)'}
+      ];
+
+      var evStations = [
+        {x:hub.x-100, y:hub.y+120, label:'EV Station A', info:'Campus e-motorbike dock — 12 bays, GPS-tracked fleet, integrated with MOVE booking app.'},
+        {x:hub.x+100, y:hub.y+120, label:'EV Station B', info:'E-shuttle terminus — SYM/Honda partnership, real-time dispatch, geofenced UEH network.'},
+        {x:hub.x-220, y:hub.y+10,  label:'EV Station C', info:'Last-mile micro-hub — bicycle + scooter mix, lock/unlock via QR, occupancy sensor.'}
+      ];
+
+      var sigNodes = [
+        {x:hub.x-90,  y:hub.y-80,  phase:0,   info:'Adaptive signal — AI adjusts cycle by real-time vehicle count. Prioritises buses + bikes.'},
+        {x:hub.x+90,  y:hub.y-80,  phase:Math.PI/2, info:'Smart intersection — conflict detection, pedestrian countdown, VISSIM-calibrated.'},
+        {x:hub.x+90,  y:hub.y+80,  phase:Math.PI,   info:'MaaS signal node — integrated with routing engine, real-time delay propagation.'},
+        {x:hub.x-90,  y:hub.y+80,  phase:Math.PI*1.5,info:'Geofenced zone gate — e-scooter speed limit enforcement, data upload at crossing.'}
+      ];
+
+      // Spawn animated vehicles
+      function spawnVehicle(){
+        var types = [{color:'#7A1F2E',r:5,speed:1.2,label:'Bus'},{color:GREEN,r:4,speed:1.6,label:'EV'},{color:BLUE,r:3,speed:2,label:'Bike'}];
+        var tp   = types[Math.floor(Math.random()*types.length)];
+        var angle= Math.random()*Math.PI*2;
+        var dist = 280 + Math.random()*80;
+        vehicles.push({
+          x: W/2 + Math.cos(angle)*dist, y: H/2 + Math.sin(angle)*dist,
+          tx:W/2 + Math.cos(angle+Math.PI)*(hub.r+20+Math.random()*60),
+          ty:H/2 + Math.sin(angle+Math.PI)*(hub.r+20+Math.random()*60),
+          color:tp.color, r:tp.r, speed:tp.speed, progress:0, label:tp.label
+        });
+      }
+      for(var i=0;i<12;i++) spawnVehicle();
+
+      // ── Clickable elements info ──
+      var clickTargets = [
+        {x:hub.x, y:hub.y, r:hub.r, title:'Transit Hub — Metro/BRT Station', body:'Central TOD node. High accessibility index, mixed-use development within 500m radius, land value capture for PPP financing.'},
+        ...evStations.map(function(e){ return {x:e.x, y:e.y, r:18, title:e.label, body:e.info}; }),
+        ...sigNodes.map(function(s){ return {x:s.x, y:s.y, r:14, title:'Smart Signal Node', body:s.info}; })
+      ];
+
+      function draw(){
+        ctx.clearRect(0,0,W,H);
+
+        // Background grid
+        ctx.strokeStyle='rgba(122,31,46,.05)'; ctx.lineWidth=1;
+        for(var gx=0;gx<W;gx+=40){ ctx.beginPath();ctx.moveTo(gx,0);ctx.lineTo(gx,H);ctx.stroke(); }
+        for(var gy=0;gy<H;gy+=40){ ctx.beginPath();ctx.moveTo(0,gy);ctx.lineTo(W,gy);ctx.stroke(); }
+
+        // TOD zones
+        zones.forEach(function(z){
+          ctx.fillStyle=z.color; ctx.fillRect(z.x,z.y,z.w,z.h);
+          ctx.strokeStyle='rgba(122,31,46,.12)'; ctx.lineWidth=1; ctx.strokeRect(z.x,z.y,z.w,z.h);
+          ctx.fillStyle='rgba(90,58,64,.6)'; ctx.font='500 9px Inter,sans-serif'; ctx.textAlign='center';
+          var lines=z.label.split('\n');
+          lines.forEach(function(l,i){ ctx.fillText(l, z.x+z.w/2, z.y+z.h/2-5+i*13); });
+        });
+
+        // Roads (cross pattern)
+        ctx.strokeStyle='rgba(122,31,46,.12)'; ctx.lineWidth=20; ctx.lineCap='round';
+        ctx.beginPath(); ctx.moveTo(0,H/2); ctx.lineTo(W,H/2); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(W/2,0); ctx.lineTo(W/2,H); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(0,H/2-60); ctx.lineTo(W,H/2-60); ctx.stroke();
+
+        ctx.strokeStyle='rgba(245,242,238,.5)'; ctx.lineWidth=1.5; ctx.setLineDash([8,10]);
+        ctx.beginPath(); ctx.moveTo(0,H/2); ctx.lineTo(W,H/2); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(W/2,0); ctx.lineTo(W/2,H); ctx.stroke();
+        ctx.setLineDash([]);
+
+        // TOD radial rings
+        [130,200,270].forEach(function(r,i){
+          ctx.beginPath(); ctx.arc(hub.x,hub.y,r,0,Math.PI*2);
+          ctx.strokeStyle='rgba(184,146,100,'+(0.1-i*0.02)+')'; ctx.lineWidth=1; ctx.stroke();
+        });
+
+        // Hub glow
+        var grad=ctx.createRadialGradient(hub.x,hub.y,0,hub.x,hub.y,hub.r+40);
+        grad.addColorStop(0,'rgba(122,31,46,0.15)');
+        grad.addColorStop(1,'rgba(122,31,46,0)');
+        ctx.fillStyle=grad; ctx.beginPath(); ctx.arc(hub.x,hub.y,hub.r+40,0,Math.PI*2); ctx.fill();
+
+        // Hub
+        ctx.beginPath(); ctx.arc(hub.x,hub.y,hub.r,0,Math.PI*2);
+        ctx.fillStyle=BURGUNDY; ctx.fill();
+        ctx.strokeStyle=GOLD; ctx.lineWidth=2; ctx.stroke();
+        ctx.fillStyle='#F5F2EE'; ctx.font='bold 11px Inter,sans-serif'; ctx.textAlign='center';
+        ctx.fillText('TRANSIT', hub.x, hub.y-3);
+        ctx.fillStyle=GOLD; ctx.font='bold 9px JetBrains Mono,monospace';
+        ctx.fillText('HUB', hub.x, hub.y+12);
+
+        // EV stations
+        evStations.forEach(function(e){
+          ctx.beginPath(); ctx.arc(e.x,e.y,16,0,Math.PI*2);
+          ctx.fillStyle=GREEN; ctx.fill();
+          ctx.strokeStyle='rgba(255,255,255,.4)'; ctx.lineWidth=1.5; ctx.stroke();
+          ctx.fillStyle='#fff'; ctx.font='bold 10px Inter,sans-serif'; ctx.textAlign='center';
+          ctx.fillText('EV', e.x, e.y+4);
+        });
+
+        // Smart signals (animated colour)
+        sigNodes.forEach(function(s,i){
+          var phase = (t*0.03 + s.phase) % (Math.PI*2);
+          var green = phase < Math.PI;
+          ctx.beginPath(); ctx.arc(s.x,s.y,12,0,Math.PI*2);
+          ctx.fillStyle=green?'#3a8c5a':'#c03030'; ctx.fill();
+          ctx.strokeStyle='rgba(255,255,255,.3)'; ctx.lineWidth=1; ctx.stroke();
+          ctx.fillStyle='#fff'; ctx.font='500 7px JetBrains Mono,monospace'; ctx.textAlign='center';
+          ctx.fillText(green?'GO':'WAIT', s.x, s.y+3);
+        });
+
+        // Animated vehicles
+        vehicles.forEach(function(v,i){
+          v.progress += v.speed/100;
+          if(v.progress>=1){ vehicles.splice(i,1); spawnVehicle(); return; }
+          var cx=v.x+(v.tx-v.x)*v.progress, cy=v.y+(v.ty-v.y)*v.progress;
+          // Trail
+          ctx.beginPath(); ctx.arc(cx,cy,v.r+3,0,Math.PI*2);
+          ctx.fillStyle=v.color+'22'; ctx.fill();
+          // Vehicle
+          ctx.beginPath(); ctx.arc(cx,cy,v.r,0,Math.PI*2);
+          ctx.fillStyle=v.color; ctx.fill();
+        });
+
+        // Data feedback arrow (animated)
+        var arrowT = (t*0.005)%1;
+        ctx.strokeStyle='rgba(184,146,100,.6)'; ctx.lineWidth=1.5; ctx.setLineDash([4,6]);
+        ctx.beginPath();
+        ctx.arc(hub.x,hub.y,260,Math.PI*0.25+arrowT*Math.PI*2,Math.PI*0.25+(arrowT+0.4)*Math.PI*2);
+        ctx.stroke(); ctx.setLineDash([]);
+
+        // "REAL-TIME DATA" label
+        ctx.fillStyle='rgba(184,146,100,.7)'; ctx.font='500 8px JetBrains Mono,monospace'; ctx.textAlign='center';
+        ctx.fillText('REAL-TIME DATA LOOP', hub.x, H-14);
+
+        t++;
+        requestAnimationFrame(draw);
+      }
+      draw();
+
+      // Click handler
+      var panel = document.getElementById('todInfo');
+      var ptitle= document.getElementById('todInfoTitle');
+      var pbody = document.getElementById('todInfoBody');
+
+      canvas.addEventListener('click', function(ev){
+        var rect=canvas.getBoundingClientRect();
+        var sx=W/rect.width, sy=H/rect.height;
+        var mx=(ev.clientX-rect.left)*sx, my=(ev.clientY-rect.top)*sy;
+        for(var i=0;i<clickTargets.length;i++){
+          var tg=clickTargets[i];
+          if(Math.hypot(mx-tg.x,my-tg.y)<=tg.r+10){
+            ptitle.textContent=tg.title;
+            pbody.textContent=tg.body;
+            panel.style.display='block';
+            return;
+          }
+        }
+        panel.style.display='none';
+      });
+    })();
+    </script>
+  </section>
+
+  <!-- ====================================================== THEMES -->
+  <section class="section" id="themes">
+    <div class="section-head">
+      <p class="eyebrow">01 · RESEARCH THEMES</p>
+      <h2>Three research themes</h2>
+      <p class="section-sub">
+        SML is organised around three interlocking streams — together they connect travellers, vehicles,
+        and infrastructure into a single learning system.
+      </p>
+    </div>
+
+    <div class="grid-3">
+
+      <article class="card theme-card">
+        <div class="card-num">T1</div>
+        <h3 data-i18n="smart.t1">MaaS &amp; Smart Routing</h3>
+        <p data-i18n="smart.t1.body">
+          Designing Mobility-as-a-Service architectures that unify routing, ticketing, and transfer
+          experiences across bus, rail, and micro-mobility — with a strong emphasis on transparent data
+          and user trust.
+        </p>
+        <ul class="bullets">
+          <li><strong>Real-Time Transportation</strong> — live feeds, multi-modal routing and ETA.</li>
+          <li><strong>Optimization Platform</strong> — matching demand and supply across operators.</li>
+          <li><strong>Integrated Payment &amp; Transparency</strong> — one account, auditable fare logic.</li>
+        </ul>
+      </article>
+
+      <article class="card theme-card">
+        <div class="card-num">T2</div>
+        <h3 data-i18n="smart.t2">Smart Mobility &amp; Traffic Operation</h3>
+        <p data-i18n="smart.t2.body">
+          Building data-driven tools for traffic operators — from adaptive signal control in mixed
+          two-wheeler traffic to AI-based demand forecasting and corridor-scale route optimisation.
+        </p>
+        <ul class="bullets">
+          <li><strong>Adaptive Signal Control</strong> — reinforcement-learning signals for mixed traffic.</li>
+          <li><strong>AI Forecast Demand &amp; Route Optimization</strong> — spatio-temporal models for OD flows.</li>
+        </ul>
+      </article>
+
+      <article class="card theme-card">
+        <div class="card-num">T3</div>
+        <h3 data-i18n="smart.t3">Last-Mile &amp; Micro-mobility Systems</h3>
+        <p data-i18n="smart.t3.body">
+          Closing the first-and-last-mile gap with shared e-motorbikes, e-shuttles, and walkable
+          infrastructure — safely and efficiently, especially for students and women.
+        </p>
+        <ul class="bullets">
+          <li><strong>Micro-mobility Hub / Stops Planning</strong> — siting, sizing and charging logic.</li>
+          <li><strong>Data Efficiency &amp; Small Vehicle Safety</strong> — trip analytics &amp; crash avoidance.</li>
+        </ul>
+      </article>
+
+    </div>
+  </section>
+
+  <!-- ====================================================== CE-M PROGRAM -->
+  <section class="section section-alt" id="cem">
+    <div class="section-head">
+      <p class="eyebrow">02 · FLAGSHIP PROGRAM</p>
+      <h2 data-i18n="smart.cem.title">CE-M · Campus Electric Micro-Mobility</h2>
+    </div>
+
+    <div class="grid-2 cem-grid">
+      <div class="cem-intro">
+        <p data-i18n="smart.cem.body">
+          CE-M is SML's flagship living-lab: a campus-scale electric micro-mobility system that combines
+          e-motorbikes and e-shuttle buses inside a geofenced UEH network. It is the place where our research
+          meets real students, real streets, and real operators — and where smart platforms, private-sector
+          partnerships, and campus-first policy come together.
+        </p>
+        <p>
+          The program is structured as a three-pillar architecture, each pillar jointly owned by researchers,
+          operators, and the university — so that technical choices, commercial viability, and policy
+          legitimacy move in lock-step.
+        </p>
+        <div class="cem-stats">
+          <div class="stat"><div class="stat-num">2</div><div class="stat-label">Vehicle classes</div></div>
+          <div class="stat"><div class="stat-num">5+</div><div class="stat-label">Hubs planned</div></div>
+          <div class="stat"><div class="stat-num">100%</div><div class="stat-label">Electric fleet</div></div>
+        </div>
+      </div>
+
+      <div class="cem-pillars">
+        <div class="pillar">
+          <div class="pillar-tag">Pillar 01</div>
+          <h4>Smart &amp; Interactive Platform</h4>
+          <ul class="bullets">
+            <li><strong>Interactive usage</strong> — student ID login, booking, payment, reporting.</li>
+            <li><strong>Integrated network</strong> — e-motorbike and e-shuttle bus on one app.</li>
+          </ul>
+        </div>
+        <div class="pillar">
+          <div class="pillar-tag">Pillar 02</div>
+          <h4>Private-Sector Cooperation</h4>
+          <ul class="bullets">
+            <li>Engage potential enterprises (SYM, Honda) for vehicle supply.</li>
+            <li>Identify an operating partner to run day-to-day fleet service.</li>
+            <li>Engage charging / battery and insurance partners.</li>
+          </ul>
+        </div>
+        <div class="pillar">
+          <div class="pillar-tag">Pillar 03</div>
+          <h4>Policy Package</h4>
+          <ul class="bullets">
+            <li>Campus-first incentives — ride credits, priority access for students and staff.</li>
+            <li>Operating rules — speed limits, geofenced zones, parking, safety compliance.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====================================================== DEMO: MaaS ROUTE PLANNER -->
+  <section class="section" id="demo">
+    <div class="section-head">
+      <p class="eyebrow">03 · INTERACTIVE DEMO</p>
+      <h2 data-i18n="smart.demo.title">MaaS Route Planner</h2>
+      <p class="section-sub" data-i18n="smart.demo.sub">
+        Click any two points on the campus map to plan a multi-modal trip. The planner picks the nearest
+        e-shuttle stop or e-motorbike, then assembles a walk &rarr; ride &rarr; walk route. Switch the mode
+        to compare time, emissions, and cost.
+      </p>
+    </div>
+
+    <div class="demo-wrap">
+      <canvas class="demo-canvas" id="maas-canvas" width="1200" height="480" aria-label="MaaS route planner canvas"></canvas>
+
+      <div class="demo-overlay-legend" aria-hidden="true">
+        <div class="legend-row"><span class="dot dot-stop"></span> E-shuttle stop</div>
+        <div class="legend-row"><span class="dot dot-bike"></span> E-motorbike</div>
+        <div class="legend-row"><span class="dot dot-origin"></span> Origin</div>
+        <div class="legend-row"><span class="dot dot-dest"></span> Destination</div>
+        <div class="legend-row"><span class="swatch swatch-fence"></span> CE-M geofence</div>
+      </div>
+
+      <div class="demo-controls">
+        <label class="control">
+          <span>Mode</span>
+          <select id="maas-mode">
+            <option value="fastest">Fastest</option>
+            <option value="greenest">Greenest</option>
+            <option value="cheapest">Cheapest</option>
+          </select>
+        </label>
+
+        <button type="button" id="maas-reset" class="btn btn-ghost">Reset</button>
+
+        <div class="status-pill" id="maas-status" aria-live="polite">
+          Distance: 2.4&nbsp;km &middot; 12&nbsp;min &middot; 0.2&nbsp;kg CO&#8322;
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====================================================== TIMELINE -->
+  <section class="section section-alt" id="timeline">
+    <div class="section-head">
+      <p class="eyebrow">04 · ROADMAP</p>
+      <h2 data-i18n="common.timeline">Timeline</h2>
+      <p class="section-sub">A staged rollout from foundational platform to regional positioning.</p>
+    </div>
+
+    <ol class="timeline">
+      <li class="tl-item">
+        <div class="tl-dot"></div>
+        <div class="tl-year">2026 &ndash; 2027</div>
+        <h4>Phase 1 — Foundation</h4>
+        <p>
+          Stand up the CE-M pilot: first e-shuttle route, booking and payment MVP, baseline OD surveys,
+          and the first adaptive-signal experiments on a single UEH corridor.
+        </p>
+      </li>
+      <li class="tl-item">
+        <div class="tl-dot"></div>
+        <div class="tl-year">2028 &ndash; 2029</div>
+        <h4>Phase 2 — Integration</h4>
+        <p>
+          Integrate e-motorbike sharing, extend the geofenced network across UEH campuses, and wire up
+          operator partners. Launch the MaaS Route Planner as a public tool and publish first impact papers.
+        </p>
+      </li>
+      <li class="tl-item">
+        <div class="tl-dot"></div>
+        <div class="tl-year">2030</div>
+        <h4>Phase 3 — Positioning &amp; Scaling</h4>
+        <p>
+          Position SML as a regional reference on campus-scale low-carbon mobility: transfer the CE-M
+          playbook to partner universities and municipal districts across Southeast Asia.
+        </p>
+      </li>
+    </ol>
+  </section>
+
+  <!-- ====================================================== PROJECTS -->
+  <section class="section" id="projects">
+    <div class="section-head">
+      <p class="eyebrow">05 · PROJECTS</p>
+      <h2 data-i18n="common.projects">Projects</h2>
+      <p class="section-sub">Ongoing and recent work underpinning SML's programmatic agenda.</p>
+    </div>
+
+    <div class="grid-3">
+
+      <article class="card project-card">
+        <div class="proj-head">
+          <span class="proj-code">GTALK</span>
+          <span class="proj-year">2022 – 2023</span>
+        </div>
+        <h4>Gender and Transport Assemblage of Learning and Knowledge</h4>
+        <p>
+          A multi-country program building a shared evidence base and curriculum on gender-responsive
+          transport planning, co-designed with practitioners in Ho Chi Minh City and partner cities.
+        </p>
+        <div class="proj-tags">
+          <span class="tag">Gender &amp; Transport</span>
+          <span class="tag">Capacity Building</span>
+        </div>
+      </article>
+
+      <article class="card project-card">
+        <div class="proj-head">
+          <span class="proj-code">ADAS</span>
+          <span class="proj-year">2021 – 2023</span>
+        </div>
+        <h4>Advanced Driver Assistance Systems</h4>
+        <p>
+          Comparative acceptance and behaviour study of ADAS technologies in Vietnam and Belgium — driver
+          trust, use patterns, and policy implications for mixed-traffic emerging markets.
+        </p>
+        <div class="proj-tags">
+          <span class="tag">ADAS</span>
+          <span class="tag">Behavioural Safety</span>
+        </div>
+      </article>
+
+      <article class="card project-card">
+        <div class="proj-head">
+          <span class="proj-code">Walkability</span>
+          <span class="proj-year">2023 – 2024</span>
+        </div>
+        <h4>Developing an Intersectional Equity Framework to Support Walkability Transitions</h4>
+        <p>
+          An intersectional framework for walkability audits — combining street audits, interviews, and
+          equity metrics to guide low-carbon street transitions in Southeast Asian cities.
+        </p>
+        <div class="proj-tags">
+          <span class="tag">Walkability</span>
+          <span class="tag">Equity</span>
+        </div>
+      </article>
+
+    </div>
+  </section>
+
+  <!-- ====================================================== FACILITIES -->
+  <section class="section section-alt" id="facilities">
+    <div class="section-head">
+      <p class="eyebrow">06 · FACILITIES</p>
+      <h2>Facilities &amp; Instruments</h2>
+      <p class="section-sub">
+        SML pairs an immersive simulation suite with a field-grade sensing stack — so ideas can move from
+        virtual prototype to instrumented pilot without leaving the lab.
+      </p>
+    </div>
+
+    <div class="grid-2">
+      <div class="card facility-card">
+        <h4>VR/AR Systems &amp; Interactive Simulation</h4>
+        <p>
+          A mixed-reality environment for traffic scenario testing, driver behaviour experiments, and
+          participatory co-design of street futures.
+        </p>
+        <div class="pill-row">
+          <span class="pill">Unity / Unreal</span>
+          <span class="pill">Eye-tracking</span>
+          <span class="pill">VISSIM / AIMSUN</span>
+          <span class="pill">Camera 360</span>
+        </div>
+      </div>
+
+      <div class="card facility-card">
+        <h4>Traffic Data Sensors &amp; Simulation</h4>
+        <p>
+          Field-deployable sensing stack and calibration bench for mixed-traffic studies — from two-wheeler
+          safety to intersection-level flow analysis.
+        </p>
+        <div class="pill-row">
+          <span class="pill">AI Traffic Camera</span>
+          <span class="pill">GoPro</span>
+          <span class="pill">2 Physical bicycles + Virtual Env</span>
+          <span class="pill">GPS Trackers</span>
+          <span class="pill">Analysis Sensors</span>
+          <span class="pill">Traffic Simulation Model</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====================================================== METRICS -->
+  <section class="section" id="metrics">
+    <div class="section-head">
+      <p class="eyebrow">07 · METRICS</p>
+      <h2>Ambition in numbers</h2>
+      <p class="section-sub">Targets tracked across the 2027 / 2029 / 2030 milestones.</p>
+    </div>
+
+    <div class="stat-table">
+      <div class="stat-row stat-row--head">
+        <div class="stat-cell stat-cell--label">Indicator</div>
+        <div class="stat-cell">2027</div>
+        <div class="stat-cell">2029</div>
+        <div class="stat-cell">2030</div>
+      </div>
+
+      <div class="stat-row">
+        <div class="stat-cell stat-cell--label">Active projects</div>
+        <div class="stat-cell"><span class="stat-num">2</span></div>
+        <div class="stat-cell"><span class="stat-num">5</span></div>
+        <div class="stat-cell"><span class="stat-num">7</span></div>
+      </div>
+
+      <div class="stat-row">
+        <div class="stat-cell stat-cell--label">Papers published <em>(cumulative)</em></div>
+        <div class="stat-cell"><span class="stat-num">3</span></div>
+        <div class="stat-cell"><span class="stat-num">5</span></div>
+        <div class="stat-cell"><span class="stat-num">15</span></div>
+      </div>
+
+      <div class="stat-row">
+        <div class="stat-cell stat-cell--label">Policy reports</div>
+        <div class="stat-cell"><span class="stat-num">4</span></div>
+        <div class="stat-cell"><span class="stat-num">10</span></div>
+        <div class="stat-cell"><span class="stat-num">15</span></div>
+      </div>
+
+      <div class="stat-row">
+        <div class="stat-cell stat-cell--label">Policies adopted</div>
+        <div class="stat-cell"><span class="stat-num">1</span></div>
+        <div class="stat-cell"><span class="stat-num">3</span></div>
+        <div class="stat-cell"><span class="stat-num">5</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====================================================== PUBLICATIONS -->
+  <section class="section section-alt" id="publications">
+    <div class="section-head">
+      <p class="eyebrow">08 · PUBLICATIONS</p>
+      <h2 data-i18n="common.publications">Publications</h2>
+      <p class="section-sub">Selected peer-reviewed outputs and policy reports.</p>
+    </div>
+
+    <ol class="pub-list">
+      <li class="pub-item">
+        <div class="pub-year">2022</div>
+        <div class="pub-body">
+          <p class="pub-authors">Trinh, T. A., Pham, N. H., &amp; Mateo-Babiano, I.</p>
+          <p class="pub-title">GTALK Report Series: Safer Cities in Asia — Ho Chi Minh City, Vietnam.</p>
+          <p class="pub-venue">Gender and Transport Assemblage of Learning and Knowledge, Report Series.</p>
+        </div>
+      </li>
+      <li class="pub-item">
+        <div class="pub-year">2024</div>
+        <div class="pub-body">
+          <p class="pub-authors">Trinh, T. A., &amp; Pham, H. N.</p>
+          <p class="pub-title">Public Transport Policy through a Gender Lens in the Post-Pandemic World.</p>
+          <p class="pub-venue">Journal of the Eastern Asia Society for Transportation Studies, 15, 659–675.</p>
+        </div>
+      </li>
+      <li class="pub-item">
+        <div class="pub-year">2024</div>
+        <div class="pub-body">
+          <p class="pub-authors">Khattak, M. W., Brijs, K., Tran, T. M., Trinh, T. A., et al.</p>
+          <p class="pub-title">Acceptance towards Advanced Driver Assistance Systems (ADAS).</p>
+          <p class="pub-venue">Transportation Research Part F, 105, 284–305.</p>
+        </div>
+      </li>
+      <li class="pub-item">
+        <div class="pub-year">2024</div>
+        <div class="pub-body">
+          <p class="pub-authors">Brijs, K., Vu, A. T., Trinh, T. A., et al.</p>
+          <p class="pub-title">A Comparative Study of Factors Influencing ADAS Acceptance in Belgium and Vietnam.</p>
+          <p class="pub-venue">Safety, 10(4), 93.</p>
+        </div>
+      </li>
+    </ol>
+  </section>
+
+  <!-- ====================================================== STAKEHOLDERS -->
+  <section class="section" id="stakeholders">
+    <div class="section-head">
+      <p class="eyebrow">09 · STAKEHOLDERS</p>
+      <h2 data-i18n="common.stakeholders">Stakeholders &amp; Benefits</h2>
+      <p class="section-sub">Who SML works with — and what each of them gains.</p>
+    </div>
+
+    <div class="grid-4 stake-grid">
+
+      <div class="card stake-card">
+        <div class="stake-icon" aria-hidden="true">S</div>
+        <h4 data-i18n="common.students">Students</h4>
+        <ul class="bullets">
+          <li>Safe, affordable on-campus mobility.</li>
+          <li>Paid research internships &amp; theses.</li>
+          <li>Hands-on training in data &amp; design.</li>
+        </ul>
+      </div>
+
+      <div class="card stake-card">
+        <div class="stake-icon" aria-hidden="true">U</div>
+        <h4 data-i18n="common.universities">Universities &amp; Educational Institutions</h4>
+        <ul class="bullets">
+          <li>Living-lab infrastructure on campus.</li>
+          <li>Shared curriculum &amp; exchange.</li>
+          <li>Joint publications and grants.</li>
+        </ul>
+      </div>
+
+      <div class="card stake-card">
+        <div class="stake-icon" aria-hidden="true">G</div>
+        <h4 data-i18n="common.gov">Authorities &amp; Government</h4>
+        <ul class="bullets">
+          <li>Evidence for mobility &amp; climate policy.</li>
+          <li>Replicable campus-first playbook.</li>
+          <li>Capacity-building for officials.</li>
+        </ul>
+      </div>
+
+      <div class="card stake-card">
+        <div class="stake-icon" aria-hidden="true">I</div>
+        <h4 data-i18n="common.industry">Industry Partners &amp; Operators</h4>
+        <ul class="bullets">
+          <li>Real-world pilot environment.</li>
+          <li>Data-driven product iteration.</li>
+          <li>Pathway to public-sector contracts.</li>
+        </ul>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ====================================================== FOOTER -->
+  <footer class="site-footer">
+    <div class="footer-grid">
+      <div class="footer-col">
+        <div class="footer-brand">
+          <span class="logo-mark">M</span>
+          <span>MOVE System</span>
+        </div>
+        <p class="footer-tag">
+          Institute of Smart City and Management (ISCM), UEH University — a research platform for
+          low-carbon, inclusive, and intelligent mobility.
+        </p>
+      </div>
+      <div class="footer-col">
+        <h5>Labs</h5>
+        <ul>
+          <li><a href="./see.html">SEE — Safety, Education &amp; Engagement Living Lab</a></li>
+          <li><a href="./smart.html">SML — Smart Mobility Lab</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h5>Contact</h5>
+        <ul>
+          <li>ISCM · UEH University</li>
+          <li>59C Nguyen Dinh Chieu, HCMC</li>
+          <li><a href="mailto:iscm@ueh.edu.vn">iscm@ueh.edu.vn</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-meta">
+      <p>&copy; 2026 MOVE System · ISCM · UEH University.</p>
+    </div>
+  </footer>
+
+  <!-- ====================================================== SCRIPTS -->
+  <script src="../js/i18n.js"></script>
+  <script>
+    // Apply i18n (EN fallbacks are already inline as element text).
+    if (window.I18N && typeof I18N.apply === "function") { I18N.apply(); }
+    document.querySelectorAll(".lang-toggle button").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        if (window.I18N && typeof I18N.setLang === "function") {
+          I18N.setLang(btn.dataset.lang);
+        }
+      });
+    });
+
+    // Mobile burger
+    var burgerSml = document.getElementById("burgerSml");
+    var navLinksSml = document.querySelector(".site-nav .nav-links");
+    if (burgerSml && navLinksSml) {
+      burgerSml.addEventListener("click", function () { navLinksSml.classList.toggle("open"); });
+      navLinksSml.querySelectorAll("a").forEach(function (a) {
+        a.addEventListener("click", function () { navLinksSml.classList.remove("open"); });
+      });
+    }
+
+    /* =====================================================
+       MaaS Route Planner — canvas demo
+       ===================================================== */
+    (function () {
+      var canvas = document.getElementById("maas-canvas");
+      if (!canvas || !canvas.getContext) return;
+      var ctx = canvas.getContext("2d");
+
+      // Responsive resize while keeping internal resolution sharp.
+      function fit() {
+        var parent = canvas.parentElement;
+        var w = parent.clientWidth;
+        var h = 480;
+        var dpr = window.devicePixelRatio || 1;
+        canvas.style.width  = w + "px";
+        canvas.style.height = h + "px";
+        canvas.width  = Math.floor(w * dpr);
+        canvas.height = Math.floor(h * dpr);
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        WORLD.w = w; WORLD.h = h;
+        layout();
+        draw();
+      }
+
+      var COLORS = {
+        burgundy: "#7A1F2E",
+        burgundyDim: "rgba(122,31,46,0.55)",
+        cream: "#F5F2EE",
+        ink: "#1a1a1a",
+        road: "#ffffff",
+        roadEdge: "#e6e0d8",
+        block: "#dcd5cb",
+        blockEdge: "#c7bfb3",
+        poi: "#2a2a2a",
+        green: "#2f7d52",
+        red:   "#b03040",
+        fence: "rgba(122,31,46,0.45)"
+      };
+
+      var WORLD = { w: 1200, h: 480 };
+
+      // Static scene (positions are relative fractions of WORLD.w/h, resolved in layout()).
+      var SCENE = {
+        blocks: [
+          { x: 0.06, y: 0.12, w: 0.14, h: 0.26, name: "Block A" },
+          { x: 0.26, y: 0.10, w: 0.18, h: 0.18, name: "Block B" },
+          { x: 0.50, y: 0.14, w: 0.12, h: 0.22, name: "Block C" },
+          { x: 0.70, y: 0.10, w: 0.14, h: 0.20, name: "Block D" },
+          { x: 0.12, y: 0.60, w: 0.18, h: 0.22, name: "Block E" },
+          { x: 0.38, y: 0.58, w: 0.16, h: 0.26, name: "Block F" },
+          { x: 0.62, y: 0.60, w: 0.20, h: 0.24, name: "Block G" }
+        ],
+        roads: [
+          // Horizontal
+          { x1: 0.02, y1: 0.46, x2: 0.98, y2: 0.46 },
+          { x1: 0.02, y1: 0.90, x2: 0.98, y2: 0.90 },
+          { x1: 0.02, y1: 0.06, x2: 0.98, y2: 0.06 },
+          // Vertical
+          { x1: 0.22, y1: 0.02, x2: 0.22, y2: 0.98 },
+          { x1: 0.48, y1: 0.02, x2: 0.48, y2: 0.98 },
+          { x1: 0.66, y1: 0.02, x2: 0.66, y2: 0.98 },
+          { x1: 0.86, y1: 0.02, x2: 0.86, y2: 0.98 }
+        ],
+        pois: [
+          { x: 0.13, y: 0.26, label: "A1 Campus" },
+          { x: 0.35, y: 0.22, label: "Library" },
+          { x: 0.56, y: 0.28, label: "Metro Station" },
+          { x: 0.78, y: 0.22, label: "Dorm" },
+          { x: 0.46, y: 0.74, label: "Cafeteria" }
+        ],
+        stops: [
+          { x: 0.22, y: 0.46 },
+          { x: 0.48, y: 0.46 },
+          { x: 0.66, y: 0.46 },
+          { x: 0.86, y: 0.46 },
+          { x: 0.48, y: 0.90 }
+        ],
+        bikes: [
+          { x: 0.15, y: 0.46 },
+          { x: 0.30, y: 0.90 },
+          { x: 0.56, y: 0.46 },
+          { x: 0.74, y: 0.90 },
+          { x: 0.90, y: 0.70 },
+          { x: 0.40, y: 0.06 }
+        ],
+        fence: { cx: 0.50, cy: 0.52, rx: 0.44, ry: 0.40 }
+      };
+
+      // Cached absolute coordinates (pixels).
+      var ABS = { blocks: [], roads: [], pois: [], stops: [], bikes: [], fence: null };
+
+      function layout() {
+        var W = WORLD.w, H = WORLD.h;
+        ABS.blocks = SCENE.blocks.map(function (b) {
+          return { x: b.x * W, y: b.y * H, w: b.w * W, h: b.h * H, name: b.name };
+        });
+        ABS.roads = SCENE.roads.map(function (r) {
+          return { x1: r.x1 * W, y1: r.y1 * H, x2: r.x2 * W, y2: r.y2 * H };
+        });
+        ABS.pois = SCENE.pois.map(function (p) {
+          return { x: p.x * W, y: p.y * H, label: p.label };
+        });
+        ABS.stops = SCENE.stops.map(function (s) { return { x: s.x * W, y: s.y * H }; });
+        ABS.bikes = SCENE.bikes.map(function (b) { return { x: b.x * W, y: b.y * H }; });
+        ABS.fence = { cx: SCENE.fence.cx * W, cy: SCENE.fence.cy * H,
+                      rx: SCENE.fence.rx * W, ry: SCENE.fence.ry * H };
+      }
+
+      // Interaction state
+      var origin = null, dest = null, route = null;
+      var travelerT = 0;
+      var pulse = 0;
+      var mode = "fastest";
+
+      function nearest(points, pt) {
+        var best = null, bd = Infinity;
+        for (var i = 0; i < points.length; i++) {
+          var dx = points[i].x - pt.x, dy = points[i].y - pt.y;
+          var d = dx * dx + dy * dy;
+          if (d < bd) { bd = d; best = points[i]; }
+        }
+        return best;
+      }
+
+      function planRoute() {
+        if (!origin || !dest) { route = null; return; }
+        // Pick vehicle pool by mode.
+        var pool;
+        if (mode === "greenest") {
+          pool = ABS.stops.slice(); // shuttle = most efficient
+        } else if (mode === "cheapest") {
+          pool = ABS.bikes.slice(); // bike = cheapest
+        } else {
+          pool = ABS.stops.concat(ABS.bikes);
+        }
+        var pickA = nearest(pool, origin);
+        var pickB = nearest(pool, dest);
+
+        // Slight mode-specific offset for the vehicle leg for visual variety.
+        var off = { fastest: 0, greenest: -8, cheapest: 8 }[mode] || 0;
+        route = {
+          a: { x: origin.x, y: origin.y },
+          b: { x: pickA.x,  y: pickA.y + off },
+          c: { x: pickB.x,  y: pickB.y + off },
+          d: { x: dest.x,   y: dest.y }
+        };
+        computeStats();
+        travelerT = 0;
+      }
+
+      function computeStats() {
+        if (!route) return;
+        function dist(p, q) {
+          var dx = p.x - q.x, dy = p.y - q.y;
+          return Math.sqrt(dx * dx + dy * dy);
+        }
+        var totalPx = dist(route.a, route.b) + dist(route.b, route.c) + dist(route.c, route.d);
+        // Map pixels to km using scene width ~= 1.6 km
+        var km = (totalPx / WORLD.w) * 1.6;
+        // Vehicle leg dominates; mode affects avg speed / cost / CO2.
+        var profile = {
+          fastest:  { speed: 24, co2: 0.08, cost: 14000 },
+          greenest: { speed: 18, co2: 0.02, cost: 10000 },
+          cheapest: { speed: 16, co2: 0.05, cost:  6000 }
+        }[mode];
+        var minutes = (km / profile.speed) * 60 + 3; // +3 min walking overhead
+        var co2 = km * profile.co2;
+        var cost = Math.round(profile.cost * Math.max(0.6, km / 2));
+        var status = "Distance: " + km.toFixed(1) + " km \u00B7 " +
+                     Math.round(minutes) + " min \u00B7 " +
+                     co2.toFixed(2) + " kg CO\u2082 \u00B7 \u20AB" +
+                     cost.toLocaleString("vi-VN");
+        var el = document.getElementById("maas-status");
+        if (el) el.textContent = status;
+      }
+
+      /* ---------- drawing ---------- */
+      function drawBackground() {
+        ctx.fillStyle = COLORS.cream;
+        ctx.fillRect(0, 0, WORLD.w, WORLD.h);
+
+        // subtle dotted grid
+        ctx.fillStyle = "rgba(122,31,46,0.08)";
+        for (var x = 12; x < WORLD.w; x += 22) {
+          for (var y = 12; y < WORLD.h; y += 22) {
+            ctx.fillRect(x, y, 1.2, 1.2);
+          }
+        }
+      }
+
+      function drawRoads() {
+        // Wide road base
+        ctx.lineCap = "round";
+        ctx.strokeStyle = COLORS.roadEdge;
+        ctx.lineWidth = 22;
+        ABS.roads.forEach(function (r) {
+          ctx.beginPath(); ctx.moveTo(r.x1, r.y1); ctx.lineTo(r.x2, r.y2); ctx.stroke();
+        });
+        // Inner road
+        ctx.strokeStyle = COLORS.road;
+        ctx.lineWidth = 14;
+        ABS.roads.forEach(function (r) {
+          ctx.beginPath(); ctx.moveTo(r.x1, r.y1); ctx.lineTo(r.x2, r.y2); ctx.stroke();
+        });
+        // center dash
+        ctx.strokeStyle = "rgba(0,0,0,0.15)";
+        ctx.lineWidth = 1.2;
+        ctx.setLineDash([6, 8]);
+        ABS.roads.forEach(function (r) {
+          ctx.beginPath(); ctx.moveTo(r.x1, r.y1); ctx.lineTo(r.x2, r.y2); ctx.stroke();
+        });
+        ctx.setLineDash([]);
+      }
+
+      function drawBlocks() {
+        ABS.blocks.forEach(function (b) {
+          ctx.fillStyle = COLORS.block;
+          ctx.strokeStyle = COLORS.blockEdge;
+          ctx.lineWidth = 1;
+          ctx.fillRect(b.x, b.y, b.w, b.h);
+          ctx.strokeRect(b.x, b.y, b.w, b.h);
+        });
+      }
+
+      function drawFence() {
+        var f = ABS.fence;
+        ctx.save();
+        ctx.setLineDash([8, 6]);
+        ctx.strokeStyle = COLORS.fence;
+        ctx.lineWidth = 1.6;
+        ctx.beginPath();
+        ctx.ellipse(f.cx, f.cy, f.rx, f.ry, 0, 0, Math.PI * 2);
+        ctx.stroke();
+        ctx.restore();
+
+        // fence label
+        ctx.fillStyle = COLORS.burgundyDim;
+        ctx.font = "600 11px 'JetBrains Mono', monospace";
+        ctx.fillText("CE-M GEOFENCE", f.cx - f.rx + 8, f.cy - f.ry + 4);
+      }
+
+      function drawPOIs() {
+        ctx.font = "600 12px Inter, sans-serif";
+        ABS.pois.forEach(function (p) {
+          ctx.fillStyle = COLORS.poi;
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, 4, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.fillStyle = "rgba(26,26,26,0.85)";
+          ctx.fillText(p.label, p.x + 8, p.y + 4);
+        });
+      }
+
+      function drawStopsAndBikes() {
+        // shuttle stops (squares)
+        ABS.stops.forEach(function (s) {
+          ctx.fillStyle = COLORS.burgundy;
+          ctx.fillRect(s.x - 5, s.y - 5, 10, 10);
+          ctx.strokeStyle = "#fff";
+          ctx.lineWidth = 1.4;
+          ctx.strokeRect(s.x - 5, s.y - 5, 10, 10);
+        });
+        // bikes (circles)
+        ABS.bikes.forEach(function (b) {
+          ctx.fillStyle = COLORS.burgundy;
+          ctx.beginPath();
+          ctx.arc(b.x, b.y, 4.5, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.strokeStyle = "#fff";
+          ctx.lineWidth = 1.4;
+          ctx.stroke();
+        });
+      }
+
+      function drawPulseMarker(p, color) {
+        if (!p) return;
+        // outer pulse
+        var r = 10 + Math.sin(pulse) * 4;
+        ctx.fillStyle = color + "33";
+        ctx.beginPath(); ctx.arc(p.x, p.y, r + 8, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = color + "66";
+        ctx.beginPath(); ctx.arc(p.x, p.y, r, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = color;
+        ctx.beginPath(); ctx.arc(p.x, p.y, 6, 0, Math.PI * 2); ctx.fill();
+        ctx.strokeStyle = "#fff";
+        ctx.lineWidth = 2;
+        ctx.stroke();
+      }
+
+      function drawRoute() {
+        if (!route) return;
+
+        // Walking leg 1 (dashed)
+        ctx.save();
+        ctx.setLineDash([6, 6]);
+        ctx.strokeStyle = COLORS.burgundy;
+        ctx.lineWidth = 2.2;
+        ctx.beginPath();
+        ctx.moveTo(route.a.x, route.a.y);
+        ctx.lineTo(route.b.x, route.b.y);
+        ctx.stroke();
+        ctx.restore();
+
+        // Vehicle leg (glow + solid)
+        ctx.save();
+        ctx.shadowColor = COLORS.burgundy;
+        ctx.shadowBlur = 14;
+        ctx.strokeStyle = COLORS.burgundy;
+        ctx.lineWidth = 4;
+        ctx.beginPath();
+        ctx.moveTo(route.b.x, route.b.y);
+        ctx.lineTo(route.c.x, route.c.y);
+        ctx.stroke();
+        ctx.restore();
+
+        // Walking leg 2 (dashed)
+        ctx.save();
+        ctx.setLineDash([6, 6]);
+        ctx.strokeStyle = COLORS.burgundy;
+        ctx.lineWidth = 2.2;
+        ctx.beginPath();
+        ctx.moveTo(route.c.x, route.c.y);
+        ctx.lineTo(route.d.x, route.d.y);
+        ctx.stroke();
+        ctx.restore();
+
+        // Traveler dot
+        var t = travelerT;
+        var p;
+        if (t < 0.33) {
+          var u = t / 0.33;
+          p = { x: lerp(route.a.x, route.b.x, u), y: lerp(route.a.y, route.b.y, u) };
+        } else if (t < 0.66) {
+          var v = (t - 0.33) / 0.33;
+          p = { x: lerp(route.b.x, route.c.x, v), y: lerp(route.b.y, route.c.y, v) };
+        } else {
+          var w = (t - 0.66) / 0.34;
+          p = { x: lerp(route.c.x, route.d.x, w), y: lerp(route.c.y, route.d.y, w) };
+        }
+        ctx.fillStyle = "#fff";
+        ctx.beginPath(); ctx.arc(p.x, p.y, 6, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = COLORS.burgundy;
+        ctx.beginPath(); ctx.arc(p.x, p.y, 4, 0, Math.PI * 2); ctx.fill();
+      }
+
+      function lerp(a, b, t) { return a + (b - a) * t; }
+
+      function drawHintIfEmpty() {
+        if (origin && dest) return;
+        ctx.fillStyle = "rgba(26,26,26,0.55)";
+        ctx.font = "500 13px Inter, sans-serif";
+        var msg = !origin ? "Click on the map to place your origin."
+                          : "Now click again to place your destination.";
+        ctx.fillText(msg, 16, WORLD.h - 14);
+      }
+
+      function draw() {
+        ctx.clearRect(0, 0, WORLD.w, WORLD.h);
+        drawBackground();
+        drawFence();
+        drawRoads();
+        drawBlocks();
+        drawStopsAndBikes();
+        drawPOIs();
+        drawRoute();
+        drawPulseMarker(origin, COLORS.green);
+        drawPulseMarker(dest, COLORS.red);
+        drawHintIfEmpty();
+      }
+
+      function animate() {
+        pulse += 0.12;
+        if (route) travelerT = (travelerT + 0.0045) % 1;
+        draw();
+        requestAnimationFrame(animate);
+      }
+
+      /* ---------- events ---------- */
+      canvas.addEventListener("click", function (ev) {
+        var rect = canvas.getBoundingClientRect();
+        var p = { x: ev.clientX - rect.left, y: ev.clientY - rect.top };
+        if (!origin) {
+          origin = p;
+        } else if (!dest) {
+          dest = p;
+          planRoute();
+        } else {
+          origin = p; dest = null; route = null;
+        }
+      });
+
+      document.getElementById("maas-mode").addEventListener("change", function (ev) {
+        mode = ev.target.value;
+        if (origin && dest) planRoute();
+      });
+
+      document.getElementById("maas-reset").addEventListener("click", function () {
+        origin = null; dest = null; route = null; travelerT = 0;
+        var el = document.getElementById("maas-status");
+        if (el) el.textContent = "Distance: 2.4 km \u00B7 12 min \u00B7 0.2 kg CO\u2082";
+      });
+
+      window.addEventListener("resize", fit);
+      fit();
+      animate();
+    })();
+  </script>
+</body>
+</html>

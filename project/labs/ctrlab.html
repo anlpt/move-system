@@ -1,0 +1,1191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>CtrLab — Carbon Transition Lab · MOVE System</title>
+  <meta name="description" content="CtrLab — Carbon Transition Lab under MOVE System. Decarbonization, emission profiling, digital twin and net-zero pathways at ISCM · UEH." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/style.css" />
+  <style>
+    .track-card{
+      border:1px solid rgba(122,31,46,.18);
+      background:rgba(255,253,250,.6);
+      padding:1.5rem 1.4rem;
+      transition:all .25s;
+    }
+    .track-card:hover{border-color:var(--burgundy);transform:translateY(-2px)}
+    .track-card .tag{
+      display:inline-block;padding:3px 9px;border-radius:3px;
+      font-size:.68rem;letter-spacing:.12em;font-weight:600;
+      background:var(--burgundy);color:var(--cream);margin-bottom:.6rem;
+    }
+    .track-card h3{color:var(--burgundy);margin-bottom:.5rem}
+    .track-card p{color:var(--ink-soft);font-size:.92rem;margin:0 0 .5rem}
+    .track-card ul{margin:0;padding-left:1.1rem;color:var(--muted);font-size:.85rem}
+    .track-card ul li{margin-bottom:.2rem}
+
+    .ctrl-canvas-wrap{
+      position:relative;background:#0D0D10;border-radius:var(--radius-md);
+      overflow:hidden;
+    }
+    #ctrCanvas{display:block;width:100%;height:480px;background:#0D0D10}
+    .ctrl-legend{
+      position:absolute;top:12px;left:12px;display:flex;flex-direction:column;gap:6px;
+      font-size:.72rem;color:#F5F2EE;font-family:var(--font-mono);
+      background:rgba(13,13,16,.65);padding:8px 10px;border-radius:4px;
+      border:1px solid rgba(184,146,100,.3);
+    }
+    .ctrl-legend .dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px;vertical-align:middle}
+    .ctrl-legend .bar{
+      display:flex;height:6px;border-radius:3px;overflow:hidden;width:160px;margin-top:4px;
+      background:linear-gradient(to right,#2b4d7a,#3f8bbc,#6fcf97,#f2c94c,#f2994a,#eb5757,#c0392b);
+    }
+    .ctrl-readout{
+      position:absolute;right:12px;top:12px;font-family:var(--font-mono);font-size:.74rem;
+      color:#F5F2EE;background:rgba(13,13,16,.75);border:1px solid rgba(184,146,100,.3);
+      padding:8px 12px;border-radius:4px;min-width:220px;
+    }
+    .ctrl-readout .k{color:#B89264;letter-spacing:.1em;font-size:.68rem}
+    .ctrl-readout .v{color:#F5F2EE;font-size:1rem}
+
+    .time-slider-wrap{
+      display:flex;align-items:center;gap:.8rem;margin:.6rem 0 0;flex-wrap:wrap;
+    }
+    .time-slider-wrap input[type=range]{
+      flex:1;min-width:200px;accent-color:var(--burgundy);
+    }
+    .layer-toggles{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:.6rem}
+    .layer-toggles .btn.on{background:var(--burgundy);color:var(--cream)}
+
+    .outcome-box{border-left:2px solid var(--burgundy);padding:.3rem 0 .3rem 1rem;margin-bottom:.9rem}
+    .outcome-box h4{margin:0 0 .25rem;font-size:.98rem;color:var(--burgundy)}
+    .outcome-box p{margin:0;color:var(--ink-soft);font-size:.88rem}
+
+    .nz-btn{
+      padding:7px 16px;border:1px solid rgba(111,207,151,0.3);background:rgba(111,207,151,0.05);
+      color:rgba(245,242,238,0.65);font-family:var(--font-mono);font-size:.72rem;letter-spacing:.06em;
+      cursor:pointer;transition:all .2s;border-color:rgba(var(--c),0.35)
+    }
+    .nz-btn.nz-active{background:rgba(111,207,151,0.12);color:#F5F2EE;border-color:rgba(111,207,151,0.5)}
+    .nz-btn[data-scenario="bau"].nz-active{background:rgba(220,80,80,0.12);border-color:rgba(220,80,80,0.45);color:#F5F2EE}
+    .nz-btn[data-scenario="policy"].nz-active{background:rgba(220,192,64,0.12);border-color:rgba(220,192,64,0.45);color:#F5F2EE}
+
+    .xcut-strip{
+      background:linear-gradient(90deg,var(--burgundy) 0%, var(--burgundy-dark) 100%);
+      color:var(--cream);padding:2rem clamp(1rem,4vw,3rem);
+      margin-top:2.5rem;border-radius:var(--radius-md);
+    }
+    .xcut-strip h3{color:var(--cream);margin:0 0 .3rem}
+    .xcut-strip p{margin:0;opacity:.86;font-size:.95rem}
+  </style>
+</head>
+<body>
+
+<!-- ========================= Top Nav ========================= -->
+<nav class="nav">
+  <a class="nav-brand" href="../index.html">
+    <span class="logo-box">ISCM</span>
+    <span>
+      <div style="font-weight:700;font-size:.86rem;color:var(--burgundy)">MOVE System</div>
+      <div class="logo-caption">INSTITUTE OF SMART CITY &amp; MANAGEMENT</div>
+    </span>
+  </a>
+  <div class="nav-links" id="navLinks">
+    <a href="../index.html#about" data-i18n="nav.about">About</a>
+    <a href="../index.html#structure" data-i18n="nav.structure">Structure</a>
+    <a href="../index.html#people" data-i18n="nav.people">People</a>
+    <a href="../index.html#funding" data-i18n="nav.funding">Funding</a>
+    <a href="../index.html#tech" data-i18n="nav.tech">Technology</a>
+  </div>
+  <div class="nav-right">
+    <div class="lang-toggle">
+      <button data-lang="en" class="active">EN</button>
+      <button data-lang="vi">VI</button>
+    </div>
+    <button class="burger" id="burger" aria-label="menu">☰</button>
+  </div>
+</nav>
+
+<!-- ========================= Lab Hero ========================= -->
+<section class="lab-hero" style="position:relative;overflow:hidden">
+  <div class="letters" aria-hidden="true">CTR</div>
+  <div class="container">
+    <a class="back-link" href="../index.html" data-i18n="ctr.back">Back to MOVE hub</a>
+    <div class="eyebrow">LAB · 04 / CTR — CARBON TRANSITION</div>
+    <h1 data-i18n="ctr.h1">CtrLab — Carbon Transition Lab</h1>
+    <p class="lead" data-i18n="ctr.lead">Understand, quantify, and control carbon emissions and their impacts through data-driven science — integrating emissions, exposure, energy and climate into one unified system.</p>
+    <div style="display:flex;flex-wrap:wrap;gap:.4rem;margin-top:1rem">
+      <span class="pill dark">Net-Zero</span>
+      <span class="pill">Digital Twin</span>
+      <span class="pill">WRF-CMAQ</span>
+      <span class="pill">Emission Profiling</span>
+      <span class="pill">Green Policy</span>
+      <span class="pill">System Optimization</span>
+    </div>
+  </div>
+</section>
+
+<!-- ========================= Lab identity / Full Intro ========================= -->
+<section style="background:linear-gradient(135deg,#1A3A2A 0%,#0D2118 100%);color:#F5F2EE;padding:4rem 0">
+  <div class="container">
+
+    <!-- Mission block -->
+    <div style="max-width:820px;margin:0 auto 2.5rem;text-align:center">
+      <div class="eyebrow" style="color:rgba(245,242,238,.55);letter-spacing:.18em">ENVIRONMENTAL RESEARCH LAB · CTRLAB · ISCM · UEH</div>
+      <h2 style="color:#F5F2EE;font-size:clamp(1.55rem,3.5vw,2.2rem);margin:.6rem 0 1.2rem;line-height:1.25">
+        Monitoring and Managing Vietnam's Urban Environment
+      </h2>
+      <p style="color:rgba(245,242,238,.82);font-size:1.05rem;line-height:1.75;margin:0 0 1rem">
+        CtrLab is an <strong style="color:#F5F2EE">environmental research lab</strong> that integrates atmospheric science, climate systems, and energy transition to understand, measure, and manage the environmental pressures on Vietnam's rapidly urbanising cities. The lab develops scientific tools and policy evidence across air quality, climate adaptation, and low-carbon energy — treating the urban environment as an interconnected system.
+      </p>
+      <p style="color:rgba(245,242,238,.72);font-size:.97rem;line-height:1.72;margin:0 0 1.5rem">
+        From mapping PM2.5 pollution across Ho Chi Minh City with WRF-CMAQ atmospheric modelling, to building urban digital twins that simulate heat islands and flooding scenarios, to analysing Vietnam's energy decoupling trajectory — CtrLab bridges environmental science with actionable urban policy.
+      </p>
+      <div style="display:flex;flex-wrap:wrap;justify-content:center;gap:.45rem">
+        <span style="background:rgba(111,207,151,.15);color:#6fcf97;border:1px solid rgba(111,207,151,.3);padding:4px 11px;border-radius:4px;font-size:.75rem;font-weight:600;letter-spacing:.08em">Air Quality Monitoring</span>
+        <span style="background:rgba(111,207,151,.15);color:#6fcf97;border:1px solid rgba(111,207,151,.3);padding:4px 11px;border-radius:4px;font-size:.75rem;font-weight:600;letter-spacing:.08em">PM2.5 · WRF-CMAQ</span>
+        <span style="background:rgba(111,207,151,.15);color:#6fcf97;border:1px solid rgba(111,207,151,.3);padding:4px 11px;border-radius:4px;font-size:.75rem;font-weight:600;letter-spacing:.08em">Urban Heat Island</span>
+        <span style="background:rgba(111,207,151,.15);color:#6fcf97;border:1px solid rgba(111,207,151,.3);padding:4px 11px;border-radius:4px;font-size:.75rem;font-weight:600;letter-spacing:.08em">Climate Adaptation</span>
+        <span style="background:rgba(111,207,151,.15);color:#6fcf97;border:1px solid rgba(111,207,151,.3);padding:4px 11px;border-radius:4px;font-size:.75rem;font-weight:600;letter-spacing:.08em">Energy Transition</span>
+        <span style="background:rgba(111,207,151,.15);color:#6fcf97;border:1px solid rgba(111,207,151,.3);padding:4px 11px;border-radius:4px;font-size:.75rem;font-weight:600;letter-spacing:.08em">Net-Zero Pathways</span>
+      </div>
+    </div>
+
+    <!-- Environmental Systems SVG Visualization -->
+    <div style="background:rgba(0,0,0,.70);border:1px solid rgba(111,207,151,.22);border-radius:12px;padding:1.8rem 1.4rem;margin-bottom:3rem;overflow:hidden">
+      <div style="font-size:.68rem;font-weight:700;letter-spacing:.18em;color:rgba(245,242,238,.4);text-align:center;margin-bottom:1.2rem;font-family:'JetBrains Mono',monospace">ENVIRONMENTAL MONITORING SYSTEM · CTRLAB RESEARCH FRAMEWORK</div>
+      <svg viewBox="0 0 860 300" style="width:100%;height:auto;display:block" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="envAtmGrad" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0%" stop-color="rgba(111,168,220,0.15)"/>
+            <stop offset="100%" stop-color="rgba(111,168,220,0.03)"/>
+          </linearGradient>
+          <linearGradient id="envAqGrad" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0%" stop-color="rgba(242,201,76,0.14)"/>
+            <stop offset="100%" stop-color="rgba(242,201,76,0.03)"/>
+          </linearGradient>
+          <linearGradient id="envUrbGrad" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0%" stop-color="rgba(235,100,80,0.13)"/>
+            <stop offset="100%" stop-color="rgba(235,100,80,0.02)"/>
+          </linearGradient>
+          <linearGradient id="envEnGrad" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0%" stop-color="rgba(111,207,151,0.14)"/>
+            <stop offset="100%" stop-color="rgba(111,207,151,0.03)"/>
+          </linearGradient>
+        </defs>
+
+        <!-- ── LAYER 1: Atmosphere / WRF-CMAQ ── -->
+        <rect x="16" y="14" width="528" height="58" rx="6" fill="url(#envAtmGrad)" stroke="rgba(111,168,220,0.28)" stroke-width="1"/>
+        <!-- WRF grid dots -->
+        <circle cx="55"  cy="43" r="3"   fill="rgba(111,168,220,0.55)"/>
+        <circle cx="80"  cy="36" r="2.2" fill="rgba(111,168,220,0.4)"/>
+        <circle cx="108" cy="48" r="3.5" fill="rgba(111,168,220,0.6)"/>
+        <circle cx="136" cy="34" r="2"   fill="rgba(111,168,220,0.35)"/>
+        <circle cx="72"  cy="56" r="2"   fill="rgba(111,168,220,0.38)"/>
+        <circle cx="160" cy="50" r="2.8" fill="rgba(111,168,220,0.45)"/>
+        <circle cx="190" cy="38" r="2"   fill="rgba(111,168,220,0.3)"/>
+        <text x="216" y="36" fill="#7ab8e8" font-size="8.5" font-weight="700" letter-spacing="1.8" font-family="monospace">WRF-CMAQ ATMOSPHERIC MODELLING</text>
+        <text x="216" y="54" fill="rgba(245,242,238,0.45)" font-size="8">Meteorological fields · Pollutant dispersion · Emission inventory integration · Satellite validation</text>
+        <text x="20"  y="65" fill="rgba(111,168,220,0.5)" font-size="7.5" font-style="italic" font-family="monospace">Atmosphere</text>
+
+        <!-- ── LAYER 2: Air Quality / PM2.5 ── -->
+        <rect x="16" y="80" width="528" height="56" rx="6" fill="url(#envAqGrad)" stroke="rgba(242,201,76,0.28)" stroke-width="1"/>
+        <!-- haze cloud ellipses -->
+        <ellipse cx="62"  cy="108" rx="24" ry="11" fill="rgba(242,201,76,0.13)"/>
+        <ellipse cx="95"  cy="102" rx="19" ry="9"  fill="rgba(242,201,76,0.10)"/>
+        <ellipse cx="130" cy="112" rx="27" ry="11" fill="rgba(242,201,76,0.11)"/>
+        <ellipse cx="175" cy="104" rx="16" ry="8"  fill="rgba(242,201,76,0.09)"/>
+        <!-- PM2.5 dot particles -->
+        <circle cx="55"  cy="96"  r="1.5" fill="rgba(242,201,76,0.55)"/>
+        <circle cx="78"  cy="100" r="1.2" fill="rgba(242,201,76,0.45)"/>
+        <circle cx="105" cy="92"  r="1"   fill="rgba(242,201,76,0.5)"/>
+        <circle cx="140" cy="98"  r="1.5" fill="rgba(242,201,76,0.4)"/>
+        <text x="216" y="98" fill="#f2c94c" font-size="8.5" font-weight="700" letter-spacing="1.8" font-family="monospace">AIR QUALITY · PM2.5 / NOx CONCENTRATION</text>
+        <text x="216" y="116" fill="rgba(245,242,238,0.45)" font-size="8">Spatial distribution mapping · Health exposure risk assessment · HCMC urban monitoring network</text>
+        <text x="20"  y="128" fill="rgba(242,201,76,0.5)" font-size="7.5" font-style="italic" font-family="monospace">Air Quality</text>
+
+        <!-- ── LAYER 3: Urban Heat / Climate Adaptation ── -->
+        <rect x="16" y="144" width="528" height="56" rx="6" fill="url(#envUrbGrad)" stroke="rgba(235,100,80,0.22)" stroke-width="1"/>
+        <!-- Building silhouettes -->
+        <rect x="38"  y="170" width="13" height="26" fill="rgba(235,100,80,0.22)" rx="1"/>
+        <rect x="56"  y="162" width="19" height="34" fill="rgba(235,100,80,0.27)" rx="1"/>
+        <rect x="80"  y="172" width="11" height="24" fill="rgba(235,100,80,0.2)"  rx="1"/>
+        <rect x="97"  y="158" width="15" height="38" fill="rgba(235,100,80,0.24)" rx="1"/>
+        <rect x="118" y="166" width="13" height="30" fill="rgba(235,100,80,0.22)" rx="1"/>
+        <rect x="137" y="174" width="10" height="22" fill="rgba(235,100,80,0.18)" rx="1"/>
+        <!-- heat wave arcs -->
+        <path d="M 42 166 Q 48 160 54 166 Q 60 160 66 166" stroke="rgba(235,100,80,0.45)" stroke-width="1" fill="none"/>
+        <path d="M 82 156 Q 88 150 94 156 Q 100 150 106 156" stroke="rgba(235,100,80,0.38)" stroke-width="1" fill="none"/>
+        <path d="M 120 161 Q 126 155 132 161" stroke="rgba(235,100,80,0.35)" stroke-width="1" fill="none"/>
+        <text x="216" y="162" fill="#eb8f6f" font-size="8.5" font-weight="700" letter-spacing="1.8" font-family="monospace">CLIMATE ADAPTATION · URBAN HEAT ISLAND</text>
+        <text x="216" y="180" fill="rgba(245,242,238,0.45)" font-size="8">Urban digital twin · Heat &amp; flooding scenario modelling · Transport–pollution–temperature coupling</text>
+        <text x="20"  y="192" fill="rgba(235,100,80,0.5)" font-size="7.5" font-style="italic" font-family="monospace">Climate</text>
+
+        <!-- ── LAYER 4: Energy Transition ── -->
+        <rect x="16" y="208" width="528" height="56" rx="6" fill="url(#envEnGrad)" stroke="rgba(111,207,151,0.28)" stroke-width="1"/>
+        <!-- Solar panels -->
+        <rect x="38" y="226" width="22" height="13" rx="1" fill="rgba(111,207,151,0.22)" stroke="rgba(111,207,151,0.4)" stroke-width="0.5"/>
+        <line x1="49" y1="226" x2="49" y2="239" stroke="rgba(111,207,151,0.3)" stroke-width="0.5"/>
+        <line x1="38" y1="232" x2="60" y2="232" stroke="rgba(111,207,151,0.3)" stroke-width="0.5"/>
+        <rect x="68" y="228" width="22" height="13" rx="1" fill="rgba(111,207,151,0.22)" stroke="rgba(111,207,151,0.4)" stroke-width="0.5"/>
+        <line x1="79" y1="228" x2="79" y2="241" stroke="rgba(111,207,151,0.3)" stroke-width="0.5"/>
+        <line x1="68" y1="234" x2="90" y2="234" stroke="rgba(111,207,151,0.3)" stroke-width="0.5"/>
+        <!-- Wind turbine -->
+        <line x1="120" y1="222" x2="120" y2="258" stroke="rgba(111,207,151,0.45)" stroke-width="1.2"/>
+        <ellipse cx="120" cy="224" rx="9" ry="3.5" fill="rgba(111,207,151,0.2)" stroke="rgba(111,207,151,0.38)" stroke-width="0.5"/>
+        <line x1="130" y1="230" x2="120" y2="224" stroke="rgba(111,207,151,0.35)" stroke-width="0.5"/>
+        <line x1="110" y1="230" x2="120" y2="224" stroke="rgba(111,207,151,0.35)" stroke-width="0.5"/>
+        <!-- Power line -->
+        <line x1="148" y1="228" x2="180" y2="228" stroke="rgba(111,207,151,0.3)" stroke-width="1.2"/>
+        <line x1="152" y1="225" x2="152" y2="235" stroke="rgba(111,207,151,0.25)" stroke-width="1"/>
+        <line x1="172" y1="225" x2="172" y2="235" stroke="rgba(111,207,151,0.25)" stroke-width="1"/>
+        <text x="216" y="228" fill="#6fcf97" font-size="8.5" font-weight="700" letter-spacing="1.8" font-family="monospace">ENERGY TRANSITION · DECARBONISATION</text>
+        <text x="216" y="246" fill="rgba(245,242,238,0.45)" font-size="8">Renewables &amp; electricity efficiency · Energy intensity turning points · Net-zero urban pathways</text>
+        <text x="20"  y="256" fill="rgba(111,207,151,0.5)" font-size="7.5" font-style="italic" font-family="monospace">Energy</text>
+
+        <!-- ── Convergence arrows → CtrLab Platform ── -->
+        <line x1="546" y1="43"  x2="588" y2="148" stroke="rgba(111,168,220,0.42)" stroke-width="1.3" stroke-dasharray="4,3"/>
+        <line x1="546" y1="108" x2="588" y2="153" stroke="rgba(242,201,76,0.42)"  stroke-width="1.3" stroke-dasharray="4,3"/>
+        <line x1="546" y1="172" x2="588" y2="160" stroke="rgba(235,100,80,0.38)"  stroke-width="1.3" stroke-dasharray="4,3"/>
+        <line x1="546" y1="236" x2="588" y2="168" stroke="rgba(111,207,151,0.42)" stroke-width="1.3" stroke-dasharray="4,3"/>
+        <!-- Arrowheads -->
+        <polygon points="588,148 582,143 582,153" fill="rgba(111,168,220,0.4)"/>
+        <polygon points="588,153 582,148 582,158" fill="rgba(242,201,76,0.4)"/>
+        <polygon points="588,160 582,155 582,165" fill="rgba(235,100,80,0.35)"/>
+        <polygon points="588,168 582,163 582,173" fill="rgba(111,207,151,0.4)"/>
+
+        <!-- ── CtrLab Central Platform ── -->
+        <rect x="590" y="118" width="256" height="90" rx="10" fill="rgba(111,207,151,0.10)" stroke="rgba(111,207,151,0.38)" stroke-width="1.5"/>
+        <text x="718" y="143" text-anchor="middle" fill="#6fcf97" font-size="9.5" font-weight="700" letter-spacing="1.8" font-family="monospace">CTRLAB PLATFORM</text>
+        <line x1="608" y1="150" x2="830" y2="150" stroke="rgba(111,207,151,0.2)" stroke-width="0.8"/>
+        <text x="718" y="164" text-anchor="middle" fill="rgba(245,242,238,0.72)" font-size="8.5">Environmental Monitoring &amp; Modelling</text>
+        <text x="718" y="178" text-anchor="middle" fill="rgba(245,242,238,0.58)" font-size="8">Scenario Simulation · Policy Evidence</text>
+        <text x="718" y="196" text-anchor="middle" fill="rgba(245,242,238,0.45)" font-size="7.5">Urban Digital Twin · Risk Assessment</text>
+
+        <!-- ── Output boxes ── -->
+        <!-- Risk Maps -->
+        <rect x="594" y="222" width="76" height="60" rx="6" fill="rgba(111,168,220,0.1)" stroke="rgba(111,168,220,0.28)" stroke-width="1"/>
+        <text x="632" y="242" text-anchor="middle" fill="#7ab8e8" font-size="8"   font-weight="700" letter-spacing="1" font-family="monospace">RISK MAPS</text>
+        <text x="632" y="256" text-anchor="middle" fill="rgba(245,242,238,0.5)"  font-size="7.5">PM2.5 exposure</text>
+        <text x="632" y="268" text-anchor="middle" fill="rgba(245,242,238,0.5)"  font-size="7.5">spatial models</text>
+        <!-- Digital Twin -->
+        <rect x="678" y="222" width="76" height="60" rx="6" fill="rgba(242,201,76,0.1)" stroke="rgba(242,201,76,0.25)" stroke-width="1"/>
+        <text x="716" y="242" text-anchor="middle" fill="#f2c94c" font-size="8"   font-weight="700" letter-spacing="1" font-family="monospace">DIGITAL</text>
+        <text x="716" y="254" text-anchor="middle" fill="#f2c94c" font-size="8"   font-weight="700" letter-spacing="1" font-family="monospace">TWIN</text>
+        <text x="716" y="268" text-anchor="middle" fill="rgba(245,242,238,0.5)"  font-size="7.5">urban scenarios</text>
+        <!-- Green Policy -->
+        <rect x="762" y="222" width="80" height="60" rx="6" fill="rgba(111,207,151,0.1)" stroke="rgba(111,207,151,0.25)" stroke-width="1"/>
+        <text x="802" y="240" text-anchor="middle" fill="#6fcf97" font-size="8"   font-weight="700" letter-spacing="1" font-family="monospace">GREEN</text>
+        <text x="802" y="252" text-anchor="middle" fill="#6fcf97" font-size="8"   font-weight="700" letter-spacing="1" font-family="monospace">POLICY</text>
+        <text x="802" y="266" text-anchor="middle" fill="rgba(245,242,238,0.5)"  font-size="7.5">net-zero tools</text>
+
+        <!-- Output arrows from platform -->
+        <line x1="660" y1="208" x2="632" y2="222" stroke="rgba(111,168,220,0.35)" stroke-width="1" stroke-dasharray="2,2"/>
+        <line x1="718" y1="208" x2="716" y2="222" stroke="rgba(242,201,76,0.35)"  stroke-width="1" stroke-dasharray="2,2"/>
+        <line x1="775" y1="208" x2="800" y2="222" stroke="rgba(111,207,151,0.35)" stroke-width="1" stroke-dasharray="2,2"/>
+
+        <!-- Bottom label -->
+        <text x="430" y="293" text-anchor="middle" fill="rgba(245,242,238,0.22)" font-size="7.5" letter-spacing="1.5" font-family="monospace">ENVIRONMENTAL INTELLIGENCE FOR VIETNAM'S URBAN FUTURE</text>
+      </svg>
+    </div>
+
+    <!-- Three research pillars -->
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1.5rem;margin-bottom:3rem">
+
+      <div style="background:rgba(111,168,220,.07);border:1px solid rgba(111,168,220,.22);border-radius:10px;padding:1.6rem 1.4rem">
+        <div style="display:inline-block;background:rgba(111,168,220,.2);color:#7ab8e8;font-size:.68rem;font-weight:700;letter-spacing:.14em;padding:3px 9px;border-radius:3px;margin-bottom:.8rem">AIR QUALITY</div>
+        <h3 style="color:#F5F2EE;margin:0 0 .6rem;font-size:1.05rem">PM2.5 Spatial Modelling</h3>
+        <p style="color:rgba(245,242,238,.72);font-size:.88rem;line-height:1.65;margin:0 0 .8rem">Mapping PM2.5 concentration and resident exposure risk across Ho Chi Minh City using WRF-CMAQ atmospheric simulation and emission inventory data from vehicles, industry, and biomass burning.</p>
+        <ul style="margin:0;padding-left:1.1rem;color:rgba(245,242,238,.55);font-size:.82rem">
+          <li style="margin-bottom:.3rem">Spatial distribution of PM2.5 in HCMC</li>
+          <li style="margin-bottom:.3rem">Urban morphology &amp; pollution interaction</li>
+          <li style="margin-bottom:.3rem">Exposure risk &amp; health-impact mapping</li>
+          <li>Emission inventory · WRF-CMAQ modelling</li>
+        </ul>
+      </div>
+
+      <div style="background:rgba(242,201,76,.06);border:1px solid rgba(242,201,76,.2);border-radius:10px;padding:1.6rem 1.4rem">
+        <div style="display:inline-block;background:rgba(242,201,76,.18);color:#f2c94c;font-size:.68rem;font-weight:700;letter-spacing:.14em;padding:3px 9px;border-radius:3px;margin-bottom:.8rem">CLIMATE ADAPTATION</div>
+        <h3 style="color:#F5F2EE;margin:0 0 .6rem;font-size:1.05rem">Urban Digital Twin</h3>
+        <p style="color:rgba(245,242,238,.72);font-size:.88rem;line-height:1.65;margin:0 0 .8rem">Integrating transportation flow, pollution emission, and urban heat into a unified city-scale digital twin for scenario simulation — supporting planning against heat islands, flooding, and extreme weather events.</p>
+        <ul style="margin:0;padding-left:1.1rem;color:rgba(245,242,238,.55);font-size:.82rem">
+          <li style="margin-bottom:.3rem">Traffic flow &amp; pollution emission coupling</li>
+          <li style="margin-bottom:.3rem">Urban heat island &amp; ambient temperature</li>
+          <li style="margin-bottom:.3rem">Flooding &amp; climate risk scenarios</li>
+          <li>Scenario simulation · digital twin platform</li>
+        </ul>
+      </div>
+
+      <div style="background:rgba(111,207,151,.06);border:1px solid rgba(111,207,151,.2);border-radius:10px;padding:1.6rem 1.4rem">
+        <div style="display:inline-block;background:rgba(111,207,151,.18);color:#6fcf97;font-size:.68rem;font-weight:700;letter-spacing:.14em;padding:3px 9px;border-radius:3px;margin-bottom:.8rem">ENERGY TRANSITION</div>
+        <h3 style="color:#F5F2EE;margin:0 0 .6rem;font-size:1.05rem">Decarbonisation Pathways</h3>
+        <p style="color:rgba(245,242,238,.72);font-size:.88rem;line-height:1.65;margin:0 0 .8rem">Long-term analysis of electricity consumption efficiency in Vietnam, the role of renewables in decoupling energy from economic growth, and the structural drivers of energy intensity turning points since 1990.</p>
+        <ul style="margin:0;padding-left:1.1rem;color:rgba(245,242,238,.55);font-size:.82rem">
+          <li style="margin-bottom:.3rem">Electricity efficiency &amp; intensity trends</li>
+          <li style="margin-bottom:.3rem">Renewables &amp; energy-growth decoupling</li>
+          <li style="margin-bottom:.3rem">Energy intensity turning points</li>
+          <li>Net-zero urban mobility pathways</li>
+        </ul>
+      </div>
+
+    </div>
+
+    <!-- Expected outcomes row -->
+    <div style="background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:1.8rem 2rem;margin-bottom:3rem">
+      <div class="eyebrow" style="color:rgba(245,242,238,.5);margin-bottom:1rem">EXPECTED OUTCOMES</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:1rem">
+        <div>
+          <div style="color:#6fcf97;font-weight:700;font-size:.85rem;margin-bottom:.3rem">Scientific Outputs</div>
+          <p style="color:rgba(245,242,238,.68);font-size:.84rem;margin:0;line-height:1.55">ISI/Scopus publications, conference papers, new environmental methods &amp; models</p>
+        </div>
+        <div>
+          <div style="color:#6fcf97;font-weight:700;font-size:.85rem;margin-bottom:.3rem">Technical Outputs</div>
+          <p style="color:rgba(245,242,238,.68);font-size:.84rem;margin:0;line-height:1.55">PM2.5 risk maps, urban digital twin platform, climate scenario &amp; risk-assessment tools</p>
+        </div>
+        <div>
+          <div style="color:#6fcf97;font-weight:700;font-size:.85rem;margin-bottom:.3rem">Human Capacity</div>
+          <p style="color:rgba(245,242,238,.68);font-size:.84rem;margin:0;line-height:1.55">Trained MSc/PhD researchers in environmental science, established international collaborations</p>
+        </div>
+        <div>
+          <div style="color:#6fcf97;font-weight:700;font-size:.85rem;margin-bottom:.3rem">Policy Impact</div>
+          <p style="color:rgba(245,242,238,.68);font-size:.84rem;margin:0;line-height:1.55">Green policy recommendations, net-zero decision-support tools, improved environmental governance</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Lab lead strip -->
+    <div style="display:flex;align-items:center;gap:2rem;flex-wrap:wrap;border-top:1px solid rgba(255,255,255,.12);padding-top:2rem">
+      <img src="../../Design/slide48_img2.png" alt="Quang Tran Vuong"
+        style="width:90px;height:90px;border-radius:50%;object-fit:cover;object-position:top center;border:3px solid rgba(111,207,151,.4);flex-shrink:0">
+      <div>
+        <div class="eyebrow" style="color:rgba(245,242,238,.5);margin-bottom:.3rem">LAB LEAD</div>
+        <div style="color:#F5F2EE;font-weight:700;font-size:1.1rem">Quang Tran Vuong, PhD</div>
+        <div style="color:rgba(245,242,238,.6);font-size:.88rem;margin:.15rem 0 .5rem">Environmental &amp; Climate Science · ISCM–UEH</div>
+        <div style="color:rgba(245,242,238,.5);font-size:.82rem">
+          <span style="margin-right:1.2rem">An Le — PhD Candidate (Systems Modelling)</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ========================= Three tracks ========================= -->
+<section style="background:linear-gradient(180deg,transparent, rgba(122,31,46,0.03));">
+  <div class="container">
+    <div class="section-head">
+      <div class="eyebrow">DEVELOPING TRACKS</div>
+      <h2>Three interlocking research tracks</h2>
+    </div>
+    <div class="grid-3">
+      <div class="track-card">
+        <span class="tag">AIR</span>
+        <h3 data-i18n="ctr.track.air">Air Quality</h3>
+        <p data-i18n="ctr.track.air.body">PM2.5 spatial distribution in HCMC, interactions between urban morphology and air pollution, and resident exposure-risk maps using WRF-CMAQ modelling.</p>
+        <ul>
+          <li>Spatial distribution of PM2.5 in HCMC</li>
+          <li>Interaction of urban morphology &amp; air pollution</li>
+          <li>Exposure risk &amp; health impact mapping</li>
+          <li>WRF-CMAQ simulation, emission inventory, risk models</li>
+        </ul>
+      </div>
+      <div class="track-card">
+        <span class="tag">CLIMATE</span>
+        <h3 data-i18n="ctr.track.climate">Climate Change Adaptation</h3>
+        <p data-i18n="ctr.track.climate.body">Integrated urban digital twin linking transportation, pollution emission, and urban heat — development of scenarios and a digital twin platform.</p>
+        <ul>
+          <li>Transportation: traffic flow, density</li>
+          <li>Pollution: PM2.5, NOx emissions</li>
+          <li>Urban heat: ambient temperature</li>
+          <li>Scenario simulation &amp; digital twin platform</li>
+        </ul>
+      </div>
+      <div class="track-card">
+        <span class="tag">ENERGY</span>
+        <h3 data-i18n="ctr.track.energy">Energy Efficiency</h3>
+        <p data-i18n="ctr.track.energy.body">Long-term analysis of electricity consumption efficiency in Vietnam and the economic drivers of energy intensity turning points.</p>
+        <ul>
+          <li>Evolution of electricity consumption since 1990</li>
+          <li>Role of renewables in decoupling energy &amp; growth</li>
+          <li>Turning points in electricity intensity</li>
+          <li>Drivers of energy-efficiency by growth component</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========================= Interactive demo ========================= -->
+<section>
+  <div class="container">
+    <div class="section-head">
+      <div class="eyebrow">INTERACTIVE DEMO</div>
+      <h2 data-i18n="ctr.demo.title">Exposure Risk Explorer</h2>
+      <p data-i18n="ctr.demo.sub">Use the time slider to see PM2.5 concentration and exposure risk across HCMC, and toggle between air-quality, urban-heat and energy layers.</p>
+    </div>
+    <div class="demo-wrap">
+      <div class="ctrl-canvas-wrap">
+        <canvas id="ctrCanvas" width="1200" height="480"></canvas>
+        <div class="ctrl-legend">
+          <div><span class="k" id="legendTitle">PM2.5 µg/m³</span></div>
+          <div class="bar" id="legendBar"></div>
+          <div style="display:flex;justify-content:space-between;font-size:.66rem;opacity:.7">
+            <span id="legMin">0</span>
+            <span id="legMax">150</span>
+          </div>
+          <div style="margin-top:8px">
+            <span class="dot" style="background:#eb5757"></span>Hotspot
+            <span class="dot" style="background:#f2c94c;margin-left:10px"></span>Warning
+            <span class="dot" style="background:#6fcf97;margin-left:10px"></span>Safe
+          </div>
+        </div>
+        <div class="ctrl-readout">
+          <div class="k">MONTH</div>
+          <div class="v" id="roMonth">Jan 2026</div>
+          <div class="k" style="margin-top:6px">HCMC AVG</div>
+          <div class="v" id="roAvg">—</div>
+          <div class="k" style="margin-top:6px">EXPOSURE RISK</div>
+          <div class="v" id="roRisk">—</div>
+          <div class="k" style="margin-top:6px">HOTSPOTS</div>
+          <div class="v" id="roHot">—</div>
+        </div>
+      </div>
+
+      <div class="time-slider-wrap">
+        <span style="font-family:var(--font-mono);font-size:.76rem;color:var(--muted);letter-spacing:.08em">TIME</span>
+        <input type="range" id="ctrTime" min="0" max="11" value="0" />
+        <button class="btn" id="ctrPlay">▶ Play</button>
+      </div>
+      <div class="layer-toggles">
+        <button class="btn on" data-layer="air">Air Quality · PM2.5</button>
+        <button class="btn" data-layer="heat">Urban Heat</button>
+        <button class="btn" data-layer="energy">Energy Load</button>
+      </div>
+      <div class="demo-status" id="ctrStatus" style="margin-top:.8rem">Ready · drag the time slider or press Play</div>
+    </div>
+  </div>
+</section>
+
+<!-- ========================= Net-Zero Carbon Pathway ========================= -->
+<section style="background:linear-gradient(180deg,#081510 0%,#0D2118 100%);padding:4.5rem 0">
+  <div class="container">
+    <div class="section-head" style="margin-bottom:2rem">
+      <div class="eyebrow" style="color:rgba(111,207,151,0.6)">NET-ZERO PATHWAY</div>
+      <h2 style="color:#F5F2EE">Vietnam Urban Carbon — Route to Net-Zero 2050</h2>
+      <p style="color:rgba(245,242,238,0.6);font-size:1.02rem">
+        Three emission scenarios for Vietnam's urban mobility sector. Select a scenario to explore the intervention milestones and carbon budget implications modelled by CtrLab.
+      </p>
+    </div>
+
+    <!-- Canvas -->
+    <div style="position:relative;border:1px solid rgba(111,207,151,0.2);border-radius:6px;overflow:hidden;background:#081310">
+      <canvas id="nzCanvas" width="1100" height="480" style="width:100%;display:block" aria-label="Net-zero carbon pathway chart"></canvas>
+    </div>
+
+    <!-- Scenario buttons -->
+    <div style="display:flex;flex-wrap:wrap;gap:.75rem;align-items:center;margin-top:1.1rem">
+      <button class="nz-btn nz-active" data-scenario="bau"    style="--c:#E05050">● Baseline (BAU)</button>
+      <button class="nz-btn"           data-scenario="policy" style="--c:#E0C040">● Current Policy</button>
+      <button class="nz-btn"           data-scenario="nz"     style="--c:#50DC78">● Net-Zero Path (CtrLab)</button>
+      <div style="flex:1"></div>
+      <div id="nzBudget" style="font-family:var(--font-mono);font-size:.78rem;color:rgba(111,207,151,0.8);padding:5px 12px;border:1px solid rgba(111,207,151,0.25);background:rgba(111,207,151,0.06)">
+        CARBON BUDGET REMAINING: —
+      </div>
+    </div>
+
+    <!-- Detail panel -->
+    <div id="nzInfo" style="margin-top:1rem;background:rgba(245,242,238,0.04);border:1px solid rgba(111,207,151,0.18);padding:1rem 1.3rem;font-size:.88rem;color:rgba(245,242,238,0.72);line-height:1.65;min-height:56px">
+      <span style="color:rgba(111,207,151,0.5);font-family:var(--font-mono);font-size:.75rem">SELECT A SCENARIO ABOVE</span> — click a button to explore emission trajectories, key intervention milestones, and residual carbon budget under each pathway.
+    </div>
+  </div>
+</section>
+
+<!-- ========================= Roadmap ========================= -->
+<section style="background:linear-gradient(180deg,transparent, rgba(122,31,46,0.03));">
+  <div class="container">
+    <div class="section-head">
+      <div class="eyebrow">STRATEGIC ROADMAP</div>
+      <h2>From datasets to policy impact</h2>
+      <p>CtrLab is building toward a regional reference lab — integrating datasets, scenarios, and decision-support tools over three phases.</p>
+    </div>
+    <div class="timeline">
+      <div class="timeline-item">
+        <div class="yr">2026 — 2027 · PHASE 1</div>
+        <h4>Foundation &amp; Data Integration</h4>
+        <p>Building datasets, publishing baseline studies, securing national grants. Collaboration with VAST for WRF-CMAQ simulation and SUTD survey data checks.</p>
+      </div>
+      <div class="timeline-item">
+        <div class="yr">2027 — 2028 · PHASE 2</div>
+        <h4>Digital Twin Platform</h4>
+        <p>Integrating datasets, developing different scenarios, collaborating and applying for international grants (Khanh Hoa Province &amp; beyond).</p>
+      </div>
+      <div class="timeline-item">
+        <div class="yr">2028 — 2030 · PHASE 3</div>
+        <h4>Control &amp; Policy Impact</h4>
+        <p>Translating results into decision-support tools, providing policy recommendations, delivering cross-cutting value: air quality + energy + climate; research ⇒ tools ⇒ policy.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========================= Publications ========================= -->
+<section>
+  <div class="container">
+    <div class="section-head">
+      <div class="eyebrow" data-i18n="common.publications">PUBLICATIONS</div>
+      <h2>Selected publications</h2>
+    </div>
+    <div class="feature-row">
+      <div class="idx">2026</div>
+      <div>
+        <h4>Investigation on long-range atmospheric transport of five-year fine particulate matter in Hanoi and Ho Chi Minh City</h4>
+        <p>QT Vuong, PQ Thang, LV Linh — The 12th Better Air Quality Conference, March 11–13, 2026, Bangkok, Thailand.</p>
+      </div>
+    </div>
+    <div class="feature-row">
+      <div class="idx">2024</div>
+      <div>
+        <h4>HoloGaussian Digital Twin: Reconstructing 3D Scenes with Gaussian Splatting for Tabletop Hologram Visualization of Real Environments</h4>
+        <p>Do, T. L. P., Choi, J., Le, V. Q., Gentet, P., Hwang, L., &amp; Lee, S. — Remote Sensing, 16(23), 4591. doi:10.3390/rs16234591</p>
+      </div>
+    </div>
+    <div class="feature-row">
+      <div class="idx">2024</div>
+      <div>
+        <h4>ArtTech Fusion: Hướng tiếp cận mới để phát triển quận 3 thành đô thị thông minh đáng sống</h4>
+        <p>Trịnh T.A., Trần T.Q.M., Lê Q.V., &amp; Phạm N.H. — Kỷ yếu hội thảo Quận 3, Trung tâm nghiên cứu kiến trúc, Sở quy hoạch kiến trúc TP.HCM.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========================= Stakeholders ========================= -->
+<section style="background:linear-gradient(180deg,transparent, rgba(122,31,46,0.03));">
+  <div class="container">
+    <div class="section-head">
+      <div class="eyebrow" data-i18n="common.stakeholders">STAKEHOLDERS &amp; BENEFITS</div>
+      <h2>Who CtrLab serves</h2>
+    </div>
+    <div class="grid-3">
+      <div>
+        <h3 data-i18n="common.students">Students</h3>
+        <ul class="muted" style="padding-left:1.1rem;font-size:.92rem">
+          <li>Hands-on experience with real datasets (air quality, energy, climate, mobility)</li>
+          <li>Training in advanced methods: modelling / simulation, AI / ML, digital twin</li>
+          <li>Participation in science-based, applied, policy-relevant research projects</li>
+          <li>Opportunities for thesis, publications, and international collaborations</li>
+          <li>Career pathways in environmental analytics, smart cities, and sustainability</li>
+        </ul>
+      </div>
+      <div>
+        <h3 data-i18n="common.universities">Universities &amp; Institutions</h3>
+        <ul class="muted" style="padding-left:1.1rem;font-size:.92rem">
+          <li>Access to integrated datasets</li>
+          <li>Collaboration on interdisciplinary research projects</li>
+          <li>Co-development of models and tools (prediction, risk assessment, digital twin)</li>
+          <li>Joint publications in ISI / Scopus journals and conferences</li>
+        </ul>
+      </div>
+      <div>
+        <h3 data-i18n="common.industry">Authorities · Industry · NGOs</h3>
+        <ul class="muted" style="padding-left:1.1rem;font-size:.92rem">
+          <li>Evidence-based decision support tools</li>
+          <li>Access to digital twin platform for urban / environmental management</li>
+          <li>Data-driven insights for net-zero strategies &amp; emission reduction</li>
+          <li>Pilot testing of technologies and interventions in real-world settings</li>
+          <li>Long-term collaboration in policy design, implementation, and evaluation</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="xcut-strip">
+      <h3>Cross-cutting value of CtrLab</h3>
+      <p>Integrated approach: Air Quality + Energy + Climate. End-to-end pipeline: research ⇒ tools ⇒ policy.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ========================= People ========================= -->
+<section>
+  <div class="container">
+    <div class="section-head">
+      <div class="eyebrow">TEAM</div>
+      <h2>People</h2>
+    </div>
+    <div class="grid-3">
+      <div class="person-card">
+        <div class="person-avatar">QT</div>
+        <div class="role">Lead · Lecturer, Environment Science &amp; Eng.</div>
+        <h4>Quang Tran Vuong, PhD</h4>
+        <div class="email">quangvt@ueh.edu.vn</div>
+      </div>
+      <div class="person-card">
+        <div class="person-avatar">VD</div>
+        <div class="role">Lecturer</div>
+        <h4>Vo Dao Chi, PhD</h4>
+        <div class="email">chivd@ueh.edu.vn</div>
+      </div>
+      <div class="person-card">
+        <div class="person-avatar">TN</div>
+        <div class="role">Researcher</div>
+        <h4>Trung Tan Nguyen, PhD</h4>
+        <div class="email">—</div>
+      </div>
+      <div class="person-card">
+        <div class="person-avatar">QV</div>
+        <div class="role">Researcher</div>
+        <h4>Quang Vu Bach, PhD</h4>
+        <div class="email">—</div>
+      </div>
+      <div class="person-card">
+        <div class="person-avatar">AL</div>
+        <div class="role">PhD Candidate</div>
+        <h4>An Le</h4>
+        <div class="email">anlpt@ueh.edu.vn</div>
+      </div>
+      <div class="person-card">
+        <div class="person-avatar">SR</div>
+        <div class="role">MArch</div>
+        <h4>Sandhya Rao</h4>
+        <div class="email">—</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========================= Footer ========================= -->
+<footer class="footer">
+  <div class="container grid-2">
+    <div>
+      <div class="eyebrow" style="margin-bottom:.5rem">ISCM · UEH</div>
+      <div data-i18n="contact.address">232/6 Vo Thi Sau, Xuan Hoa Ward, Ho Chi Minh City</div>
+      <div style="margin-top:.4rem">
+        <span data-i18n="contact.phone">(+84) 283 930 9589</span> ·
+        <a href="mailto:iscm@ueh.edu.vn" data-i18n="contact.email">iscm@ueh.edu.vn</a>
+      </div>
+      <div class="tiny">
+        <a href="https://iscm.ueh.edu.vn" target="_blank" data-i18n="contact.visit">Visit the ISCM website</a>
+      </div>
+    </div>
+    <div style="text-align:right">
+      <div class="eyebrow" style="margin-bottom:.5rem">MOVE SYSTEM</div>
+      <div>Mobility-oriented, Operations,<br/>Visualization &amp; Environment System</div>
+      <div class="tiny mono">CtrLab · ISCM · University of Economics Ho Chi Minh City · 2026</div>
+    </div>
+  </div>
+</footer>
+
+<script src="../js/i18n.js"></script>
+<script>
+I18N.apply();
+document.querySelectorAll(".lang-toggle button").forEach(btn => {
+  btn.addEventListener("click", () => I18N.setLang(btn.dataset.lang));
+});
+
+/* ==========================================================================
+   CtrLab Exposure Risk Explorer — canvas demo
+   Three layers: PM2.5 air quality, urban heat, energy load — 12 months.
+   ========================================================================== */
+(function(){
+  const canvas = document.getElementById("ctrCanvas");
+  const ctx = canvas.getContext("2d");
+  const timeSlider = document.getElementById("ctrTime");
+  const playBtn = document.getElementById("ctrPlay");
+  const statusEl = document.getElementById("ctrStatus");
+  const layerBtns = document.querySelectorAll(".layer-toggles .btn");
+  const roMonth = document.getElementById("roMonth");
+  const roAvg = document.getElementById("roAvg");
+  const roRisk = document.getElementById("roRisk");
+  const roHot = document.getElementById("roHot");
+  const legendTitle = document.getElementById("legendTitle");
+  const legMin = document.getElementById("legMin");
+  const legMax = document.getElementById("legMax");
+  const legendBar = document.getElementById("legendBar");
+
+  const W = canvas.width, H = canvas.height;
+  const MONTHS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+
+  // Stylized HCMC map — a few named districts as polygons, the river as a curve.
+  const DISTRICTS = [
+    { name:"District 1",   cx:520, cy:230, r:80, base:0.75 },
+    { name:"District 3",   cx:440, cy:175, r:55, base:0.68 },
+    { name:"District 4",   cx:580, cy:290, r:50, base:0.72 },
+    { name:"District 5",   cx:340, cy:235, r:70, base:0.80 },
+    { name:"District 7",   cx:680, cy:350, r:75, base:0.60 },
+    { name:"Binh Thanh",   cx:410, cy:105, r:60, base:0.58 },
+    { name:"Thu Duc",      cx:760, cy:170, r:110, base:0.52 },
+    { name:"Tan Binh",     cx:270, cy:130, r:75, base:0.66 },
+    { name:"Go Vap",       cx:220, cy:70,  r:70, base:0.48 },
+    { name:"Phu Nhuan",    cx:360, cy:135, r:35, base:0.70 },
+    { name:"Binh Chanh",   cx:180, cy:330, r:100, base:0.45 },
+    { name:"Nha Be",       cx:720, cy:420, r:80, base:0.40 },
+  ];
+
+  // Generate consistent noise per district per month
+  function pseudoNoise(seed){
+    // simple hash -> [0,1]
+    const x = Math.sin(seed * 9871.23) * 4389.19;
+    return x - Math.floor(x);
+  }
+
+  let currentLayer = "air";
+  let playing = false;
+
+  // Monthly modifier to simulate seasonal variation
+  // Nov-Feb = dry season = high PM2.5, April=hottest, July-Sep=rainy/lower
+  const AIR_SEASON = [1.25,1.30,1.10,0.95,0.80,0.70,0.65,0.70,0.78,0.92,1.15,1.28];
+  const HEAT_SEASON= [0.70,0.80,0.95,1.15,1.10,1.05,1.00,0.98,0.92,0.85,0.78,0.70];
+  const ENRG_SEASON= [0.88,0.90,0.98,1.10,1.20,1.15,1.00,0.96,0.92,0.90,0.88,0.95];
+
+  // Layer palettes
+  const PALETTES = {
+    air: ["#2b4d7a","#3f8bbc","#6fcf97","#f2c94c","#f2994a","#eb5757","#c0392b"],
+    heat:["#1e3d59","#2b7a78","#77b28c","#e8c547","#e98a3a","#d7263d","#720026"],
+    energy:["#1d3557","#457b9d","#a8dadc","#ffd166","#f4a261","#e76f51","#9d0208"]
+  };
+
+  function palettePos(palette,t){
+    // t in [0,1] -> interpolate palette
+    const n = palette.length - 1;
+    const i = Math.max(0, Math.min(n-1, Math.floor(t*n)));
+    const f = t*n - i;
+    const a = hex2rgb(palette[i]), b = hex2rgb(palette[i+1]);
+    return `rgb(${Math.round(a.r+(b.r-a.r)*f)},${Math.round(a.g+(b.g-a.g)*f)},${Math.round(a.b+(b.b-a.b)*f)})`;
+  }
+  function hex2rgb(h){
+    h=h.replace("#","");
+    return {r:parseInt(h.slice(0,2),16), g:parseInt(h.slice(2,4),16), b:parseInt(h.slice(4,6),16)};
+  }
+
+  function layerMeta(layer){
+    if (layer==="air")    return {title:"PM2.5 µg/m³", min:10, max:150, season:AIR_SEASON, riskScale:1.2};
+    if (layer==="heat")   return {title:"Temp °C",      min:24, max:39,  season:HEAT_SEASON, riskScale:0.9};
+    if (layer==="energy") return {title:"Load MW/km²",  min:2,  max:18,  season:ENRG_SEASON, riskScale:0.8};
+  }
+
+  function layerValue(d, monthIdx, layer){
+    const meta = layerMeta(layer);
+    // base * seasonal * district noise
+    const noise = 0.7 + pseudoNoise(d.cx*7 + d.cy*11 + monthIdx*3)*0.6;
+    const v = d.base * meta.season[monthIdx] * noise;
+    return Math.max(0, Math.min(1, v));
+  }
+
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    // ambient grain backdrop
+    const grad = ctx.createLinearGradient(0,0,0,H);
+    grad.addColorStop(0,"#111117");
+    grad.addColorStop(1,"#0a0a0e");
+    ctx.fillStyle = grad;
+    ctx.fillRect(0,0,W,H);
+
+    // faint latitude/longitude grid
+    ctx.strokeStyle = "rgba(184,146,100,0.08)";
+    ctx.lineWidth = 1;
+    for (let x=0; x<W; x+=40){ ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,H); ctx.stroke(); }
+    for (let y=0; y<H; y+=40){ ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(W,y); ctx.stroke(); }
+
+    // Saigon river — stylized curve
+    ctx.beginPath();
+    ctx.moveTo(0, 60);
+    ctx.bezierCurveTo(200, 80, 350, 180, 560, 240);
+    ctx.bezierCurveTo(720, 280, 840, 400, W, 430);
+    ctx.strokeStyle = "rgba(120,170,210,0.35)";
+    ctx.lineWidth = 14;
+    ctx.stroke();
+    ctx.strokeStyle = "rgba(160,200,230,0.5)";
+    ctx.lineWidth = 2;
+    ctx.stroke();
+
+    const m = parseInt(timeSlider.value, 10);
+    const meta = layerMeta(currentLayer);
+    const palette = PALETTES[currentLayer];
+
+    let sum = 0, hotspots = 0, highestVal = 0, highestName = "";
+
+    // Draw districts as colored blobs
+    DISTRICTS.forEach(d => {
+      const vN = layerValue(d, m, currentLayer);
+      const color = palettePos(palette, vN);
+      const realVal = meta.min + vN*(meta.max-meta.min);
+
+      sum += realVal;
+      if (vN > 0.7) hotspots++;
+      if (vN > highestVal){ highestVal = vN; highestName = d.name; }
+
+      // outer glow
+      const grd = ctx.createRadialGradient(d.cx, d.cy, d.r*0.1, d.cx, d.cy, d.r);
+      grd.addColorStop(0, color);
+      grd.addColorStop(0.6, color.replace("rgb","rgba").replace(")",",0.45)"));
+      grd.addColorStop(1, "rgba(0,0,0,0)");
+      ctx.fillStyle = grd;
+      ctx.beginPath();
+      ctx.arc(d.cx, d.cy, d.r, 0, Math.PI*2);
+      ctx.fill();
+
+      // hotspot pulse
+      if (vN > 0.75){
+        const pulse = 0.6 + 0.4 * Math.sin(performance.now()*0.003 + d.cx);
+        ctx.beginPath();
+        ctx.arc(d.cx, d.cy, 8+pulse*4, 0, Math.PI*2);
+        ctx.strokeStyle = "rgba(255,100,100,"+(0.4+pulse*0.4)+")";
+        ctx.lineWidth = 2;
+        ctx.stroke();
+      }
+
+      // label
+      ctx.fillStyle = "rgba(245,242,238,0.85)";
+      ctx.font = "500 11px 'Inter', sans-serif";
+      ctx.textAlign = "center";
+      ctx.fillText(d.name, d.cx, d.cy-d.r*0.25);
+
+      ctx.fillStyle = "rgba(184,146,100,0.9)";
+      ctx.font = "600 10px 'JetBrains Mono', monospace";
+      ctx.fillText(realVal.toFixed(1), d.cx, d.cy-d.r*0.25+14);
+    });
+
+    // Top-left month badge
+    ctx.fillStyle = "rgba(184,146,100,0.95)";
+    ctx.font = "600 14px 'JetBrains Mono', monospace";
+    ctx.textAlign = "left";
+    ctx.fillText(MONTHS[m] + " 2026 · " + currentLayer.toUpperCase(), 16, H-22);
+
+    // Readout
+    const avg = sum / DISTRICTS.length;
+    roMonth.textContent = MONTHS[m] + " 2026";
+    roAvg.textContent   = avg.toFixed(1) + " " + (currentLayer==="air"?"µg/m³": currentLayer==="heat"?"°C":"MW/km²");
+    let risk = "Low";
+    const riskScore = (avg - meta.min)/(meta.max-meta.min) * meta.riskScale;
+    if (riskScore > 0.75) risk = "Severe";
+    else if (riskScore > 0.55) risk = "High";
+    else if (riskScore > 0.35) risk = "Moderate";
+    roRisk.textContent = risk;
+    roHot.textContent = hotspots + " district" + (hotspots===1?"":"s");
+
+    legendTitle.textContent = meta.title;
+    legMin.textContent = meta.min;
+    legMax.textContent = meta.max;
+    // update gradient legend
+    legendBar.style.background = `linear-gradient(to right, ${palette.join(",")})`;
+
+    statusEl.textContent = `Month ${MONTHS[m]} 2026 · Layer ${currentLayer.toUpperCase()} · Avg ${avg.toFixed(1)} · Risk ${risk} · Hotspot: ${highestName}`;
+  }
+
+  timeSlider.addEventListener("input", draw);
+
+  layerBtns.forEach(btn => {
+    btn.addEventListener("click", () => {
+      layerBtns.forEach(b => b.classList.remove("on"));
+      btn.classList.add("on");
+      currentLayer = btn.dataset.layer;
+      draw();
+    });
+  });
+
+  let playInterval = null;
+  playBtn.addEventListener("click", () => {
+    if (playing){
+      clearInterval(playInterval);
+      playBtn.textContent = "▶ Play";
+      playing = false;
+    } else {
+      playing = true;
+      playBtn.textContent = "❚❚ Pause";
+      playInterval = setInterval(() => {
+        let v = parseInt(timeSlider.value,10);
+        v = (v+1)%12;
+        timeSlider.value = v;
+        draw();
+      }, 900);
+    }
+  });
+
+  // redraw loop for pulsing hotspots
+  (function loop(){
+    requestAnimationFrame(loop);
+    draw();
+  })();
+
+  /* ============================================================
+     Net-Zero Carbon Pathway Simulator
+  ============================================================ */
+  (function(){
+    var canvas = document.getElementById('nzCanvas');
+    if (!canvas) return;
+    var ctx = canvas.getContext('2d');
+    var W = canvas.width, H = canvas.height;
+
+    var budgetEl = document.getElementById('nzBudget');
+    var infoEl   = document.getElementById('nzInfo');
+
+    var YEARS = [];
+    for (var y = 2020; y <= 2050; y++) YEARS.push(y);
+    var NY = YEARS.length; // 31 points
+
+    // Emissions in Mt CO₂e (urban mobility sector proxy)
+    // BAU: keeps growing ~3%/yr
+    // Policy: grows then plateaus ~2030, slow decline
+    // Net-Zero: steep decline, reaches ~5 Mt by 2050
+    var BAU     = YEARS.map(function(yr){ return 85 * Math.pow(1.028, yr-2020); });
+    var POLICY  = YEARS.map(function(yr){ var t=yr-2020; return 85 * (1 + 0.018*Math.min(t,10) - 0.02*Math.max(0,t-10)); });
+    var NETZERO = YEARS.map(function(yr){ var t=yr-2020; return Math.max(5, 85 * Math.pow(0.927, t)); });
+
+    // Key interventions on Net-Zero path
+    var INTERVENTIONS = [
+      { year:2025, label:'CtrLab Launch\n& Baseline Studies', emit:NETZERO[5] },
+      { year:2028, label:'Urban Digital\nTwin Operational', emit:NETZERO[8] },
+      { year:2030, label:'HCMC Rail\nExpansion', emit:NETZERO[10] },
+      { year:2035, label:'EV Fleet\n40% Share', emit:NETZERO[15] },
+      { year:2040, label:'Solar + Wind\nMajority', emit:NETZERO[20] },
+      { year:2045, label:'Carbon Capture\nPilot', emit:NETZERO[25] },
+      { year:2050, label:'Net-Zero\nTarget', emit:NETZERO[30] }
+    ];
+
+    var SCENARIOS = {
+      bau:    { data:BAU,     color:'#E05050', label:'Baseline (BAU)',       info:'<strong style="color:#E07070">Business as Usual:</strong> No additional policy action. Emissions grow at ~2.8%/year driven by motorisation, freight growth, and continued fossil fuel reliance. By 2050, urban mobility emissions reach <strong>191 Mt CO₂e</strong> — more than doubling current levels. Carbon budget exhausted by <strong>2037</strong>. This pathway locks in severe climate risk and health costs from sustained PM2.5 exposure.' },
+      policy: { data:POLICY,  color:'#E0C040', label:'Current Policy',       info:'<strong style="color:#E0C040">Current Policy Scenario:</strong> Existing commitments — EV subsidies, bus rapid transit, fuel efficiency standards. Emissions plateau around 2030 at ~115 Mt CO₂e, then decline slowly. Net-zero is not achieved by 2050 (<strong>~62 Mt CO₂e residual</strong>). A step forward, but insufficient. An additional intervention gap of ~57 Mt/yr remains by 2050 under this trajectory.' },
+      nz:     { data:NETZERO, color:'#50DC78', label:'Net-Zero Path (CtrLab)', info:'<strong style="color:#50DC78">CtrLab Net-Zero Pathway:</strong> Integrates CtrLab emission modelling, digital twin scenarios, and MOVE System mobility interventions. Aggressive urban rail expansion, electrification of last-mile, solar deployment, and carbon capture achieve <strong>~5 Mt CO₂e by 2050</strong>. Key milestones: 2025 CtrLab data infrastructure, 2030 rail network complete, 2035 40% EV fleet share, 2040 majority renewable power, 2050 net-zero target met.' }
+    };
+
+    var activeScenario = 'bau';
+    var animProgress = 0; // 0 → 1
+    var animating = true;
+
+    function emitToY(val) {
+      var MAX_EMIT = 200;
+      var PAD_TOP = 60, PAD_BOT = 60;
+      return PAD_TOP + (1 - val / MAX_EMIT) * (H - PAD_TOP - PAD_BOT);
+    }
+    function yearToX(yr) {
+      var PAD_L = 68, PAD_R = 40;
+      return PAD_L + ((yr - 2020) / 30) * (W - PAD_L - PAD_R);
+    }
+
+    function drawBackground() {
+      // Deep dark green
+      var bg = ctx.createLinearGradient(0, 0, 0, H);
+      bg.addColorStop(0, '#081310');
+      bg.addColorStop(1, '#050E09');
+      ctx.fillStyle = bg;
+      ctx.fillRect(0, 0, W, H);
+
+      // Horizontal grid lines (emission levels)
+      var gridVals = [0, 50, 100, 150, 200];
+      gridVals.forEach(function(v) {
+        var gy = emitToY(v);
+        ctx.strokeStyle = 'rgba(111,207,151,0.1)';
+        ctx.lineWidth = 1;
+        ctx.setLineDash([4, 6]);
+        ctx.beginPath(); ctx.moveTo(68, gy); ctx.lineTo(W - 40, gy); ctx.stroke();
+        ctx.setLineDash([]);
+        ctx.fillStyle = 'rgba(111,207,151,0.4)';
+        ctx.font = '500 10px "JetBrains Mono", monospace';
+        ctx.textAlign = 'right';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(v + ' Mt', 62, gy);
+      });
+
+      // Vertical year marks
+      [2020,2025,2030,2035,2040,2045,2050].forEach(function(yr) {
+        var gx = yearToX(yr);
+        ctx.strokeStyle = 'rgba(111,207,151,0.08)';
+        ctx.lineWidth = 1;
+        ctx.beginPath(); ctx.moveTo(gx, 40); ctx.lineTo(gx, H - 52); ctx.stroke();
+        ctx.fillStyle = 'rgba(111,207,151,0.45)';
+        ctx.font = '500 10px "JetBrains Mono", monospace';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'top';
+        ctx.fillText(yr, gx, H - 46);
+      });
+
+      // Y-axis label
+      ctx.save();
+      ctx.translate(14, H/2);
+      ctx.rotate(-Math.PI/2);
+      ctx.fillStyle = 'rgba(111,207,151,0.4)';
+      ctx.font = '500 9px "JetBrains Mono", monospace';
+      ctx.textAlign = 'center';
+      ctx.fillText('Mt CO₂e / year', 0, 0);
+      ctx.restore();
+
+      // Title strip
+      ctx.fillStyle = 'rgba(5,10,7,0.9)';
+      ctx.fillRect(0, 0, W, 36);
+      ctx.fillStyle = 'rgba(111,207,151,0.6)';
+      ctx.font = '600 10px "JetBrains Mono", monospace';
+      ctx.textAlign = 'left';
+      ctx.textBaseline = 'middle';
+      ctx.fillText('CTRLAB · VIETNAM URBAN MOBILITY CARBON PATHWAY · 2020–2050  |  Mt CO₂e / year', 14, 18);
+
+      // Net-zero line
+      var nzY = emitToY(0);
+      ctx.strokeStyle = 'rgba(80,220,120,0.25)';
+      ctx.lineWidth = 1.5;
+      ctx.setLineDash([6,5]);
+      ctx.beginPath(); ctx.moveTo(68, nzY); ctx.lineTo(W-40, nzY); ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.fillStyle = 'rgba(80,220,120,0.35)';
+      ctx.font = '600 9px "JetBrains Mono", monospace';
+      ctx.textAlign = 'right';
+      ctx.fillText('NET-ZERO', W-42, nzY - 6);
+    }
+
+    function drawCurve(data, color, pct, filled) {
+      var pts = Math.max(2, Math.round(pct * (NY - 1)));
+      ctx.beginPath();
+      for (var i = 0; i < pts; i++) {
+        var x = yearToX(YEARS[i]);
+        var y = emitToY(data[i]);
+        if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+      }
+      if (filled) {
+        // Fill to bottom
+        ctx.lineTo(yearToX(YEARS[pts-1]), H - 52);
+        ctx.lineTo(yearToX(YEARS[0]), H - 52);
+        ctx.closePath();
+        var grad = ctx.createLinearGradient(0, emitToY(200), 0, H - 52);
+        var rgb = color === '#E05050' ? '224,80,80' : color === '#E0C040' ? '224,192,64' : '80,220,120';
+        grad.addColorStop(0, 'rgba(' + rgb + ',0.18)');
+        grad.addColorStop(1, 'rgba(' + rgb + ',0.02)');
+        ctx.fillStyle = grad;
+        ctx.fill();
+        ctx.beginPath();
+        for (var j = 0; j < pts; j++) {
+          var xj = yearToX(YEARS[j]);
+          var yj = emitToY(data[j]);
+          if (j === 0) ctx.moveTo(xj, yj); else ctx.lineTo(xj, yj);
+        }
+      }
+      var alpha = (activeScenario === null) ? 0.4 : 1;
+      ctx.strokeStyle = color;
+      ctx.lineWidth = filled ? 2.5 : 1.5;
+      ctx.globalAlpha = filled ? 1 : 0.4;
+      ctx.stroke();
+      ctx.globalAlpha = 1;
+    }
+
+    function drawInterventions(pct) {
+      if (activeScenario !== 'nz') return;
+      INTERVENTIONS.forEach(function(iv) {
+        var t = (iv.year - 2020) / 30;
+        if (t > pct) return;
+        var x = yearToX(iv.year);
+        var y = emitToY(iv.emit);
+
+        // Dot
+        ctx.beginPath();
+        ctx.arc(x, y, 5, 0, Math.PI * 2);
+        ctx.fillStyle = '#50DC78';
+        ctx.shadowBlur = 10;
+        ctx.shadowColor = '#50DC78';
+        ctx.fill();
+        ctx.shadowBlur = 0;
+
+        // Label
+        var lines = iv.label.split('\n');
+        var above = iv.year < 2038;
+        ctx.fillStyle = 'rgba(80,220,120,0.85)';
+        ctx.font = '500 9px "JetBrains Mono", monospace';
+        ctx.textAlign = 'center';
+        var lyStart = above ? y - 28 : y + 14;
+        lines.forEach(function(line, li) {
+          ctx.fillText(line, x, lyStart + li * 11);
+        });
+
+        // Stem
+        ctx.strokeStyle = 'rgba(80,220,120,0.3)';
+        ctx.lineWidth = 1;
+        ctx.setLineDash([2,3]);
+        ctx.beginPath();
+        ctx.moveTo(x, y - 5);
+        ctx.lineTo(x, above ? y - 16 : y + 10);
+        ctx.stroke();
+        ctx.setLineDash([]);
+      });
+    }
+
+    function drawLegend() {
+      var items = [
+        { color:'#E05050', label:'Baseline (BAU)',         key:'bau' },
+        { color:'#E0C040', label:'Current Policy',         key:'policy' },
+        { color:'#50DC78', label:'Net-Zero Path (CtrLab)', key:'nz' }
+      ];
+      var lx = W - 210, ly = 48;
+      ctx.fillStyle = 'rgba(5,12,8,0.8)';
+      ctx.fillRect(lx - 8, ly - 6, 200, 64);
+      ctx.strokeStyle = 'rgba(111,207,151,0.18)';
+      ctx.lineWidth = 1;
+      ctx.strokeRect(lx - 8, ly - 6, 200, 64);
+      items.forEach(function(it, i) {
+        var active = (activeScenario === it.key);
+        ctx.strokeStyle = it.color;
+        ctx.lineWidth = active ? 2.5 : 1.5;
+        ctx.globalAlpha = active ? 1 : 0.4;
+        ctx.beginPath();
+        ctx.moveTo(lx, ly + i * 18 + 6);
+        ctx.lineTo(lx + 20, ly + i * 18 + 6);
+        ctx.stroke();
+        ctx.globalAlpha = 1;
+        ctx.fillStyle = active ? '#F5F2EE' : 'rgba(245,242,238,0.4)';
+        ctx.font = (active ? '600' : '400') + ' 9.5px "JetBrains Mono", monospace';
+        ctx.textAlign = 'left';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(it.label, lx + 26, ly + i * 18 + 6);
+      });
+    }
+
+    function updateBudget() {
+      var scen = SCENARIOS[activeScenario];
+      var total = scen.data.reduce(function(a,b){return a+b;}, 0);
+      // Cumulative budget 2020-2050 for 1.5C pathway: ~300 Gt globally, HCMC share ~3%
+      var budget = 2400; // Mt total allowed
+      var remaining = Math.round(budget - total);
+      budgetEl.textContent = 'CARBON BUDGET REMAINING: ' + (remaining > 0 ? remaining + ' Mt CO₂e' : 'EXCEEDED BY ' + Math.abs(remaining) + ' Mt');
+      budgetEl.style.color = remaining > 500 ? 'rgba(80,220,120,0.8)' : remaining > 0 ? 'rgba(220,192,64,0.9)' : 'rgba(220,80,80,0.9)';
+    }
+
+    function render() {
+      if (animating) {
+        animProgress = Math.min(1, animProgress + 0.012);
+        if (animProgress >= 1) animating = false;
+      }
+      drawBackground();
+      // Draw all scenarios; active one filled and bright
+      ['bau','policy','nz'].forEach(function(key) {
+        drawCurve(SCENARIOS[key].data, SCENARIOS[key].color, animProgress, key === activeScenario);
+      });
+      drawInterventions(animProgress);
+      drawLegend();
+      updateBudget();
+      requestAnimationFrame(render);
+    }
+
+    // Scenario buttons
+    document.querySelectorAll('.nz-btn').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        document.querySelectorAll('.nz-btn').forEach(function(b) { b.classList.remove('nz-active'); });
+        btn.classList.add('nz-active');
+        activeScenario = btn.dataset.scenario;
+        animProgress = 0;
+        animating = true;
+        var s = SCENARIOS[activeScenario];
+        infoEl.innerHTML = s.info;
+      });
+    });
+
+    requestAnimationFrame(render);
+  })();
+
+  // Mobile burger
+  const burger = document.getElementById("burger");
+  const links  = document.getElementById("navLinks");
+  burger && burger.addEventListener("click", () => links.classList.toggle("open"));
+  links && links.querySelectorAll("a").forEach(a => a.addEventListener("click", () => links.classList.remove("open")));
+})();
+</script>
+</body>
+</html>

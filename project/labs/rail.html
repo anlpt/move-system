@@ -1,0 +1,2101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CE-Rail@UEH — MOVE System</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <link rel="stylesheet" href="../css/style.css" />
+  <style>
+    /* ── rail.html page-local styles ───────────────────────────── */
+    .nav-inner{display:flex;align-items:center;justify-content:space-between;height:var(--nav-h)}
+    .nav-logo{display:flex;align-items:center;gap:.6rem;text-decoration:none}
+    .nav-logo .logo-mark{background:var(--ink);color:var(--cream);padding:5px 9px;font-size:.72rem;letter-spacing:.12em;font-weight:700}
+    .nav-logo .logo-sub{color:var(--muted);font-size:.64rem;letter-spacing:.14em;text-transform:uppercase}
+    nav .nav-links{list-style:none;margin:0;padding:0;display:flex;gap:clamp(1rem,3vw,2.3rem)}
+    nav .nav-links li{margin:0}
+
+    /* Lab hero – rail variant */
+    .lab-hero--rail{padding-top:calc(var(--nav-h) + 3.5rem);padding-bottom:3rem;border-bottom:1px solid var(--grid);position:relative}
+    .lab-hero-inner{position:relative}
+    .lab-hero-bg{position:absolute;top:0;right:-3vw;font-size:clamp(10rem,26vw,28rem);font-weight:300;color:rgba(122,31,46,.07);letter-spacing:-.05em;line-height:.8;pointer-events:none;user-select:none}
+    .lab-title{color:var(--burgundy);max-width:900px;position:relative}
+    .hero-hint{display:flex;flex-wrap:wrap;gap:.4rem;margin-top:1rem}
+
+    /* Section helpers */
+    .section{padding:clamp(4rem,8vw,7rem) 0;position:relative}
+    .section--tinted{background:linear-gradient(180deg,transparent,rgba(122,31,46,.03))}
+    .section-sub{font-size:1.05rem;color:var(--ink-soft);margin:.4rem 0 0}
+    .section-note{margin-top:2rem;color:var(--muted);font-size:.92rem;font-style:italic}
+
+    /* Lab cards – extended */
+    .lab-card-index{font-family:var(--font-mono);color:var(--burgundy);font-size:.78rem;letter-spacing:.14em;margin-bottom:.5rem}
+    .lab-card-list{margin:.6rem 0 0;padding-left:1.2rem;color:var(--ink-soft);font-size:.9rem}
+    .lab-card-list li{margin-bottom:.3rem}
+    .lab-card--wide{grid-column:1/-1}
+    .lab-card--publication{}
+
+    /* Feature rows with numeric index */
+    .feature-index{font-family:var(--font-mono);color:var(--burgundy);font-size:.78rem;letter-spacing:.1em;min-width:40px;padding-top:3px;margin-bottom:.3rem}
+    .grid-4 .feature-row{display:block;padding:1.2rem;border:1px solid rgba(122,31,46,.15);background:rgba(255,253,250,.6)}
+
+    /* Timeline – rail variant */
+    .tl-item,.timeline-item{position:relative;padding-left:1.8rem;margin-bottom:2rem}
+    .timeline-phase{font-family:var(--font-mono);font-size:.68rem;letter-spacing:.18em;color:var(--burgundy);text-transform:uppercase;margin-bottom:.15rem}
+    .timeline-range{font-family:var(--font-mono);font-size:.82rem;color:var(--burgundy);letter-spacing:.08em;font-weight:600;margin-bottom:.25rem}
+    .timeline-item--vision .timeline-phase{color:var(--gold)}
+    .timeline-item--vision .timeline-range{color:var(--gold)}
+
+    /* Publications */
+    .pub-year{font-family:var(--font-mono);color:var(--burgundy);font-size:.9rem;letter-spacing:.08em;margin-bottom:.3rem}
+    .pub-authors{color:var(--muted);font-size:.88rem;margin:.2rem 0}
+    .pub-venue{color:var(--burgundy);font-style:italic;font-size:.88rem;margin:.2rem 0}
+    .pub-tags{margin-top:.6rem}
+
+    /* Stats – phase outcomes */
+    .stat-value{font-size:2.2rem;font-weight:300;color:var(--burgundy);line-height:1}
+    .stat-label{font-size:.78rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-top:.2rem}
+
+    /* People – bio */
+    .person-role{color:var(--burgundy);font-size:.78rem;letter-spacing:.1em;text-transform:uppercase;margin-bottom:.2rem}
+    .person-bio{font-size:.88rem;color:var(--muted);margin:.3rem 0 0}
+
+    /* Footer */
+    .footer-inner{display:flex;flex-wrap:wrap;align-items:flex-start;justify-content:space-between;gap:2rem;padding:3rem 0 1.5rem}
+    .footer-brand .logo-mark{font-family:var(--font-mono);font-size:.9rem;font-weight:700;color:var(--burgundy);letter-spacing:.14em}
+    .footer-brand .logo-sub{font-size:.76rem;color:var(--muted);margin-top:.2rem}
+    .footer-links{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:.5rem 1.5rem}
+    .footer-links a{color:var(--ink-soft);font-size:.88rem}
+    .footer-links a:hover{color:var(--burgundy)}
+    .footer-meta{border-top:1px solid var(--grid);padding-top:1rem;margin-top:1rem;color:var(--muted);font-size:.78rem;width:100%}
+
+    /* Demo controls – rail */
+    .demo-slider{display:flex;flex-direction:column;gap:.3rem;flex:1;min-width:200px}
+    .demo-slider-label{font-size:.78rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-family:var(--font-mono)}
+    .demo-slider input[type=range]{width:100%;accent-color:var(--burgundy)}
+    .demo-toggles{display:flex;flex-wrap:wrap;gap:.5rem}
+    .btn-toggle{padding:5px 12px;border:1px solid var(--burgundy);color:var(--burgundy);font-size:.78rem;background:transparent;letter-spacing:.06em;transition:all .2s}
+    .btn-toggle.is-active{background:var(--burgundy);color:var(--cream)}
+
+    @media(max-width:820px){nav .nav-links{display:none}}
+  </style>
+</head>
+<body>
+
+  <!-- ========== NAV ========== -->
+  <nav class="nav">
+    <div class="container nav-inner">
+      <a href="../index.html" class="nav-logo">
+        <span class="logo-mark">MOVE</span>
+        <span class="logo-sub">System · ISCM · UEH</span>
+      </a>
+      <ul class="nav-links">
+        <li><a href="../index.html#about" data-i18n="nav.about">About</a></li>
+        <li><a href="../index.html#structure" data-i18n="nav.structure">Structure</a></li>
+        <li><a href="../index.html#people" data-i18n="nav.people">People</a></li>
+        <li><a href="../index.html#funding" data-i18n="nav.funding">Funding</a></li>
+        <li><a href="../index.html#tech" data-i18n="nav.tech">Tech</a></li>
+      </ul>
+      <div style="display:flex;align-items:center;gap:.8rem">
+        <div class="lang-toggle">
+          <button data-lang="en" type="button">EN</button>
+          <button data-lang="vi" type="button">VI</button>
+        </div>
+        <button class="burger" id="burgerRail" aria-label="menu">☰</button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ========== HERO ========== -->
+  <header class="lab-hero lab-hero--rail">
+    <div class="container lab-hero-inner">
+      <div class="lab-hero-bg" aria-hidden="true">RAIL</div>
+
+      <a href="../index.html" class="back-link" data-i18n="rail.back">Back to MOVE hub</a>
+
+      <div class="eyebrow">LAB · 03 / RAIL</div>
+      <h1 class="lab-title" data-i18n="rail.h1">CE-Rail@UEH</h1>
+      <p class="lead" data-i18n="rail.lead">
+        A Center of Excellence for urban rail and high-speed rail — combining a
+        physical Rail Systems Lab (rolling stock, signalling, PTC/CBTC, SCADA) with
+        a Rail-City Smart Corridor Living Lab that treats a real urban rail
+        corridor as an open-air testbed for TOD, multimodal integration, and
+        passenger-flow experimentation.
+      </p>
+
+      <div class="hero-hint">
+        <span class="pill">Rail Systems Lab</span>
+        <span class="pill">Smart Corridor Living Lab</span>
+        <span class="pill">TOD &amp; Green Finance</span>
+        <span class="pill">PPP / PPPP</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- ========== CE-RAIL INTRODUCTION ========== -->
+  <section style="background:linear-gradient(135deg,#4E121C 0%,#2A0810 100%);color:#F5F2EE;padding:4.5rem 0;">
+    <div class="container">
+
+      <!-- A. Mission headline — Rail Management focus -->
+      <div style="max-width:800px;margin:0 auto 3.5rem;text-align:center">
+        <div style="font-family:var(--font-mono);font-size:.68rem;letter-spacing:.22em;color:rgba(245,242,238,.5);margin-bottom:.6rem;text-transform:uppercase">RAIL MANAGEMENT CENTRE · CE-RAIL@UEH · ISCM · UEH</div>
+        <h2 style="color:#F5F2EE;margin:0 0 1rem;font-size:clamp(1.7rem,4vw,2.5rem);line-height:1.2">Building Capacity in Modern<br>Rail Systems Management</h2>
+        <p style="font-size:1.06rem;line-height:1.78;color:rgba(245,242,238,.87);margin:0 0 1.2rem">
+          CE-Rail@UEH is a dedicated railway laboratory focused on operations management, maintenance, signalling systems, and safety certification for modern urban rail. Through small-scale simulation testbeds — rolling stock mock-ups, PTC/CBTC trainers, and SCADA sandboxes — and a real-world Rail-City Smart Corridor Living Lab, the centre delivers practical training, professional certification, and strategic consulting for Vietnam's growing rail network.
+        </p>
+        <div style="display:flex;flex-wrap:wrap;gap:.5rem;justify-content:center">
+          <span style="padding:5px 14px;border-radius:999px;border:1px solid rgba(245,242,238,.3);font-size:.75rem;letter-spacing:.08em;color:rgba(245,242,238,.82)">Rail Operations</span>
+          <span style="padding:5px 14px;border-radius:999px;border:1px solid rgba(245,242,238,.3);font-size:.75rem;letter-spacing:.08em;color:rgba(245,242,238,.82)">Maintenance Management</span>
+          <span style="padding:5px 14px;border-radius:999px;border:1px solid rgba(245,242,238,.3);font-size:.75rem;letter-spacing:.08em;color:rgba(245,242,238,.82)">CBTC / PTC Signalling</span>
+          <span style="padding:5px 14px;border-radius:999px;border:1px solid rgba(245,242,238,.3);font-size:.75rem;letter-spacing:.08em;color:rgba(245,242,238,.82)">SCADA Systems</span>
+          <span style="padding:5px 14px;border-radius:999px;border:1px solid rgba(245,242,238,.3);font-size:.75rem;letter-spacing:.08em;color:rgba(245,242,238,.82)">Safety Certification</span>
+          <span style="padding:5px 14px;border-radius:999px;border:1px solid rgba(245,242,238,.3);font-size:.75rem;letter-spacing:.08em;color:rgba(245,242,238,.82)">TOD Consulting</span>
+        </div>
+      </div>
+
+      <!-- B. 3D Rail Operations Simulation -->
+      <div style="margin-bottom:3rem">
+        <div style="font-family:var(--font-mono);font-size:.65rem;letter-spacing:.22em;color:rgba(245,242,238,.4);margin-bottom:1rem;text-transform:uppercase;text-align:center">CBTC Rail Yard Simulation — Block Sections · Interlocking · Train Protection — Click Trains &amp; Signals</div>
+        <div style="position:relative;border:1px solid rgba(184,146,100,0.22);border-radius:6px;overflow:hidden;background:#050408">
+          <canvas id="rail3dCanvas" style="width:100%;height:500px;display:block;cursor:grab"></canvas>
+          <div style="position:absolute;top:10px;left:12px;font-family:var(--font-mono);font-size:.65rem;color:rgba(184,146,100,0.7);letter-spacing:.1em">CE-RAIL@UEH · CBTC RAIL YARD SIMULATOR</div>
+          <div style="position:absolute;top:10px;right:12px;display:flex;flex-direction:column;gap:4px;font-family:var(--font-mono);font-size:.63rem;color:rgba(245,242,238,0.5)">
+            <div><span style="display:inline-block;width:14px;height:5px;background:#50DC78;margin-right:5px;vertical-align:middle;border-radius:1px"></span>Block CLEAR</div>
+            <div><span style="display:inline-block;width:14px;height:5px;background:#E8C020;margin-right:5px;vertical-align:middle;border-radius:1px"></span>Block CAUTION</div>
+            <div><span style="display:inline-block;width:14px;height:5px;background:#E04040;margin-right:5px;vertical-align:middle;border-radius:1px"></span>Block OCCUPIED</div>
+          </div>
+          <div style="position:absolute;bottom:10px;left:12px;font-family:var(--font-mono);font-size:.62rem;color:rgba(184,146,100,0.45);letter-spacing:.08em">CBTC · PTC · SCADA · ATP · ATO</div>
+        </div>
+        <div id="rail3dInfo" style="margin-top:.8rem;background:rgba(245,242,238,0.04);border:1px solid rgba(184,146,100,0.18);padding:.9rem 1.2rem;font-family:var(--font-mono);font-size:.75rem;color:rgba(245,242,238,0.65);min-height:48px;border-radius:4px;letter-spacing:.04em">
+          <span style="color:rgba(184,146,100,0.5)">CLICK A TRAIN OR SIGNAL</span> to inspect block authority, ATP status, and real-time train management data. Drag to orbit.
+        </div>
+      </div>
+
+      <script>
+      (function(){
+        if (typeof THREE === 'undefined') return;
+        var canvas = document.getElementById('rail3dCanvas');
+        if (!canvas) return;
+        var H = 500, W = canvas.offsetWidth || 900;
+        var renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true });
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        renderer.setSize(W, H);
+
+        var scene = new THREE.Scene();
+        scene.background = new THREE.Color(0x050408);
+        scene.fog = new THREE.FogExp2(0x050408, 0.011);
+
+        var camera = new THREE.PerspectiveCamera(36, W / H, 0.1, 280);
+        camera.position.set(0, 32, 52);
+        camera.lookAt(0, 4, 0);
+
+        scene.add(new THREE.AmbientLight(0x6080A0, 0.38));
+        var sun = new THREE.DirectionalLight(0xD0E0FF, 1.3);
+        sun.position.set(20, 40, 15); scene.add(sun);
+        var blueGlow = new THREE.PointLight(0x2040C0, 0.7, 80);
+        blueGlow.position.set(0, 6, 0); scene.add(blueGlow);
+
+        /* ---- Ground / rail yard floor ---- */
+        var groundMat = new THREE.MeshLambertMaterial({ color: 0x0A0810 });
+        var ground = new THREE.Mesh(new THREE.PlaneGeometry(140, 70), groundMat);
+        ground.rotation.x = -Math.PI / 2; ground.position.y = -0.1; scene.add(ground);
+
+        /* Ballast (gravel bed) */
+        var ballastMat = new THREE.MeshLambertMaterial({ color: 0x2A2430 });
+        [-3, 3].forEach(function(z) {
+          var b1 = new THREE.Mesh(new THREE.BoxGeometry(100, 0.18, 5), ballastMat);
+          b1.position.set(0, 0.06, z * 3.5); scene.add(b1);
+        });
+        /* Center ballast (through switch) */
+        var bc = new THREE.Mesh(new THREE.BoxGeometry(100, 0.18, 3), ballastMat);
+        bc.position.set(0, 0.06, 0); scene.add(bc);
+
+        /* ---- Background city buildings ---- */
+        var bCols = [0x10102A, 0x141232, 0x181438, 0x1C1840];
+        for (var bi = 0; bi < 26; bi++) {
+          var bh = 2 + (bi % 8) * 2.5;
+          var bw = 2.5 + (bi % 3) * 1.5;
+          var bMesh = new THREE.Mesh(new THREE.BoxGeometry(bw, bh, bw),
+            new THREE.MeshLambertMaterial({ color: bCols[bi % bCols.length] }));
+          bMesh.position.set((bi % 13 - 6) * 9, bh / 2, (bi < 13 ? -20 : 20));
+          scene.add(bMesh);
+          /* Window strips */
+          var wMat = new THREE.MeshLambertMaterial({ color: 0xFFE890, emissive: 0xFFD860, emissiveIntensity: 0.2 });
+          for (var wi = 0; wi < 5; wi++) {
+            var wstrip = new THREE.Mesh(new THREE.BoxGeometry(bw * 0.55, 0.22, 0.1), wMat);
+            wstrip.position.set(bMesh.position.x, 1 + wi * 1.35, bMesh.position.z + bw/2 + 0.06);
+            scene.add(wstrip);
+          }
+        }
+
+        /* ---- Track layout: 3 lines (Line A, B, siding) ---- */
+        var railMat = new THREE.MeshLambertMaterial({ color: 0xA09080 });
+        var sleepMat = new THREE.MeshLambertMaterial({ color: 0x3A3040 });
+
+        function buildTrack(z, len) {
+          /* Rail lines */
+          [-0.72, 0.72].forEach(function(dz) {
+            var rail = new THREE.Mesh(new THREE.BoxGeometry(len, 0.18, 0.22), railMat);
+            rail.position.set(0, 0.28, z + dz); scene.add(rail);
+          });
+          /* Sleepers */
+          for (var si = -len/2 + 1; si < len/2; si += 2.5) {
+            var sl = new THREE.Mesh(new THREE.BoxGeometry(0.4, 0.14, 3.5), sleepMat);
+            sl.position.set(si, 0.15, z); scene.add(sl);
+          }
+        }
+        buildTrack(-10.5, 100); /* Line A */
+        buildTrack(10.5, 100);  /* Line B */
+        buildTrack(0, 40);      /* Siding / shunt track */
+
+        /* Switch points (diamond connecting tracks) */
+        var switchMat = new THREE.MeshLambertMaterial({ color: 0xC0A070, emissive: 0xB89264, emissiveIntensity: 0.1 });
+        [[-20, -5.5], [20, -5.5], [-20, 5.5], [20, 5.5]].forEach(function(sw) {
+          var swMesh = new THREE.Mesh(new THREE.BoxGeometry(8, 0.2, 0.4), switchMat);
+          swMesh.position.set(sw[0], 0.28, sw[1]);
+          swMesh.rotation.y = Math.atan2(sw[1], 8); scene.add(swMesh);
+        });
+
+        /* ---- CBTC Block sections (colored overlays on ground) ---- */
+        var BLOCKS = [
+          { x: -38, len: 18, line: -10.5, id: 'BLK-A1', state: 'clear',   label: 'Line A Block A1', info: 'CLEAR — Movement authority granted. ATP target speed: 80 km/h. No train within 400 m overlap buffer.' },
+          { x: -18, len: 18, line: -10.5, id: 'BLK-A2', state: 'caution', label: 'Line A Block A2', info: 'CAUTION — Preceding block BLK-A3 is OCCUPIED. CBTC issues reduced speed command: 40 km/h max. ATC brake enforcement active.' },
+          { x:   2, len: 18, line: -10.5, id: 'BLK-A3', state: 'occupied',label: 'Line A Block A3', info: 'OCCUPIED by T-01. Block locked. All rear signals display STOP. ATS calculates re-routing via siding if dwell exceeds 90 s.' },
+          { x:  22, len: 18, line: -10.5, id: 'BLK-A4', state: 'clear',   label: 'Line A Block A4', info: 'CLEAR — Target speed 80 km/h. No occupation. Headway to next train: 3.8 min. SCADA: system nominal.' },
+          { x: -38, len: 18, line:  10.5, id: 'BLK-B1', state: 'occupied',label: 'Line B Block B1', info: 'OCCUPIED by T-02. T-03 approaching from west — automatic brake application holding T-03 at platform until block clears.' },
+          { x: -18, len: 18, line:  10.5, id: 'BLK-B2', state: 'caution', label: 'Line B Block B2', info: 'CAUTION — Approaching occupied BLK-B1. Speed restricted to 30 km/h. ATP will trigger emergency brake at 200 m if block not cleared.' },
+          { x:   2, len: 18, line:  10.5, id: 'BLK-B3', state: 'clear',   label: 'Line B Block B3', info: 'CLEAR — Line B running normal schedule. Headway maintained at 3.5 min. On-time performance: 97.4% this week.' },
+          { x:  22, len: 18, line:  10.5, id: 'BLK-B4', state: 'clear',   label: 'Line B Block B4', info: 'CLEAR — Terminus approach block. Platform arrival speed profile active: 15 km/h arrival target. ATP precision stop enabled.' }
+        ];
+
+        var stateColors = { clear: 0x50DC78, caution: 0xE8C020, occupied: 0xE04040 };
+        var blockMeshes = [];
+        BLOCKS.forEach(function(blk) {
+          var col = stateColors[blk.state];
+          var bMat = new THREE.MeshLambertMaterial({ color: col, emissive: col, emissiveIntensity: 0.2, transparent: true, opacity: 0.35 });
+          var bMesh = new THREE.Mesh(new THREE.BoxGeometry(blk.len - 0.5, 0.1, 3.5), bMat);
+          bMesh.position.set(blk.x, 0.18, blk.line);
+          bMesh.userData = { blk: blk }; scene.add(bMesh); blockMeshes.push(bMesh);
+        });
+
+        /* ---- Stations ---- */
+        var staDefs = [
+          { x: -20, z: -10.5, name: 'Central Station' },
+          { x:  20, z: -10.5, name: 'University Station' },
+          { x: -20, z:  10.5, name: 'Tech Park Station' },
+          { x:  20, z:  10.5, name: 'Suburb Station' }
+        ];
+        var staBodyMat = new THREE.MeshLambertMaterial({ color: 0x7A1F2E });
+        var staRoofMat = new THREE.MeshLambertMaterial({ color: 0xB89264, emissive: 0xB89264, emissiveIntensity: 0.18 });
+        var poleMat = new THREE.MeshLambertMaterial({ color: 0x44404A });
+        staDefs.forEach(function(s) {
+          var plat = new THREE.Mesh(new THREE.BoxGeometry(14, 0.35, 4.5), staBodyMat);
+          plat.position.set(s.x, 0.18, s.z); scene.add(plat);
+          var roof = new THREE.Mesh(new THREE.BoxGeometry(14, 0.18, 4.5), staRoofMat);
+          roof.position.set(s.x, 3.2, s.z); scene.add(roof);
+          [s.x-5, s.x+5].forEach(function(px) {
+            [s.z-1.8, s.z+1.8].forEach(function(pz) {
+              var post = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.14, 3, 6), poleMat);
+              post.position.set(px, 1.5, pz); scene.add(post);
+            });
+          });
+          /* Passenger crowd indicator */
+          for (var pi = 0; pi < 8; pi++) {
+            var pMat = new THREE.MeshLambertMaterial({ color: 0xB89264, emissive: 0xB89264, emissiveIntensity: 0.1 });
+            var p = new THREE.Mesh(new THREE.CylinderGeometry(0.15, 0.15, 0.9, 6), pMat);
+            p.position.set(s.x + (pi % 4 - 1.5) * 1.8, 0.8, s.z + (pi < 4 ? -0.8 : 0.8));
+            scene.add(p);
+          }
+        });
+
+        /* ---- Trains ---- */
+        var clickMeshes = [], trainMeshes = [];
+        var trainDefs = [
+          { id: 'T-01', x: 8,   z: -10.5, dir: 1,  speed: 0.09, cars: 4, kmh: 65, col: 0x7A1F2E, block: 'BLK-A3', info: 'CBTC ATP active. Speed: 65 km/h. Dwell at University Stn: 42 s. Next block: A4 CLEAR. Headway to T-02: 3.2 min. On-time: ✓' },
+          { id: 'T-02', x: -28, z:  10.5, dir: 1,  speed: 0.06, cars: 3, kmh: 30, col: 0x5A1020, block: 'BLK-B1', info: 'Speed reduced: 30 km/h — approaching T-03 in BLK-B1. CBTC ATC has issued deceleration command. Distance to stopping point: 180 m.' },
+          { id: 'T-03', x: 32,  z:  10.5, dir: -1, speed: 0.07, cars: 3, kmh: 52, col: 0x7A1F2E, block: 'BLK-B4', info: 'Inbound T-03 — Suburb to Central. Speed: 52 km/h. CBTC precision stop enabled for Central Stn. Arrival ETA: 2 min 18 s.' }
+        ];
+        trainDefs.forEach(function(td) {
+          var tMat = new THREE.MeshLambertMaterial({ color: td.col });
+          /* Multi-car train */
+          for (var ci = 0; ci < td.cars; ci++) {
+            var body = new THREE.Mesh(new THREE.BoxGeometry(5.5, 1.2, 2.1), tMat);
+            var carX = td.x + (ci - td.cars/2 + 0.5) * 5.8 * (td.dir > 0 ? 1 : -1);
+            body.position.set(carX, 0.9, td.z);
+            if (ci === 0) {
+              body.userData = { type: 'train', td: td }; clickMeshes.push(body);
+            }
+            scene.add(body);
+            /* Windows */
+            var wMat = new THREE.MeshLambertMaterial({ color: 0xFFE890, emissive: 0xFFD860, emissiveIntensity: 0.35 });
+            [-1.5, 0, 1.5].forEach(function(wx) {
+              var w = new THREE.Mesh(new THREE.BoxGeometry(1.1, 0.45, 0.12), wMat);
+              w.position.set(carX + wx, 0.95, td.z + 1.07); scene.add(w);
+            });
+            /* Pantograph */
+            if (ci === 0) {
+              var panto = new THREE.Mesh(new THREE.BoxGeometry(0.4, 0.9, 0.08),
+                new THREE.MeshLambertMaterial({ color: 0x808090 }));
+              panto.position.set(carX, 1.85, td.z); scene.add(panto);
+            }
+          }
+          trainMeshes.push(td);
+        });
+
+        /* ---- Signals ---- */
+        var sigMeshes = [];
+        var sigDefs = [
+          { x: -29, z: -10.5, side: 1, blkId: 'BLK-A1', id: 'SIG-A1' },
+          { x: -9,  z: -10.5, side: 1, blkId: 'BLK-A2', id: 'SIG-A2' },
+          { x:  11, z: -10.5, side: 1, blkId: 'BLK-A3', id: 'SIG-A3' },
+          { x:  31, z: -10.5, side: 1, blkId: 'BLK-A4', id: 'SIG-A4' },
+          { x: -29, z:  10.5, side:-1, blkId: 'BLK-B1', id: 'SIG-B1' },
+          { x: -9,  z:  10.5, side:-1, blkId: 'BLK-B2', id: 'SIG-B2' },
+          { x:  11, z:  10.5, side:-1, blkId: 'BLK-B3', id: 'SIG-B3' }
+        ];
+        sigDefs.forEach(function(sd) {
+          var blk = BLOCKS.find(function(b) { return b.id === sd.blkId; });
+          var state = blk ? blk.state : 'clear';
+          var col = state === 'clear' ? 0x50DC78 : state === 'caution' ? 0xE8C020 : 0xE04040;
+          /* Pole */
+          var pole = new THREE.Mesh(new THREE.CylinderGeometry(0.1, 0.12, 2.8, 6),
+            new THREE.MeshLambertMaterial({ color: 0x303038 }));
+          pole.position.set(sd.x, 1.4, sd.z + sd.side * 2.5); scene.add(pole);
+          /* Lamp */
+          var lamp = new THREE.Mesh(new THREE.SphereGeometry(0.32, 10, 10),
+            new THREE.MeshLambertMaterial({ color: col, emissive: col, emissiveIntensity: 0.9 }));
+          lamp.position.set(sd.x, 2.95, sd.z + sd.side * 2.5);
+          lamp.userData = { type: 'signal', id: sd.id, blkId: sd.blkId, state: state };
+          scene.add(lamp); clickMeshes.push(lamp); sigMeshes.push(lamp);
+        });
+
+        /* Overhead catenary wires */
+        var catMat = new THREE.MeshLambertMaterial({ color: 0x808890 });
+        [-10.5, 10.5].forEach(function(z) {
+          for (var cx = -45; cx < 45; cx += 10) {
+            var mast = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.1, 5.5, 6), catMat);
+            mast.position.set(cx, 2.75, z); scene.add(mast);
+            var arm = new THREE.Mesh(new THREE.BoxGeometry(2, 0.08, 0.08), catMat);
+            arm.position.set(cx, 5.5, z); scene.add(arm);
+          }
+          var wire = new THREE.Mesh(new THREE.BoxGeometry(90, 0.05, 0.06), catMat);
+          wire.position.set(0, 5.45, z); scene.add(wire);
+        });
+
+        /* ---- Raycaster ---- */
+        var raycaster = new THREE.Raycaster();
+        var mouse2 = new THREE.Vector2();
+        var infoEl = document.getElementById('rail3dInfo');
+        canvas.addEventListener('click', function(e) {
+          var rect = canvas.getBoundingClientRect();
+          mouse2.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+          mouse2.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
+          raycaster.setFromCamera(mouse2, camera);
+          var hits = raycaster.intersectObjects(clickMeshes.concat(blockMeshes));
+          if (!hits.length || !infoEl) return;
+          var ud = hits[0].object.userData;
+          if (ud.type === 'train') {
+            var td = ud.td;
+            var sc = td.kmh > 60 ? '#50DC78' : td.kmh > 35 ? '#E8C020' : '#E04040';
+            infoEl.innerHTML = '<strong style="color:#F5F2EE">' + td.id + '</strong>'
+              + ' &nbsp;|&nbsp; Speed: <span style="color:' + sc + '">' + td.kmh + ' km/h</span>'
+              + ' &nbsp;|&nbsp; Block: ' + td.block
+              + '<br><span style="color:rgba(245,242,238,.7)">' + td.info + '</span>';
+          } else if (ud.type === 'signal') {
+            var sc2 = ud.state === 'clear' ? '#50DC78' : ud.state === 'caution' ? '#E8C020' : '#E04040';
+            var blk = BLOCKS.find(function(b) { return b.id === ud.blkId; });
+            infoEl.innerHTML = '<strong style="color:#F5F2EE">' + ud.id + '</strong>'
+              + ' → ' + ud.blkId + ' : <span style="color:' + sc2 + '">' + ud.state.toUpperCase() + '</span>'
+              + '<br><span style="color:rgba(245,242,238,.7)">' + (blk ? blk.info : '') + '</span>';
+          } else if (ud.blk) {
+            var b = ud.blk;
+            var sc3 = b.state === 'clear' ? '#50DC78' : b.state === 'caution' ? '#E8C020' : '#E04040';
+            infoEl.innerHTML = '<strong style="color:#F5F2EE">' + b.label + '</strong>'
+              + ' — State: <span style="color:' + sc3 + '">' + b.state.toUpperCase() + '</span>'
+              + '<br><span style="color:rgba(245,242,238,.7)">' + b.info + '</span>';
+          }
+        });
+
+        /* ---- Orbit ---- */
+        var orb = { angle: 0.15, elev: 32, r: 62, drag: false, lx: 0, ly: 0 };
+        function updateCam() { camera.position.set(Math.sin(orb.angle)*orb.r, orb.elev, Math.cos(orb.angle)*orb.r); camera.lookAt(0, 4, 0); }
+        canvas.addEventListener('mousedown', function(e) { orb.drag=true; orb.lx=e.clientX; orb.ly=e.clientY; canvas.style.cursor='grabbing'; });
+        canvas.addEventListener('mousemove', function(e) {
+          if (!orb.drag) return;
+          orb.angle += (e.clientX-orb.lx)*0.005;
+          orb.elev = Math.max(10, Math.min(52, orb.elev-(e.clientY-orb.ly)*0.1));
+          orb.lx=e.clientX; orb.ly=e.clientY; updateCam();
+        });
+        window.addEventListener('mouseup', function() { orb.drag=false; canvas.style.cursor='grab'; });
+
+        /* ---- Animate ---- */
+        var t = 0;
+        function animate() {
+          requestAnimationFrame(animate);
+          t += 0.016;
+
+          /* Move train bodies (find all Mesh with .userData.type==='train' parent) */
+          scene.children.forEach(function(obj) {
+            if (obj.isMesh && obj.userData.type === 'train') {
+              var td2 = obj.userData.td;
+              obj.position.x += td2.speed * td2.dir;
+              if (obj.position.x > 52) obj.position.x = -52;
+              if (obj.position.x < -52) obj.position.x = 52;
+            }
+          });
+
+          /* Also animate window meshes roughly (they're separate from the train body) */
+          /* Block sections pulse occupied */
+          blockMeshes.forEach(function(bm) {
+            if (bm.userData.blk.state === 'occupied') {
+              bm.material.opacity = 0.25 + 0.2 * Math.abs(Math.sin(t * 2.5));
+              bm.material.emissiveIntensity = 0.15 + 0.15 * Math.abs(Math.sin(t * 2.5));
+            }
+          });
+          /* Signal lamps pulse on caution */
+          sigMeshes.forEach(function(s, i) {
+            if (s.userData.state === 'caution') {
+              s.material.emissiveIntensity = 0.5 + 0.5 * Math.abs(Math.sin(t * 3 + i));
+            }
+          });
+          /* Blue glow breathe */
+          blueGlow.intensity = 0.5 + 0.3 * Math.sin(t * 0.7);
+
+          if (!orb.drag) { orb.angle += 0.0006; updateCam(); }
+          renderer.render(scene, camera);
+        }
+        animate();
+
+        window.addEventListener('resize', function() {
+          var nw = canvas.offsetWidth;
+          renderer.setSize(nw, H); camera.aspect = nw/H; camera.updateProjectionMatrix();
+        });
+      })();
+      </script>
+
+      <!-- C. Two components grid -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.2rem;margin-bottom:2.5rem">
+
+        <div style="background:rgba(245,242,238,.06);border:1px solid rgba(245,242,238,.10);padding:1.5rem 1.4rem">
+          <div style="font-family:var(--font-mono);font-size:.62rem;letter-spacing:.16em;color:#B89264;margin-bottom:.6rem;text-transform:uppercase">Component 01 · Rail Systems Lab</div>
+          <h3 style="color:#F5F2EE;margin:0 0 .7rem;font-size:1.05rem">Small-Scale Simulation Testbed</h3>
+          <p style="font-size:.86rem;color:rgba(245,242,238,.72);line-height:1.65;margin:0 0 .8rem">A practical simulation environment housing rolling stock mock-ups, CBTC/PTC signalling trainers, and SCADA sandbox systems for operations management training. Delivers scenario-based certification for railway technicians and students in a safe, repeatable environment.</p>
+          <div style="display:flex;flex-direction:column;gap:.4rem">
+            <div style="font-size:.8rem;color:rgba(245,242,238,.62);padding-left:.8rem;border-left:2px solid rgba(184,146,100,.4)">Rolling stock mock-up &amp; signalling simulator</div>
+            <div style="font-size:.8rem;color:rgba(245,242,238,.62);padding-left:.8rem;border-left:2px solid rgba(184,146,100,.4)">PTC / CBTC training modules</div>
+            <div style="font-size:.8rem;color:rgba(245,242,238,.62);padding-left:.8rem;border-left:2px solid rgba(184,146,100,.4)">SCADA sandbox &amp; operations certification</div>
+          </div>
+        </div>
+
+        <div style="background:rgba(245,242,238,.06);border:1px solid rgba(245,242,238,.10);padding:1.5rem 1.4rem">
+          <div style="font-family:var(--font-mono);font-size:.62rem;letter-spacing:.16em;color:#B89264;margin-bottom:.6rem;text-transform:uppercase">Component 02 · Rail-City Smart Corridor Living Lab</div>
+          <h3 style="color:#F5F2EE;margin:0 0 .7rem;font-size:1.05rem">Real-World Urban Rail Testbed</h3>
+          <p style="font-size:.86rem;color:rgba(245,242,238,.72);line-height:1.65;margin:0 0 .8rem">A real urban rail corridor used for site visits, field training, and applied research. Focuses on passenger flow management, TOD planning, last-mile multimodal integration, and PPP/Green Finance structuring — inspired by Tokyo Metro collaborative research programmes.</p>
+          <div style="display:flex;flex-direction:column;gap:.4rem">
+            <div style="font-size:.8rem;color:rgba(245,242,238,.62);padding-left:.8rem;border-left:2px solid rgba(184,146,100,.4)">Passenger flow experimentation &amp; optimisation</div>
+            <div style="font-size:.8rem;color:rgba(245,242,238,.62);padding-left:.8rem;border-left:2px solid rgba(184,146,100,.4)">TOD prototype &amp; land-value capture strategy</div>
+            <div style="font-size:.8rem;color:rgba(245,242,238,.62);padding-left:.8rem;border-left:2px solid rgba(184,146,100,.4)">PPP / Green Finance structuring for rail + TOD</div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Lab lead strip -->
+      <div style="border-top:1px solid rgba(184,146,100,.2);padding-top:1.8rem;display:flex;align-items:center;gap:2rem;flex-wrap:wrap">
+        <div style="font-family:var(--font-mono);font-size:.68rem;letter-spacing:.18em;color:rgba(245,242,238,.4);text-transform:uppercase">Lab Lead</div>
+        <div style="display:flex;align-items:center;gap:.9rem">
+          <div style="width:56px;height:56px;border-radius:50%;overflow:hidden;border:2px solid rgba(184,146,100,.5);flex-shrink:0">
+            <img src="../../Design/slide47_img12.png" style="width:100%;height:100%;object-fit:cover;object-position:top center;" alt="Pham Nguyen Hoai">
+          </div>
+          <div>
+            <div style="font-weight:600;color:#F5F2EE;font-size:.95rem">Pham Nguyen Hoai, PhD</div>
+            <div style="font-size:.78rem;color:rgba(245,242,238,.55);margin-top:1px">Director of BMOM · Lecturer</div>
+            <div style="font-size:.75rem;color:#B89264;margin-top:2px;font-family:var(--font-mono)">hoaipm@ueh.edu.vn</div>
+          </div>
+        </div>
+        <div style="display:flex;flex-wrap:wrap;gap:.6rem;margin-left:auto">
+          <span style="font-size:.78rem;color:rgba(245,242,238,.55)">Research team:</span>
+          <span style="font-size:.78rem;color:rgba(245,242,238,.72)">Nguyen Duc Thanh Binh, M.Sc</span>
+          <span style="font-size:.78rem;color:rgba(245,242,238,.55)">·</span>
+          <span style="font-size:.78rem;color:rgba(245,242,238,.72)">An Le, PhD Candidate</span>
+        </div>
+      </div>
+
+    <!-- CE-Rail Research Framework -->
+    <div style="background:rgba(0,0,0,.70);border:1px solid rgba(184,146,100,.22);border-radius:12px;padding:1.8rem 1.4rem;margin-top:2.5rem;overflow:hidden">
+      <div style="font-size:.68rem;font-weight:700;letter-spacing:.18em;color:rgba(245,242,238,.4);text-align:center;margin-bottom:1.2rem;font-family:'JetBrains Mono',monospace">RAIL SYSTEMS · CE-RAIL@UEH RESEARCH FRAMEWORK</div>
+      <svg viewBox="0 0 860 300" style="width:100%;height:auto;display:block" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="railS1" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="rgba(122,184,232,0.16)"/><stop offset="100%" stop-color="rgba(122,184,232,0.03)"/></linearGradient>
+          <linearGradient id="railS2" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="rgba(242,201,76,0.15)"/><stop offset="100%" stop-color="rgba(242,201,76,0.03)"/></linearGradient>
+          <linearGradient id="railS3" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="rgba(235,143,111,0.14)"/><stop offset="100%" stop-color="rgba(235,143,111,0.03)"/></linearGradient>
+          <linearGradient id="railS4" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="rgba(111,207,151,0.14)"/><stop offset="100%" stop-color="rgba(111,207,151,0.03)"/></linearGradient>
+        </defs>
+        <!-- CBTC SIMULATION -->
+        <rect x="16" y="14" width="528" height="58" rx="6" fill="url(#railS1)" stroke="rgba(122,184,232,0.28)" stroke-width="1"/>
+        <!-- Track rails + colored block sections -->
+        <line x1="30" y1="50" x2="195" y2="50" stroke="rgba(122,184,232,0.55)" stroke-width="2"/>
+        <line x1="30" y1="58" x2="195" y2="58" stroke="rgba(122,184,232,0.55)" stroke-width="2"/>
+        <!-- sleepers -->
+        <line x1="35" y1="47" x2="35" y2="61" stroke="rgba(122,184,232,0.30)" stroke-width="1"/><line x1="47" y1="47" x2="47" y2="61" stroke="rgba(122,184,232,0.30)" stroke-width="1"/>
+        <line x1="59" y1="47" x2="59" y2="61" stroke="rgba(122,184,232,0.30)" stroke-width="1"/><line x1="71" y1="47" x2="71" y2="61" stroke="rgba(122,184,232,0.30)" stroke-width="1"/>
+        <line x1="83" y1="47" x2="83" y2="61" stroke="rgba(122,184,232,0.30)" stroke-width="1"/><line x1="95" y1="47" x2="95" y2="61" stroke="rgba(122,184,232,0.30)" stroke-width="1"/>
+        <line x1="107" y1="47" x2="107" y2="61" stroke="rgba(122,184,232,0.30)" stroke-width="1"/><line x1="119" y1="47" x2="119" y2="61" stroke="rgba(122,184,232,0.30)" stroke-width="1"/>
+        <line x1="131" y1="47" x2="131" y2="61" stroke="rgba(122,184,232,0.30)" stroke-width="1"/><line x1="143" y1="47" x2="143" y2="61" stroke="rgba(122,184,232,0.30)" stroke-width="1"/>
+        <line x1="155" y1="47" x2="155" y2="61" stroke="rgba(122,184,232,0.30)" stroke-width="1"/><line x1="167" y1="47" x2="167" y2="61" stroke="rgba(122,184,232,0.30)" stroke-width="1"/>
+        <!-- Colored block sections -->
+        <rect x="36" y="44" width="34" height="16" rx="1" fill="rgba(60,200,60,0.30)" stroke="rgba(60,200,60,0.5)" stroke-width="0.6"/>
+        <rect x="72" y="44" width="34" height="16" rx="1" fill="rgba(242,201,76,0.35)" stroke="rgba(242,201,76,0.55)" stroke-width="0.6"/>
+        <rect x="108" y="44" width="34" height="16" rx="1" fill="rgba(224,60,60,0.30)" stroke="rgba(224,60,60,0.5)" stroke-width="0.6"/>
+        <rect x="144" y="44" width="34" height="16" rx="1" fill="rgba(60,200,60,0.25)" stroke="rgba(60,200,60,0.4)" stroke-width="0.6"/>
+        <!-- signal lights -->
+        <circle cx="176" cy="30" r="5" fill="rgba(60,200,60,0.6)" stroke="rgba(122,184,232,0.3)" stroke-width="0.6"/>
+        <line x1="176" y1="35" x2="176" y2="44" stroke="rgba(122,184,232,0.35)" stroke-width="0.8"/>
+        <text x="216" y="36" fill="#7ab8e8" font-size="8.5" font-weight="700" letter-spacing="1.8" font-family="monospace">CBTC SIMULATION · MOVING BLOCK TRAIN CONTROL</text>
+        <text x="216" y="54" fill="rgba(245,242,238,0.45)" font-size="8">Block section management · ATP/ATO logic · Train position tracking · Headway optimisation</text>
+        <text x="20" y="65" fill="rgba(122,184,232,0.50)" font-size="7.5" font-style="italic" font-family="monospace">CBTC</text>
+        <!-- TRAIN OPERATIONS -->
+        <rect x="16" y="80" width="528" height="56" rx="6" fill="url(#railS2)" stroke="rgba(242,201,76,0.28)" stroke-width="1"/>
+        <!-- Train silhouette (3 cars) -->
+        <rect x="32" y="98" width="30" height="18" rx="2" fill="rgba(242,201,76,0.22)" stroke="rgba(242,201,76,0.45)" stroke-width="0.8"/>
+        <rect x="64" y="100" width="28" height="16" rx="2" fill="rgba(242,201,76,0.18)" stroke="rgba(242,201,76,0.38)" stroke-width="0.7"/>
+        <rect x="94" y="100" width="28" height="16" rx="2" fill="rgba(242,201,76,0.18)" stroke="rgba(242,201,76,0.38)" stroke-width="0.7"/>
+        <!-- windows on train -->
+        <rect x="36" y="101" width="22" height="7" rx="1" fill="rgba(242,201,76,0.30)"/>
+        <rect x="68" y="103" width="20" height="5" rx="1" fill="rgba(242,201,76,0.25)"/>
+        <rect x="98" y="103" width="20" height="5" rx="1" fill="rgba(242,201,76,0.25)"/>
+        <!-- pantograph -->
+        <line x1="47" y1="98" x2="44" y2="90" stroke="rgba(242,201,76,0.50)" stroke-width="0.8"/>
+        <line x1="44" y1="90" x2="122" y2="90" stroke="rgba(242,201,76,0.50)" stroke-width="1"/>
+        <!-- bogies -->
+        <circle cx="42"  cy="118" r="3.5" fill="rgba(242,201,76,0.40)"/><circle cx="57"  cy="118" r="3.5" fill="rgba(242,201,76,0.40)"/>
+        <circle cx="71"  cy="118" r="3.5" fill="rgba(242,201,76,0.35)"/><circle cx="86"  cy="118" r="3.5" fill="rgba(242,201,76,0.35)"/>
+        <!-- timetable grid -->
+        <rect x="140" y="88" width="52" height="36" rx="2" fill="rgba(242,201,76,0.08)" stroke="rgba(242,201,76,0.22)" stroke-width="0.6"/>
+        <line x1="140" y1="97" x2="192" y2="97" stroke="rgba(242,201,76,0.18)" stroke-width="0.5"/>
+        <line x1="140" y1="106" x2="192" y2="106" stroke="rgba(242,201,76,0.18)" stroke-width="0.5"/>
+        <line x1="140" y1="115" x2="192" y2="115" stroke="rgba(242,201,76,0.18)" stroke-width="0.5"/>
+        <line x1="160" y1="88" x2="160" y2="124" stroke="rgba(242,201,76,0.15)" stroke-width="0.5"/>
+        <line x1="178" y1="88" x2="178" y2="124" stroke="rgba(242,201,76,0.15)" stroke-width="0.5"/>
+        <text x="216" y="98" fill="#f2c94c" font-size="8.5" font-weight="700" letter-spacing="1.8" font-family="monospace">TRAIN OPERATIONS · TIMETABLING &amp; ENERGY</text>
+        <text x="216" y="116" fill="rgba(245,242,238,0.45)" font-size="8">Dwell time optimisation · Regenerative braking energy · Driver advisory system · Incident management</text>
+        <text x="20" y="128" fill="rgba(242,201,76,0.50)" font-size="7.5" font-style="italic" font-family="monospace">Operations</text>
+        <!-- RAIL-CITY CORRIDOR -->
+        <rect x="16" y="144" width="528" height="56" rx="6" fill="url(#railS3)" stroke="rgba(235,143,111,0.22)" stroke-width="1"/>
+        <!-- City skyline + rail connection -->
+        <rect x="32" y="162" width="10" height="28" fill="rgba(235,143,111,0.22)" rx="1"/><rect x="46" y="155" width="14" height="35" fill="rgba(235,143,111,0.27)" rx="1"/>
+        <rect x="64" y="164" width="10" height="26" fill="rgba(235,143,111,0.20)" rx="1"/><rect x="78" y="152" width="13" height="38" fill="rgba(235,143,111,0.24)" rx="1"/>
+        <rect x="95" y="160" width="11" height="30" fill="rgba(235,143,111,0.22)" rx="1"/>
+        <!-- station marker -->
+        <circle cx="58" cy="194" r="5" fill="rgba(235,143,111,0.45)" stroke="rgba(235,143,111,0.65)" stroke-width="1"/>
+        <circle cx="100" cy="194" r="5" fill="rgba(235,143,111,0.45)" stroke="rgba(235,143,111,0.65)" stroke-width="1"/>
+        <!-- transit rail line through city -->
+        <line x1="30" y1="194" x2="195" y2="194" stroke="rgba(235,143,111,0.60)" stroke-width="2.2"/>
+        <!-- intermodal connections -->
+        <line x1="58" y1="189" x2="58" y2="172" stroke="rgba(235,143,111,0.38)" stroke-width="0.8" stroke-dasharray="2,1.5"/>
+        <line x1="100" y1="189" x2="100" y2="172" stroke="rgba(235,143,111,0.38)" stroke-width="0.8" stroke-dasharray="2,1.5"/>
+        <!-- bus connection nodes -->
+        <rect x="138" y="186" width="16" height="10" rx="1" fill="rgba(235,143,111,0.20)" stroke="rgba(235,143,111,0.38)" stroke-width="0.6"/>
+        <line x1="154" y1="191" x2="170" y2="191" stroke="rgba(235,143,111,0.30)" stroke-width="0.8" stroke-dasharray="2,1.5"/>
+        <rect x="170" y="186" width="18" height="10" rx="1" fill="rgba(235,143,111,0.18)" stroke="rgba(235,143,111,0.30)" stroke-width="0.6"/>
+        <text x="216" y="162" fill="#eb8f6f" font-size="8.5" font-weight="700" letter-spacing="1.8" font-family="monospace">RAIL-CITY CORRIDOR · INTERMODAL CONNECTIVITY</text>
+        <text x="216" y="180" fill="rgba(245,242,238,0.45)" font-size="8">TOD station catchment · Bus-rail interchange · Urban rail demand modelling · Smart corridor design</text>
+        <text x="20" y="192" fill="rgba(235,143,111,0.50)" font-size="7.5" font-style="italic" font-family="monospace">Corridor</text>
+        <!-- CAPACITY BUILDING -->
+        <rect x="16" y="208" width="528" height="56" rx="6" fill="url(#railS4)" stroke="rgba(111,207,151,0.28)" stroke-width="1"/>
+        <!-- Graduation cap -->
+        <rect x="38" y="230" width="26" height="14" rx="1" fill="rgba(111,207,151,0.18)" stroke="rgba(111,207,151,0.38)" stroke-width="0.8"/>
+        <polygon points="26,228 51,220 76,228 51,232" fill="rgba(111,207,151,0.30)"/>
+        <line x1="76" y1="228" x2="76" y2="240" stroke="rgba(111,207,151,0.45)" stroke-width="1.2"/>
+        <circle cx="76" cy="242" r="3" fill="rgba(111,207,151,0.50)"/>
+        <!-- certification document -->
+        <rect x="92" y="222" width="28" height="34" rx="2" fill="rgba(111,207,151,0.12)" stroke="rgba(111,207,151,0.30)" stroke-width="0.6"/>
+        <line x1="96" y1="228" x2="116" y2="228" stroke="rgba(111,207,151,0.40)" stroke-width="0.8"/>
+        <line x1="96" y1="234" x2="116" y2="234" stroke="rgba(111,207,151,0.30)" stroke-width="0.7"/>
+        <line x1="96" y1="240" x2="108" y2="240" stroke="rgba(111,207,151,0.25)" stroke-width="0.6"/>
+        <polygon points="104,248 108,244 112,248" fill="rgba(111,207,151,0.40)"/>
+        <!-- people / trainees -->
+        <circle cx="140" cy="226" r="5" fill="rgba(111,207,151,0.25)" stroke="rgba(111,207,151,0.40)" stroke-width="0.7"/>
+        <rect x="135" y="231" width="10" height="8" rx="2" fill="rgba(111,207,151,0.18)" stroke="rgba(111,207,151,0.30)" stroke-width="0.5"/>
+        <circle cx="158" cy="226" r="5" fill="rgba(111,207,151,0.22)" stroke="rgba(111,207,151,0.38)" stroke-width="0.7"/>
+        <rect x="153" y="231" width="10" height="8" rx="2" fill="rgba(111,207,151,0.15)" stroke="rgba(111,207,151,0.28)" stroke-width="0.5"/>
+        <line x1="145" y1="227" x2="153" y2="227" stroke="rgba(111,207,151,0.25)" stroke-width="0.6" stroke-dasharray="1.5,1"/>
+        <text x="216" y="228" fill="#6fcf97" font-size="8.5" font-weight="700" letter-spacing="1.8" font-family="monospace">CAPACITY BUILDING · PROFESSIONAL TRAINING</text>
+        <text x="216" y="246" fill="rgba(245,242,238,0.45)" font-size="8">Rail engineer certification · Train driver simulation · Regional knowledge transfer · Industry curriculum</text>
+        <text x="20" y="256" fill="rgba(111,207,151,0.50)" font-size="7.5" font-style="italic" font-family="monospace">Training</text>
+        <!-- Arrows -->
+        <line x1="546" y1="43"  x2="588" y2="148" stroke="rgba(122,184,232,0.42)" stroke-width="1.3" stroke-dasharray="4,3"/>
+        <line x1="546" y1="108" x2="588" y2="153" stroke="rgba(242,201,76,0.42)"  stroke-width="1.3" stroke-dasharray="4,3"/>
+        <line x1="546" y1="172" x2="588" y2="160" stroke="rgba(235,143,111,0.38)" stroke-width="1.3" stroke-dasharray="4,3"/>
+        <line x1="546" y1="236" x2="588" y2="168" stroke="rgba(111,207,151,0.42)" stroke-width="1.3" stroke-dasharray="4,3"/>
+        <polygon points="588,148 582,143 582,153" fill="rgba(122,184,232,0.40)"/>
+        <polygon points="588,153 582,148 582,158" fill="rgba(242,201,76,0.40)"/>
+        <polygon points="588,160 582,155 582,165" fill="rgba(235,143,111,0.35)"/>
+        <polygon points="588,168 582,163 582,173" fill="rgba(111,207,151,0.40)"/>
+        <!-- CE-Rail Platform -->
+        <rect x="590" y="118" width="256" height="90" rx="10" fill="rgba(78,18,28,0.25)" stroke="rgba(122,184,232,0.35)" stroke-width="1.5"/>
+        <text x="718" y="143" text-anchor="middle" fill="#7ab8e8" font-size="9.5" font-weight="700" letter-spacing="1.8" font-family="monospace">CE-RAIL PLATFORM</text>
+        <line x1="608" y1="150" x2="830" y2="150" stroke="rgba(122,184,232,0.2)" stroke-width="0.8"/>
+        <text x="718" y="164" text-anchor="middle" fill="rgba(245,242,238,0.72)" font-size="8.5">Rail Systems Research &amp; Training</text>
+        <text x="718" y="178" text-anchor="middle" fill="rgba(245,242,238,0.58)" font-size="8">Simulation · Certification · Policy Evidence</text>
+        <text x="718" y="196" text-anchor="middle" fill="rgba(245,242,238,0.45)" font-size="7.5">Urban Rail · CBTC · Smart Corridor</text>
+        <!-- Outputs -->
+        <rect x="594" y="222" width="76" height="60" rx="6" fill="rgba(122,184,232,0.10)" stroke="rgba(122,184,232,0.28)" stroke-width="1"/>
+        <text x="632" y="242" text-anchor="middle" fill="#7ab8e8" font-size="8" font-weight="700" letter-spacing="1" font-family="monospace">TRAIN</text>
+        <text x="632" y="254" text-anchor="middle" fill="#7ab8e8" font-size="8" font-weight="700" letter-spacing="1" font-family="monospace">SIM</text>
+        <text x="632" y="268" text-anchor="middle" fill="rgba(245,242,238,0.5)" font-size="7.5">CBTC testbed</text>
+        <rect x="678" y="222" width="76" height="60" rx="6" fill="rgba(242,201,76,0.10)" stroke="rgba(242,201,76,0.25)" stroke-width="1"/>
+        <text x="716" y="242" text-anchor="middle" fill="#f2c94c" font-size="8" font-weight="700" letter-spacing="1" font-family="monospace">CERT</text>
+        <text x="716" y="256" text-anchor="middle" fill="rgba(245,242,238,0.5)" font-size="7.5">rail engineer</text>
+        <text x="716" y="268" text-anchor="middle" fill="rgba(245,242,238,0.5)" font-size="7.5">certification</text>
+        <rect x="762" y="222" width="80" height="60" rx="6" fill="rgba(111,207,151,0.10)" stroke="rgba(111,207,151,0.25)" stroke-width="1"/>
+        <text x="802" y="240" text-anchor="middle" fill="#6fcf97" font-size="8" font-weight="700" letter-spacing="1" font-family="monospace">URBAN</text>
+        <text x="802" y="252" text-anchor="middle" fill="#6fcf97" font-size="8" font-weight="700" letter-spacing="1" font-family="monospace">RAIL</text>
+        <text x="802" y="266" text-anchor="middle" fill="rgba(245,242,238,0.5)" font-size="7.5">policy guidance</text>
+        <line x1="660" y1="208" x2="632" y2="222" stroke="rgba(122,184,232,0.35)" stroke-width="1" stroke-dasharray="2,2"/>
+        <line x1="718" y1="208" x2="716" y2="222" stroke="rgba(242,201,76,0.35)"  stroke-width="1" stroke-dasharray="2,2"/>
+        <line x1="775" y1="208" x2="800" y2="222" stroke="rgba(111,207,151,0.35)" stroke-width="1" stroke-dasharray="2,2"/>
+        <text x="430" y="293" text-anchor="middle" fill="rgba(245,242,238,0.22)" font-size="7.5" letter-spacing="1.5" font-family="monospace">RAIL SYSTEMS INTELLIGENCE FOR VIETNAM'S URBAN TRANSIT FUTURE</text>
+      </svg>
+    </div>
+
+    </div>
+  </section>
+
+  <!-- ========== STRUCTURE (two halves) ========== -->
+  <section class="section" id="structure">
+    <div class="container">
+      <div class="section-head">
+        <span class="eyebrow">STRUCTURE · 02</span>
+        <h2>Two complementary platforms under one roof</h2>
+        <p class="section-sub">
+          CE-Rail@UEH is organised around a training &amp; simulation hub and a
+          city-scale living lab. Together they connect the classroom, the
+          laboratory bench, and the operating corridor.
+        </p>
+      </div>
+
+      <div class="grid-2">
+        <article class="lab-card">
+          <div class="lab-card-index">01</div>
+          <h3 data-i18n="rail.s1">Rail Systems Lab</h3>
+          <p data-i18n="rail.s1.body">
+            A teaching and research facility that concentrates the core
+            subsystems of a modern railway into a single hands-on environment:
+            a rolling-stock mock-up for driver and maintenance training, a
+            signalling simulator, basic PTC/CBTC training devices, and a SCADA
+            supervisory-control sandbox. Students, engineers, and policymakers
+            can experience the interaction between vehicle, track, control,
+            and operations without interrupting a live network.
+          </p>
+          <ul class="lab-card-list">
+            <li>Rolling-stock mock-up for driving &amp; maintenance drills</li>
+            <li>Signalling &amp; interlocking simulator</li>
+            <li>PTC / CBTC training devices</li>
+            <li>SCADA supervisory-control sandbox</li>
+          </ul>
+        </article>
+
+        <article class="lab-card">
+          <div class="lab-card-index">02</div>
+          <h3 data-i18n="rail.s2">Rail-City Smart Corridor Living Lab</h3>
+          <p data-i18n="rail.s2.body">
+            A real urban rail corridor operated as an open research corridor:
+            TOD prototypes around stations, passenger-flow experimentation and
+            optimisation, last-mile integration with e-mobility and
+            micro-mobility, and a shared digital twin for operators,
+            authorities, and researchers. Inspired by collaborative city-operator
+            research programmes such as the Tokyo Metro site programmes.
+          </p>
+          <ul class="lab-card-list">
+            <li>TOD station-area prototypes</li>
+            <li>Passenger-flow experimentation &amp; optimisation</li>
+            <li>Last-mile &amp; micro-mobility integration</li>
+            <li>Shared digital twin for operators and authorities</li>
+          </ul>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ========== STRATEGIC CONSULTING SCOPE ========== -->
+  <section class="section" id="consulting">
+    <div class="container">
+      <div class="section-head">
+        <span class="eyebrow">SCOPE · 03</span>
+        <h2>Strategic consulting &amp; research scope</h2>
+        <p class="section-sub">
+          CE-Rail@UEH advises ministries, cities, operators, and financiers on
+          the full life-cycle of urban and high-speed rail — from workforce
+          strategy to green-finance structuring.
+        </p>
+      </div>
+
+      <div class="grid-2">
+        <article class="lab-card">
+          <div class="lab-card-index">A</div>
+          <h3>Strategic Consulting and Development Projects</h3>
+          <ul class="lab-card-list">
+            <li>Strategy for Building the Railway Workforce</li>
+            <li>Integrated Urban Rail &amp; City Development Advisory</li>
+            <li>Operations &amp; Safety Management for Urban Rail</li>
+            <li>Smart Mobility Data &amp; Digital Twin</li>
+            <li>Green Finance &amp; Lifecycle Costing</li>
+            <li>Human Factors, Accessibility &amp; Inclusive Station Design</li>
+          </ul>
+        </article>
+
+        <article class="lab-card">
+          <div class="lab-card-index">B</div>
+          <h3>Research &amp; Consulting on Urban Development, Finance &amp; Sustainability</h3>
+          <ul class="lab-card-list">
+            <li>Social-Economic &amp; Environmental Impact Assessment</li>
+            <li>Multimodal Integration &amp; Last-Mile Connectivity</li>
+            <li>Transit-Oriented Development (TOD) Models</li>
+            <li>PPP / PPPP Models &amp; Green Finance Structuring</li>
+            <li>Urban Mobility &amp; Land Value Capture</li>
+            <li>Resilience &amp; Climate Adaptation</li>
+            <li>Smart Mobility Analytics &amp; Forecasting</li>
+          </ul>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== EQUIPMENT (Rail Systems Lab) ========== -->
+  <section class="section section--tinted" id="equipment">
+    <div class="container">
+      <div class="section-head">
+        <span class="eyebrow">EQUIPMENT · 04</span>
+        <h2>Rail Systems Lab — core platforms</h2>
+        <p class="section-sub">
+          A compact, modular equipment stack that covers vehicle, control,
+          supervision, and operations under one teaching facility.
+        </p>
+      </div>
+
+      <div class="grid-4">
+        <article class="feature-row">
+          <div class="feature-index">01</div>
+          <h4>Rolling stock mock-up</h4>
+          <p>
+            A full-scale driving cabin and carriage section used for train
+            simulation, driver training, and maintenance drills — from braking
+            profiles to door-cycle diagnostics.
+          </p>
+        </article>
+
+        <article class="feature-row">
+          <div class="feature-index">02</div>
+          <h4>Signalling simulator</h4>
+          <p>
+            Interlocking logic, route-setting, and track-circuit behaviour
+            reproduced in software, so students can run realistic scenarios
+            including degraded-mode operation and recovery.
+          </p>
+        </article>
+
+        <article class="feature-row">
+          <div class="feature-index">03</div>
+          <h4>PTC / CBTC training devices</h4>
+          <p>
+            Basic Positive Train Control and Communications-Based Train Control
+            training kits for learning movement authority, automatic train
+            protection, and on-board–wayside communication.
+          </p>
+        </article>
+
+        <article class="feature-row">
+          <div class="feature-index">04</div>
+          <h4>SCADA supervisory sandbox</h4>
+          <p>
+            A supervisory control and data acquisition sandbox covering power,
+            tunnel ventilation, and station systems — connected to the signalling
+            simulator for integrated operations exercises.
+          </p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== INTERACTIVE DEMO ========== -->
+  <section class="section" id="demo">
+    <div class="container">
+      <div class="section-head">
+        <span class="eyebrow">DEMO · 05</span>
+        <h2 data-i18n="rail.demo.title">Rail-City Smart Corridor explorer</h2>
+        <p class="section-sub" data-i18n="rail.demo.sub">
+          Slide along a 5-station corridor and toggle overlays — TOD density,
+          last-mile reach, passenger flow — to see how the Living Lab treats the
+          corridor as an instrumented testbed.
+        </p>
+      </div>
+
+      <div class="demo-wrap">
+        <canvas id="rail-canvas" width="1200" height="480" aria-label="Rail-City Smart Corridor explorer"></canvas>
+
+        <div class="demo-controls">
+          <label class="demo-slider">
+            <span class="demo-slider-label">Corridor position</span>
+            <input type="range" id="rail-pos" min="0" max="100" step="1" value="50" />
+          </label>
+
+          <div class="demo-toggles">
+            <button type="button" class="btn btn-toggle is-active" data-layer="stations">Stations</button>
+            <button type="button" class="btn btn-toggle is-active" data-layer="tod">TOD Density</button>
+            <button type="button" class="btn btn-toggle" data-layer="lastmile">Last-Mile</button>
+            <button type="button" class="btn btn-toggle" data-layer="flow">Passenger Flow</button>
+          </div>
+
+          <div class="demo-status" id="rail-status">
+            CURRENT: Tech Park · TOD 65% · Daily Flow 24k
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== RAIL OPS SIMULATION ========== -->
+  <section class="section" id="rail-ops-sim" style="background:linear-gradient(180deg,#0F0A0E 0%,#1A0A0F 100%);padding:4.5rem 0">
+    <div class="container">
+      <div class="section-head" style="margin-bottom:2rem">
+        <span class="eyebrow" style="color:rgba(184,146,100,0.7)">SIMULATION · 05B</span>
+        <h2 style="color:#F5F2EE">Rail Operations Control — Interactive SCADA Demo</h2>
+        <p class="section-sub" style="color:rgba(245,242,238,0.6)">
+          A live rail management simulation showing CBTC signalling, train movement authority, and SCADA supervision. Click a train to inspect its status; use the controls to adjust speed or inject a fault scenario.
+        </p>
+      </div>
+
+      <!-- Canvas -->
+      <div style="position:relative;border:1px solid rgba(184,146,100,0.22);border-radius:4px;overflow:hidden;background:#0A0408">
+        <canvas id="scadaCanvas" width="1100" height="500" style="width:100%;display:block" aria-label="Rail operations SCADA simulation"></canvas>
+      </div>
+
+      <!-- Controls row -->
+      <div style="display:flex;flex-wrap:wrap;gap:1rem;align-items:center;margin-top:1.2rem">
+        <div style="display:flex;align-items:center;gap:.6rem;flex:1;min-width:220px">
+          <span style="font-family:var(--font-mono);font-size:.68rem;letter-spacing:.14em;color:rgba(184,146,100,0.7);white-space:nowrap;text-transform:uppercase">Sim Speed</span>
+          <input type="range" id="scadaSpeed" min="0.3" max="3" step="0.1" value="1" style="flex:1;accent-color:#7A1F2E">
+          <span id="scadaSpeedVal" style="font-family:var(--font-mono);font-size:.75rem;color:#B89264;min-width:30px">1.0×</span>
+        </div>
+        <button id="scadaFault" type="button" style="padding:6px 16px;border:1px solid rgba(200,60,60,0.6);color:#E06060;background:rgba(200,60,60,0.08);font-family:var(--font-mono);font-size:.72rem;letter-spacing:.1em;cursor:pointer;transition:all .2s">⚠ INJECT FAULT</button>
+        <button id="scadaReset" type="button" style="padding:6px 16px;border:1px solid rgba(184,146,100,0.4);color:#B89264;background:rgba(184,146,100,0.06);font-family:var(--font-mono);font-size:.72rem;letter-spacing:.1em;cursor:pointer;transition:all .2s">↺ RESET</button>
+        <div id="scadaMode" style="font-family:var(--font-mono);font-size:.7rem;letter-spacing:.12em;color:rgba(80,220,120,0.85);padding:4px 12px;border:1px solid rgba(80,220,120,0.3);background:rgba(80,220,120,0.06)">● CBTC NORMAL</div>
+      </div>
+
+      <!-- Info panel -->
+      <div id="scadaInfo" style="margin-top:1rem;background:rgba(245,242,238,0.04);border:1px solid rgba(184,146,100,0.18);padding:1rem 1.2rem;font-family:var(--font-mono);font-size:.78rem;color:rgba(245,242,238,0.7);min-height:52px">
+        <span style="color:rgba(184,146,100,0.5)">SELECT A TRAIN</span> — click any train on the canvas to inspect its CBTC status, movement authority, speed profile, and headway.
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== TIMELINE ========== -->
+  <section class="section section--tinted" id="timeline">
+    <div class="container">
+      <div class="section-head">
+        <span class="eyebrow" data-i18n="common.timeline">TIMELINE · 06</span>
+        <h2>Roadmap — from foundation to regional centre of excellence</h2>
+      </div>
+
+      <ol class="timeline">
+        <li class="timeline-item">
+          <div class="timeline-phase">Phase 1</div>
+          <div class="timeline-range">2025 — 2027</div>
+          <h4>Foundation Building</h4>
+          <p>
+            Stand up the Rail Systems Lab, establish the first international
+            MoUs, launch the undergraduate programme, and deliver the first
+            ministerial-level policy advisory projects.
+          </p>
+        </li>
+        <li class="timeline-item">
+          <div class="timeline-phase">Phase 2</div>
+          <div class="timeline-range">2028 — 2032</div>
+          <h4>Expansion and Enhancement</h4>
+          <p>
+            Open the Rail-City Smart Corridor Living Lab, introduce master's
+            programmes and international joint programmes, and scale the
+            consulting portfolio across TOD, green finance, and digital twin.
+          </p>
+        </li>
+        <li class="timeline-item">
+          <div class="timeline-phase">Phase 3</div>
+          <div class="timeline-range">2033 — 2035</div>
+          <h4>Scaling Up</h4>
+          <p>
+            Train tens of thousands of students and professionals, deliver
+            large-scale consultancy for national rail programmes, and anchor
+            multi-country research collaborations.
+          </p>
+        </li>
+        <li class="timeline-item timeline-item--vision">
+          <div class="timeline-phase">Vision</div>
+          <div class="timeline-range">to 2045</div>
+          <h4>Regional Centre of Excellence</h4>
+          <p>
+            CE-Rail@UEH becomes a recognised regional hub for urban and
+            high-speed rail research, education, and policy — serving Vietnam
+            and partner countries across Southeast Asia.
+          </p>
+        </li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- ========== LIVING LAB FOCUS AREAS ========== -->
+  <section class="section" id="focus">
+    <div class="container">
+      <div class="section-head">
+        <span class="eyebrow">LIVING LAB · 07</span>
+        <h2>Focus areas of the Smart Corridor Living Lab</h2>
+        <p class="section-sub">
+          Three experimentation themes run continuously along the corridor,
+          each producing data, prototypes, and policy briefs.
+        </p>
+      </div>
+
+      <div class="grid-3">
+        <article class="lab-card">
+          <div class="lab-card-index">F1</div>
+          <h3>TOD prototypes</h3>
+          <p>
+            Station-area design prototypes — land-use mix, public space,
+            pedestrian networks — tested with operators, local authorities, and
+            residents.
+          </p>
+        </article>
+        <article class="lab-card">
+          <div class="lab-card-index">F2</div>
+          <h3>Passenger flow experimentation &amp; optimisation</h3>
+          <p>
+            Sensor-based flow measurement, wayfinding experiments, and
+            operations-side scheduling trials to smooth peaks and improve
+            accessibility.
+          </p>
+        </article>
+        <article class="lab-card">
+          <div class="lab-card-index">F3</div>
+          <h3>Last-mile integration</h3>
+          <p>
+            Integration with e-mobility and micro-mobility — bike-share,
+            e-scooters, shared shuttles — including interchange design and
+            fare integration.
+          </p>
+        </article>
+      </div>
+
+      <p class="section-note">
+        Inspired by collaborative city-operator research programmes such as
+        Tokyo Metro site programmes, where live stations and corridors are
+        opened up as shared research infrastructure.
+      </p>
+    </div>
+  </section>
+
+  <!-- ========== EXPECTED OUTCOMES ========== -->
+  <section class="section section--tinted" id="outcomes">
+    <div class="container">
+      <div class="section-head">
+        <span class="eyebrow">OUTCOMES · 08</span>
+        <h2>Expected outcomes by phase</h2>
+      </div>
+
+      <div class="grid-2">
+        <article class="lab-card">
+          <div class="lab-card-index">P1</div>
+          <h3>Phase 1 · 2025 — 2027</h3>
+          <ul class="lab-card-list">
+            <li>1 international MoU</li>
+            <li>2 ministerial-level policy advisory projects</li>
+            <li>1 undergraduate degree programme</li>
+            <li>2 supplementary modules</li>
+            <li>3 short-term training programmes</li>
+          </ul>
+        </article>
+
+        <article class="lab-card">
+          <div class="lab-card-index">P2</div>
+          <h3>Phase 2 · 2028 — 2032</h3>
+          <ul class="lab-card-list">
+            <li>2 laboratories / living labs completed</li>
+            <li>3 associate / second-degree programmes</li>
+            <li>2 master's degree programmes</li>
+            <li>At least 1 international joint programme</li>
+          </ul>
+        </article>
+
+        <article class="lab-card lab-card--wide">
+          <div class="lab-card-index">P3</div>
+          <h3>Phase 3 · 2033 — 2035</h3>
+          <div class="stat-row">
+            <div class="stat">
+              <div class="stat-value">20,000</div>
+              <div class="stat-label">students and professionals trained</div>
+            </div>
+            <div class="stat">
+              <div class="stat-value">15</div>
+              <div class="stat-label">consultancy projects</div>
+            </div>
+            <div class="stat">
+              <div class="stat-value">5</div>
+              <div class="stat-label">international collaborations</div>
+            </div>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== PUBLICATIONS ========== -->
+  <section class="section" id="publications">
+    <div class="container">
+      <div class="section-head">
+        <span class="eyebrow" data-i18n="common.publications">PUBLICATIONS · 09</span>
+        <h2>Selected publication</h2>
+      </div>
+
+      <article class="lab-card lab-card--publication">
+        <div class="pub-year">2026</div>
+        <h4>
+          Sử dụng dữ liệu mở trong phân tích cấu trúc đô thị và đánh giá tiềm
+          năng TOD tại TP. Hồ Chí Minh
+        </h4>
+        <p class="pub-authors">Trịnh Tú Anh</p>
+        <p class="pub-venue">
+          Hội thảo quốc tế TOD với phát triển đường sắt đô thị, TP. Hồ Chí Minh,
+          2026 (tr. 444–453). NXB Xây Dựng.
+        </p>
+        <div class="pub-tags">
+          <span class="pill">Open data</span>
+          <span class="pill">TOD</span>
+          <span class="pill">HCMC</span>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <!-- ========== STAKEHOLDERS ========== -->
+  <section class="section section--tinted" id="stakeholders">
+    <div class="container">
+      <div class="section-head">
+        <span class="eyebrow" data-i18n="common.stakeholders">STAKEHOLDERS · 10</span>
+        <h2>Stakeholders &amp; benefits</h2>
+        <p class="section-sub">
+          CE-Rail@UEH is built as a shared platform — each partner group gets
+          a specific set of benefits and a specific role.
+        </p>
+      </div>
+
+      <div class="grid-4">
+        <article class="lab-card">
+          <div class="lab-card-index">S1</div>
+          <h3 data-i18n="common.students">Students</h3>
+          <ul class="lab-card-list">
+            <li>Hands-on training in the Rail Systems Lab (rolling stock, signalling, PTC/CBTC, SCADA)</li>
+            <li>Real-world experimentation in the Rail-City Smart Corridor Living Lab</li>
+            <li>Practical knowledge in TOD, multimodal integration, smart mobility</li>
+            <li>Enhanced skills for careers in urban rail and high-speed rail</li>
+          </ul>
+        </article>
+
+        <article class="lab-card">
+          <div class="lab-card-index">S2</div>
+          <h3 data-i18n="common.universities">Universities &amp; Educational Institutions</h3>
+          <ul class="lab-card-list">
+            <li>Support for new undergraduate and master's programmes</li>
+            <li>Development of advanced simulation and living labs</li>
+            <li>Strengthened research capacity in urban rail and high-speed rail</li>
+          </ul>
+        </article>
+
+        <article class="lab-card">
+          <div class="lab-card-index">S3</div>
+          <h3 data-i18n="common.gov">Authorities &amp; Government</h3>
+          <ul class="lab-card-list">
+            <li>Evidence-based policy advisory on TOD, land value capture, green finance</li>
+            <li>Data and insights from the living labs</li>
+            <li>Contributions to national policies for sustainable urban development</li>
+          </ul>
+        </article>
+
+        <article class="lab-card">
+          <div class="lab-card-index">S4</div>
+          <h3 data-i18n="common.industry">Industry Partners &amp; Rail Operators</h3>
+          <ul class="lab-card-list">
+            <li>Access to a trained workforce</li>
+            <li>Real-world testing of TOD prototypes</li>
+            <li>Collaboration in PPP models, digital twin, green infrastructure</li>
+          </ul>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== PEOPLE ========== -->
+  <section class="section" id="people">
+    <div class="container">
+      <div class="section-head">
+        <span class="eyebrow">PEOPLE · 11</span>
+        <h2>Core team</h2>
+      </div>
+
+      <div class="grid-3">
+        <article class="person-card">
+          <div class="person-avatar" aria-hidden="true">PN</div>
+          <h4>Pham Nguyen Hoai, PhD</h4>
+          <div class="person-role">Lecturer · Rail Systems</div>
+          <p class="person-bio">
+            Leads the rolling-stock and signalling track of the Rail Systems
+            Lab and coordinates the operations-management research line.
+          </p>
+        </article>
+
+        <article class="person-card">
+          <div class="person-avatar" aria-hidden="true">NT</div>
+          <h4>Nguyen Duc Thanh Binh, MSc</h4>
+          <div class="person-role">Researcher · Smart Mobility</div>
+          <p class="person-bio">
+            Works on smart mobility analytics and the digital-twin layer of the
+            Rail-City Smart Corridor Living Lab.
+          </p>
+        </article>
+
+        <article class="person-card">
+          <div class="person-avatar" aria-hidden="true">AL</div>
+          <h4>An Le</h4>
+          <div class="person-role">PhD Candidate · TOD &amp; Land Value Capture</div>
+          <p class="person-bio">
+            Researches TOD prototypes and land-value-capture mechanisms for
+            Vietnamese urban rail corridors.
+          </p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== FOOTER ========== -->
+  <footer class="footer">
+    <div class="container footer-inner">
+      <div class="footer-brand">
+        <div class="logo-mark">MOVE</div>
+        <div class="logo-sub">
+          Institute of Smart City and Management · University of Economics Ho Chi Minh City
+        </div>
+      </div>
+      <ul class="footer-links">
+        <li><a href="../index.html#about" data-i18n="nav.about">About</a></li>
+        <li><a href="../index.html#structure" data-i18n="nav.structure">Structure</a></li>
+        <li><a href="../index.html#people" data-i18n="nav.people">People</a></li>
+        <li><a href="../index.html#funding" data-i18n="nav.funding">Funding</a></li>
+        <li><a href="../index.html#tech" data-i18n="nav.tech">Tech</a></li>
+      </ul>
+      <div class="footer-meta">
+        &copy; 2026 MOVE System — ISCM, UEH.
+      </div>
+    </div>
+  </footer>
+
+  <!-- ========== SCRIPTS ========== -->
+  <script src="../js/i18n.js"></script>
+  <script>
+    I18N.apply();
+    document.querySelectorAll(".lang-toggle button").forEach(btn => {
+      btn.addEventListener("click", () => I18N.setLang(btn.dataset.lang));
+    });
+
+    // Mobile burger
+    const burgerRail = document.getElementById("burgerRail");
+    const navLinksRail = document.querySelector("nav .nav-links");
+    if (burgerRail && navLinksRail) {
+      burgerRail.addEventListener("click", () => navLinksRail.classList.toggle("open"));
+      navLinksRail.querySelectorAll("a").forEach(a => a.addEventListener("click", () => navLinksRail.classList.remove("open")));
+    }
+
+    /* ---------- Rail-City Smart Corridor explorer ---------- */
+    (function () {
+      const canvas = document.getElementById("rail-canvas");
+      if (!canvas) return;
+      const ctx = canvas.getContext("2d");
+      const slider = document.getElementById("rail-pos");
+      const statusEl = document.getElementById("rail-status");
+      const toggleBtns = document.querySelectorAll(".btn-toggle");
+
+      // Logical drawing size (independent of CSS size)
+      const W = canvas.width;
+      const H = canvas.height;
+
+      // Palette
+      const BURGUNDY = "#7A1F2E";
+      const CREAM = "#F5F2EE";
+      const INK = "#1F1A1A";
+      const MUTED = "#9A8F88";
+      const RAIL = "#2A2422";
+
+      // Stations
+      const stations = [
+        { name: "Central",    x: 0.10, flow: 42, tod: 88 },
+        { name: "University", x: 0.30, flow: 31, tod: 74 },
+        { name: "Tech Park",  x: 0.50, flow: 24, tod: 65 },
+        { name: "Residence",  x: 0.70, flow: 18, tod: 52 },
+        { name: "Suburb",     x: 0.90, flow: 12, tod: 34 }
+      ];
+
+      // Layer state
+      const layers = {
+        stations: true,
+        tod: true,
+        lastmile: false,
+        flow: false
+      };
+
+      // Toggle button wiring
+      toggleBtns.forEach(btn => {
+        btn.addEventListener("click", () => {
+          const key = btn.dataset.layer;
+          layers[key] = !layers[key];
+          btn.classList.toggle("is-active", layers[key]);
+        });
+      });
+
+      // Slider wiring
+      slider.addEventListener("input", updateStatus);
+
+      // Deterministic pseudo-random building layout
+      function buildingSeries(count) {
+        const out = [];
+        let s = 1337;
+        for (let i = 0; i < count; i++) {
+          s = (s * 9301 + 49297) % 233280;
+          out.push(s / 233280);
+        }
+        return out;
+      }
+      const topRand = buildingSeries(60);
+      const botRand = buildingSeries(60);
+
+      function nearestStation(pos01) {
+        let best = stations[0];
+        let bestD = Infinity;
+        stations.forEach(s => {
+          const d = Math.abs(s.x - pos01);
+          if (d < bestD) { bestD = d; best = s; }
+        });
+        return best;
+      }
+
+      // Mix two hex colours by factor t ∈ [0,1]
+      function mixColor(hexA, hexB, t) {
+        function h2r(h) {
+          h = h.replace("#", "");
+          return { r: parseInt(h.slice(0,2),16), g: parseInt(h.slice(2,4),16), b: parseInt(h.slice(4,6),16) };
+        }
+        const a = h2r(hexA), b = h2r(hexB);
+        const r = Math.round(a.r + (b.r - a.r) * t);
+        const g = Math.round(a.g + (b.g - a.g) * t);
+        const bl = Math.round(a.b + (b.b - a.b) * t);
+        return `rgb(${r},${g},${bl})`;
+      }
+
+      // TOD proximity boost — closer to a station => higher density
+      function todBoost(px01) {
+        let b = 0;
+        stations.forEach(s => {
+          const d = Math.abs(s.x - px01);
+          b = Math.max(b, Math.max(0, 1 - d * 8));
+        });
+        return b; // 0..1
+      }
+
+      // Passenger-flow animation particles
+      const particles = [];
+      function spawnParticles() {
+        if (!layers.flow) return;
+        const pos = parseInt(slider.value, 10) / 100;
+        const near = nearestStation(pos);
+        // spawn particles flowing toward the nearest station
+        if (particles.length < 40) {
+          const fromLeft = Math.random() < 0.5;
+          particles.push({
+            x: fromLeft ? near.x - 0.08 - Math.random() * 0.05
+                        : near.x + 0.08 + Math.random() * 0.05,
+            y: (Math.random() - 0.5) * 0.10,
+            targetX: near.x,
+            life: 1
+          });
+        }
+      }
+
+      function stepParticles() {
+        for (let i = particles.length - 1; i >= 0; i--) {
+          const p = particles[i];
+          p.x += (p.targetX - p.x) * 0.03;
+          p.life -= 0.012;
+          if (Math.abs(p.x - p.targetX) < 0.003 || p.life <= 0) {
+            particles.splice(i, 1);
+          }
+        }
+      }
+
+      function drawBackground() {
+        ctx.fillStyle = CREAM;
+        ctx.fillRect(0, 0, W, H);
+
+        // faint dot grid
+        ctx.fillStyle = "rgba(31,26,26,0.08)";
+        const gap = 24;
+        for (let x = gap; x < W; x += gap) {
+          for (let y = gap; y < H; y += gap) {
+            ctx.beginPath();
+            ctx.arc(x, y, 1, 0, Math.PI * 2);
+            ctx.fill();
+          }
+        }
+      }
+
+      function drawBuildings() {
+        const baseTop = H * 0.45;
+        const baseBot = H * 0.55;
+        const topHeight = H * 0.32;
+        const botHeight = H * 0.32;
+        const slotW = W / topRand.length;
+
+        for (let i = 0; i < topRand.length; i++) {
+          const px = (i + 0.5) / topRand.length;
+          const boost = todBoost(px); // 0..1 near stations
+          const jitter = topRand[i];
+          const h = (0.25 + boost * 0.75) * topHeight * (0.55 + jitter * 0.6);
+
+          let fill;
+          if (layers.tod) {
+            // burgundy near stations, muted far away
+            const mix = Math.min(1, boost);
+            fill = mixColor(MUTED, BURGUNDY, mix);
+          } else {
+            fill = "#CFC7C1";
+          }
+
+          ctx.fillStyle = fill;
+          const x = i * slotW + 2;
+          const bw = slotW - 4;
+          ctx.fillRect(x, baseTop - h, bw, h);
+
+          // window stripe
+          if (h > 40) {
+            ctx.fillStyle = "rgba(245,242,238,0.25)";
+            ctx.fillRect(x + 3, baseTop - h + 8, bw - 6, 2);
+            ctx.fillRect(x + 3, baseTop - h + 16, bw - 6, 2);
+          }
+        }
+
+        for (let i = 0; i < botRand.length; i++) {
+          const px = (i + 0.5) / botRand.length;
+          const boost = todBoost(px);
+          const jitter = botRand[i];
+          const h = (0.25 + boost * 0.75) * botHeight * (0.5 + jitter * 0.6);
+
+          let fill;
+          if (layers.tod) {
+            const mix = Math.min(1, boost);
+            fill = mixColor(MUTED, BURGUNDY, mix * 0.85);
+          } else {
+            fill = "#C8C0BA";
+          }
+
+          ctx.fillStyle = fill;
+          const x = i * slotW + 2;
+          const bw = slotW - 4;
+          ctx.fillRect(x, baseBot, bw, h);
+        }
+      }
+
+      function drawRail() {
+        const y = H / 2;
+        // rail bed
+        ctx.fillStyle = "rgba(31,26,26,0.08)";
+        ctx.fillRect(0, y - 10, W, 20);
+
+        // two rail lines
+        ctx.strokeStyle = RAIL;
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.moveTo(0, y - 4);
+        ctx.lineTo(W, y - 4);
+        ctx.moveTo(0, y + 4);
+        ctx.lineTo(W, y + 4);
+        ctx.stroke();
+
+        // sleepers
+        ctx.fillStyle = "rgba(31,26,26,0.35)";
+        for (let x = 0; x < W; x += 22) {
+          ctx.fillRect(x, y - 8, 10, 16);
+        }
+      }
+
+      function drawStations() {
+        const y = H / 2;
+        stations.forEach(s => {
+          const sx = s.x * W;
+
+          // platform
+          ctx.fillStyle = layers.stations ? BURGUNDY : "#5A4A48";
+          ctx.fillRect(sx - 34, y - 18, 68, 6);
+          ctx.fillRect(sx - 34, y + 12, 68, 6);
+
+          // station pole
+          ctx.fillStyle = INK;
+          ctx.fillRect(sx - 1, y - 70, 2, 40);
+
+          // station sign
+          ctx.fillStyle = layers.stations ? BURGUNDY : "#3A2A28";
+          ctx.fillRect(sx - 42, y - 90, 84, 22);
+
+          ctx.fillStyle = CREAM;
+          ctx.font = "600 11px Inter, sans-serif";
+          ctx.textAlign = "center";
+          ctx.textBaseline = "middle";
+          ctx.fillText(s.name.toUpperCase(), sx, y - 79);
+        });
+      }
+
+      function drawLastMile() {
+        if (!layers.lastmile) return;
+        const pos = parseInt(slider.value, 10) / 100;
+        const near = nearestStation(pos);
+        const cx = near.x * W;
+        const cy = H / 2;
+
+        // reach radius circle
+        ctx.strokeStyle = "rgba(122,31,46,0.35)";
+        ctx.setLineDash([4, 4]);
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        ctx.arc(cx, cy, 140, 0, Math.PI * 2);
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        // radiating micro-mobility icons (bike = circle + dash)
+        const n = 12;
+        for (let i = 0; i < n; i++) {
+          const a = (i / n) * Math.PI * 2;
+          const r = 90 + (i % 3) * 18;
+          const px = cx + Math.cos(a) * r;
+          const py = cy + Math.sin(a) * r;
+
+          // wheel
+          ctx.strokeStyle = BURGUNDY;
+          ctx.lineWidth = 1.5;
+          ctx.beginPath();
+          ctx.arc(px - 5, py, 3.5, 0, Math.PI * 2);
+          ctx.stroke();
+          ctx.beginPath();
+          ctx.arc(px + 5, py, 3.5, 0, Math.PI * 2);
+          ctx.stroke();
+          // frame
+          ctx.beginPath();
+          ctx.moveTo(px - 5, py);
+          ctx.lineTo(px + 5, py);
+          ctx.stroke();
+        }
+      }
+
+      function drawFlow() {
+        if (!layers.flow) return;
+        spawnParticles();
+        stepParticles();
+        const y = H / 2;
+        particles.forEach(p => {
+          const px = p.x * W;
+          const py = y + p.y * H;
+          ctx.fillStyle = "rgba(122,31,46," + Math.max(0, Math.min(1, p.life)).toFixed(2) + ")";
+          ctx.beginPath();
+          ctx.arc(px, py, 3, 0, Math.PI * 2);
+          ctx.fill();
+        });
+      }
+
+      function drawCursor() {
+        const pos = parseInt(slider.value, 10) / 100;
+        const cx = pos * W;
+        const y = H / 2;
+
+        // vertical guide
+        ctx.strokeStyle = "rgba(122,31,46,0.4)";
+        ctx.lineWidth = 1;
+        ctx.setLineDash([3, 5]);
+        ctx.beginPath();
+        ctx.moveTo(cx, 30);
+        ctx.lineTo(cx, H - 30);
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        // train marker
+        ctx.fillStyle = BURGUNDY;
+        ctx.fillRect(cx - 18, y - 10, 36, 20);
+        ctx.fillStyle = "#FFD9A0";
+        ctx.fillRect(cx - 14, y - 6, 6, 6);
+        ctx.fillRect(cx - 4,  y - 6, 6, 6);
+        ctx.fillRect(cx + 6,  y - 6, 6, 6);
+
+        // headlight glow
+        ctx.fillStyle = "rgba(255,217,160,0.5)";
+        ctx.beginPath();
+        ctx.arc(cx + 18, y, 5, 0, Math.PI * 2);
+        ctx.fill();
+
+        // "you are here" label
+        ctx.fillStyle = BURGUNDY;
+        ctx.font = "600 11px JetBrains Mono, monospace";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "bottom";
+        ctx.fillText("YOU ARE HERE", cx, y - 16);
+      }
+
+      function mixColor(a, b, t) {
+        const ca = hexToRgb(a);
+        const cb = hexToRgb(b);
+        const r = Math.round(ca.r + (cb.r - ca.r) * t);
+        const g = Math.round(ca.g + (cb.g - ca.g) * t);
+        const bl = Math.round(ca.b + (cb.b - ca.b) * t);
+        return "rgb(" + r + "," + g + "," + bl + ")";
+      }
+      function hexToRgb(h) {
+        const m = h.replace("#", "");
+        return {
+          r: parseInt(m.substring(0, 2), 16),
+          g: parseInt(m.substring(2, 4), 16),
+          b: parseInt(m.substring(4, 6), 16)
+        };
+      }
+
+      function updateStatus() {
+        const pos = parseInt(slider.value, 10) / 100;
+        const near = nearestStation(pos);
+        statusEl.textContent =
+          "CURRENT: " + near.name +
+          " · TOD " + near.tod + "%" +
+          " · Daily Flow " + near.flow + "k";
+      }
+
+      function render() {
+        drawBackground();
+        drawBuildings();
+        drawRail();
+        drawStations();
+        drawLastMile();
+        drawFlow();
+        drawCursor();
+        requestAnimationFrame(render);
+      }
+
+      updateStatus();
+      render();
+    })();
+
+    /* =========================================================
+       SCADA / CBTC Rail Operations Simulation
+    ========================================================= */
+    (function () {
+      var canvas = document.getElementById('scadaCanvas');
+      if (!canvas) return;
+      var ctx = canvas.getContext('2d');
+      var W = canvas.width, H = canvas.height;
+
+      var speedSlider = document.getElementById('scadaSpeed');
+      var speedVal    = document.getElementById('scadaSpeedVal');
+      var faultBtn    = document.getElementById('scadaFault');
+      var resetBtn    = document.getElementById('scadaReset');
+      var modeEl      = document.getElementById('scadaMode');
+      var infoEl      = document.getElementById('scadaInfo');
+
+      var simSpeed = 1;
+      var faultActive = false;
+      var faultStation = null;
+      var selectedTrain = null;
+      var tick = 0;
+
+      speedSlider.addEventListener('input', function () {
+        simSpeed = parseFloat(speedSlider.value);
+        speedVal.textContent = simSpeed.toFixed(1) + '×';
+      });
+
+      /* ---- Stations ---- */
+      var STN = [
+        { name:'CENTRAL',    x: 0.10, color:'#B89264' },
+        { name:'UNIVERSITY', x: 0.28, color:'#B89264' },
+        { name:'TECH PARK',  x: 0.50, color:'#B89264' },
+        { name:'RESIDENCE',  x: 0.72, color:'#B89264' },
+        { name:'SUBURB',     x: 0.90, color:'#B89264' }
+      ];
+      var TRACK1_Y = H * 0.38;   // eastbound (top)
+      var TRACK2_Y = H * 0.62;   // westbound (bottom)
+
+      /* ---- Signals (between each pair of stations, both directions) ---- */
+      // Each signal sits at the midpoint between consecutive stations
+      function makeSigs() {
+        var sigs = [];
+        for (var i = 0; i < STN.length - 1; i++) {
+          var mid = (STN[i].x + STN[i+1].x) / 2;
+          sigs.push({ id:'S1-' + i, x: mid, track: 1, state:'green', blink:0 });
+          sigs.push({ id:'S2-' + i, x: mid, track: 2, state:'green', blink:0 });
+        }
+        return sigs;
+      }
+      var signals = makeSigs();
+
+      /* ---- Trains ---- */
+      function makeTrain(id, pos01, track, speed, label) {
+        return { id:id, pos:pos01, track:track, speed:speed,
+                 label:label, stopped:false, dwellTimer:0, alerting:false };
+      }
+      var trains = [
+        makeTrain('T-01', 0.05, 1,  0.00012, 'T-01 · Eastbound'),
+        makeTrain('T-02', 0.45, 1,  0.00012, 'T-02 · Eastbound'),
+        makeTrain('T-03', 0.82, 1,  0.00012, 'T-03 · Eastbound'),
+        makeTrain('T-04', 0.15, 2, -0.00012, 'T-04 · Westbound'),
+        makeTrain('T-05', 0.58, 2, -0.00012, 'T-05 · Westbound'),
+        makeTrain('T-06', 0.94, 2, -0.00012, 'T-06 · Westbound')
+      ];
+
+      /* ---- Reset ---- */
+      function reset() {
+        faultActive = false;
+        faultStation = null;
+        selectedTrain = null;
+        modeEl.style.color = 'rgba(80,220,120,0.85)';
+        modeEl.style.borderColor = 'rgba(80,220,120,0.3)';
+        modeEl.style.background = 'rgba(80,220,120,0.06)';
+        modeEl.textContent = '● CBTC NORMAL';
+        trains = [
+          makeTrain('T-01', 0.05, 1,  0.00012, 'T-01 · Eastbound'),
+          makeTrain('T-02', 0.45, 1,  0.00012, 'T-02 · Eastbound'),
+          makeTrain('T-03', 0.82, 1,  0.00012, 'T-03 · Eastbound'),
+          makeTrain('T-04', 0.15, 2, -0.00012, 'T-04 · Westbound'),
+          makeTrain('T-05', 0.58, 2, -0.00012, 'T-05 · Westbound'),
+          makeTrain('T-06', 0.94, 2, -0.00012, 'T-06 · Westbound')
+        ];
+        signals = makeSigs();
+        infoEl.innerHTML = '<span style="color:rgba(184,146,100,0.5)">SELECT A TRAIN</span> — click any train on the canvas to inspect its CBTC status, movement authority, speed profile, and headway.';
+      }
+      resetBtn.addEventListener('click', reset);
+
+      /* ---- Inject fault ---- */
+      faultBtn.addEventListener('click', function () {
+        if (faultActive) return;
+        faultActive = true;
+        var idx = Math.floor(Math.random() * (signals.length));
+        signals[idx].state = 'red';
+        faultStation = signals[idx].id;
+        modeEl.style.color = 'rgba(220,80,80,0.9)';
+        modeEl.style.borderColor = 'rgba(220,80,80,0.4)';
+        modeEl.style.background = 'rgba(220,80,80,0.08)';
+        modeEl.textContent = '⚠ FAULT — ' + signals[idx].id;
+        // auto clear after 8 s
+        setTimeout(function () {
+          if (faultActive) {
+            faultActive = false;
+            signals[idx].state = 'green';
+            modeEl.style.color = 'rgba(80,220,120,0.85)';
+            modeEl.style.borderColor = 'rgba(80,220,120,0.3)';
+            modeEl.style.background = 'rgba(80,220,120,0.06)';
+            modeEl.textContent = '● CBTC NORMAL';
+          }
+        }, 8000);
+      });
+
+      /* ---- CBTC logic: update signal states based on train proximity ---- */
+      function updateSignals() {
+        signals.forEach(function (sig) {
+          if (faultActive && sig.id === faultStation) { sig.state = 'red'; return; }
+          // Check if any train of the same track is within 0.08 ahead of signal
+          var occupied = false;
+          trains.forEach(function (t) {
+            if (t.track !== sig.track) return;
+            var ahead = t.track === 1
+              ? (t.pos > sig.x - 0.10 && t.pos < sig.x + 0.04)
+              : (t.pos < sig.x + 0.10 && t.pos > sig.x - 0.04);
+            if (ahead) occupied = true;
+          });
+          if (occupied) {
+            sig.state = 'red';
+          } else {
+            // yellow if train is between 0.08 and 0.18 ahead
+            var nearish = false;
+            trains.forEach(function (t) {
+              if (t.track !== sig.track) return;
+              var semi = t.track === 1
+                ? (t.pos > sig.x - 0.22 && t.pos < sig.x - 0.08)
+                : (t.pos < sig.x + 0.22 && t.pos > sig.x + 0.08);
+              if (semi) nearish = true;
+            });
+            sig.state = nearish ? 'yellow' : 'green';
+          }
+        });
+      }
+
+      /* ---- Update trains ---- */
+      function updateTrains(dt) {
+        trains.forEach(function (t) {
+          // Dwell at station
+          STN.forEach(function (s) {
+            if (Math.abs(t.pos - s.x) < 0.012 && t.dwellTimer <= 0) {
+              t.dwellTimer = 1200; // frames to dwell
+            }
+          });
+          if (t.dwellTimer > 0) {
+            t.stopped = true;
+            t.dwellTimer -= dt * simSpeed;
+            if (t.dwellTimer <= 0) { t.stopped = false; t.dwellTimer = 0; }
+            return;
+          }
+
+          // Stop at red signal
+          var blocked = false;
+          signals.forEach(function (sig) {
+            if (sig.track !== t.track) return;
+            if (sig.state !== 'red') return;
+            var approaching = t.track === 1
+              ? (t.pos < sig.x && sig.x - t.pos < 0.06)
+              : (t.pos > sig.x && t.pos - sig.x < 0.06);
+            if (approaching) blocked = true;
+          });
+          t.stopped = blocked;
+
+          if (!t.stopped) {
+            t.pos += t.speed * dt * simSpeed;
+          }
+
+          // Wrap around
+          if (t.track === 1 && t.pos > 1.02) t.pos = -0.02;
+          if (t.track === 2 && t.pos < -0.02) t.pos = 1.02;
+        });
+      }
+
+      /* ---- Click detection ---- */
+      canvas.addEventListener('click', function (e) {
+        var rect = canvas.getBoundingClientRect();
+        var mx = (e.clientX - rect.left) * (W / rect.width);
+        var my = (e.clientY - rect.top)  * (H / rect.height);
+        selectedTrain = null;
+        trains.forEach(function (t) {
+          var tx = t.pos * W;
+          var ty = t.track === 1 ? TRACK1_Y : TRACK2_Y;
+          if (Math.abs(mx - tx) < 22 && Math.abs(my - ty) < 14) {
+            selectedTrain = t;
+          }
+        });
+        if (selectedTrain) {
+          var t = selectedTrain;
+          var sigAhead = null;
+          signals.forEach(function (sig) {
+            if (sig.track !== t.track) return;
+            var inFront = t.track === 1 ? sig.x > t.pos : sig.x < t.pos;
+            if (inFront && (!sigAhead || (t.track===1 ? sig.x < sigAhead.x : sig.x > sigAhead.x))) {
+              sigAhead = sig;
+            }
+          });
+          var nextStn = null;
+          STN.forEach(function (s) {
+            var ahead2 = t.track === 1 ? s.x > t.pos + 0.01 : s.x < t.pos - 0.01;
+            if (ahead2 && (!nextStn || (t.track===1 ? s.x < nextStn.x : s.x > nextStn.x))) {
+              nextStn = s;
+            }
+          });
+          var kmh = t.stopped ? '0' : Math.round(Math.abs(t.speed) * 1e5 * simSpeed * 30);
+          infoEl.innerHTML =
+            '<span style="color:#B89264;letter-spacing:.1em">' + t.label + '</span>' +
+            '&nbsp;&nbsp;|&nbsp;&nbsp;' +
+            '<span style="color:rgba(245,242,238,0.9)">Speed: ' + kmh + ' km/h</span>' +
+            '&nbsp;&nbsp;|&nbsp;&nbsp;' +
+            '<span>Status: ' + (t.stopped ? '<span style="color:#E07070">STOPPED</span>' : '<span style="color:#70E090">RUNNING</span>') + '</span>' +
+            '&nbsp;&nbsp;|&nbsp;&nbsp;' +
+            '<span>Next sig: ' + (sigAhead ? '<span style="color:' + (sigAhead.state==='green'?'#70E090':sigAhead.state==='yellow'?'#E0C040':'#E07070') + '">' + sigAhead.id + ' [' + sigAhead.state.toUpperCase() + ']</span>' : '—') + '</span>' +
+            '&nbsp;&nbsp;|&nbsp;&nbsp;' +
+            '<span>Next stn: ' + (nextStn ? nextStn.name : 'WRAP') + '</span>';
+        } else {
+          infoEl.innerHTML = '<span style="color:rgba(184,146,100,0.5)">SELECT A TRAIN</span> — click any train on the canvas to inspect its CBTC status, movement authority, speed profile, and headway.';
+        }
+      });
+
+      /* ======== DRAWING ======== */
+
+      function drawBackground() {
+        // Dark SCADA background
+        ctx.fillStyle = '#0A0408';
+        ctx.fillRect(0, 0, W, H);
+
+        // Grid lines
+        ctx.strokeStyle = 'rgba(184,146,100,0.06)';
+        ctx.lineWidth = 1;
+        for (var gx = 0; gx < W; gx += 55) {
+          ctx.beginPath(); ctx.moveTo(gx, 0); ctx.lineTo(gx, H); ctx.stroke();
+        }
+        for (var gy = 0; gy < H; gy += 40) {
+          ctx.beginPath(); ctx.moveTo(0, gy); ctx.lineTo(W, gy); ctx.stroke();
+        }
+
+        // Header bar
+        ctx.fillStyle = 'rgba(30,10,15,0.9)';
+        ctx.fillRect(0, 0, W, 32);
+        ctx.fillStyle = '#B89264';
+        ctx.font = '600 10px "JetBrains Mono", monospace';
+        ctx.textAlign = 'left';
+        ctx.textBaseline = 'middle';
+        ctx.fillText('CE-RAIL@UEH  ·  RAIL OPERATIONS CONTROL  ·  CBTC / SCADA', 14, 16);
+        // Clock
+        var now = new Date();
+        var ts = now.getHours().toString().padStart(2,'0') + ':' + now.getMinutes().toString().padStart(2,'0') + ':' + now.getSeconds().toString().padStart(2,'0');
+        ctx.textAlign = 'right';
+        ctx.fillText(ts, W - 14, 16);
+
+        // Footer bar
+        ctx.fillStyle = 'rgba(20,8,12,0.9)';
+        ctx.fillRect(0, H - 28, W, 28);
+        ctx.textAlign = 'left';
+        ctx.fillStyle = 'rgba(184,146,100,0.5)';
+        ctx.font = '500 9px "JetBrains Mono", monospace';
+        ctx.fillText('TRACK 1: EASTBOUND  ——  TRACK 2: WESTBOUND  |  CBTC AUTOMATIC BLOCK SIGNALLING  |  5 STATIONS · 6 TRAINS', 14, H - 14);
+      }
+
+      function drawTrack(trackY, label) {
+        // Glow
+        var grd = ctx.createLinearGradient(0, trackY - 12, 0, trackY + 12);
+        grd.addColorStop(0, 'transparent');
+        grd.addColorStop(0.5, 'rgba(184,146,100,0.08)');
+        grd.addColorStop(1, 'transparent');
+        ctx.fillStyle = grd;
+        ctx.fillRect(0, trackY - 12, W, 24);
+
+        // Ballast
+        ctx.fillStyle = 'rgba(80,55,45,0.5)';
+        ctx.fillRect(0, trackY - 5, W, 10);
+
+        // Sleepers
+        ctx.fillStyle = 'rgba(100,70,55,0.7)';
+        for (var x = 10; x < W; x += 22) {
+          ctx.fillRect(x, trackY - 7, 12, 14);
+        }
+
+        // Rail lines (golden)
+        ctx.strokeStyle = 'rgba(184,146,100,0.8)';
+        ctx.lineWidth = 2;
+        ctx.beginPath(); ctx.moveTo(0, trackY - 3); ctx.lineTo(W, trackY - 3); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(0, trackY + 3); ctx.lineTo(W, trackY + 3); ctx.stroke();
+
+        // Track label
+        ctx.fillStyle = 'rgba(184,146,100,0.35)';
+        ctx.font = '500 9px "JetBrains Mono", monospace';
+        ctx.textAlign = 'right';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(label, W - 12, trackY - 14);
+      }
+
+      function drawStations() {
+        STN.forEach(function (s) {
+          var sx = s.x * W;
+
+          // Platform top
+          ctx.fillStyle = 'rgba(122,31,46,0.35)';
+          ctx.strokeStyle = 'rgba(184,146,100,0.3)';
+          ctx.lineWidth = 1;
+          ctx.fillRect(sx - 40, TRACK1_Y - 22, 80, 10);
+          ctx.strokeRect(sx - 40, TRACK1_Y - 22, 80, 10);
+
+          // Platform bottom
+          ctx.fillRect(sx - 40, TRACK2_Y + 12, 80, 10);
+          ctx.strokeRect(sx - 40, TRACK2_Y + 12, 80, 10);
+
+          // Vertical station pole
+          ctx.strokeStyle = 'rgba(184,146,100,0.4)';
+          ctx.lineWidth = 1;
+          ctx.setLineDash([3,4]);
+          ctx.beginPath(); ctx.moveTo(sx, TRACK1_Y - 22); ctx.lineTo(sx, TRACK2_Y + 22); ctx.stroke();
+          ctx.setLineDash([]);
+
+          // Name tag
+          ctx.fillStyle = '#1A0A0F';
+          ctx.fillRect(sx - 38, TRACK1_Y - 55, 76, 18);
+          ctx.strokeStyle = 'rgba(184,146,100,0.4)';
+          ctx.lineWidth = 1;
+          ctx.strokeRect(sx - 38, TRACK1_Y - 55, 76, 18);
+          ctx.fillStyle = '#B89264';
+          ctx.font = '700 8px "JetBrains Mono", monospace';
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          ctx.fillText(s.name, sx, TRACK1_Y - 46);
+
+          // Headway indicator dots (3 dots below name)
+          for (var d = 0; d < 3; d++) {
+            ctx.beginPath();
+            ctx.arc(sx - 8 + d * 8, TRACK1_Y - 64, 2, 0, Math.PI * 2);
+            ctx.fillStyle = d === 0 ? 'rgba(80,220,120,0.7)' : 'rgba(184,146,100,0.25)';
+            ctx.fill();
+          }
+        });
+      }
+
+      function drawSignals() {
+        signals.forEach(function (sig) {
+          var sx = sig.x * W;
+          var ty = sig.track === 1 ? TRACK1_Y : TRACK2_Y;
+          var yOff = sig.track === 1 ? -30 : 20;
+
+          // Signal mast
+          ctx.strokeStyle = 'rgba(184,146,100,0.3)';
+          ctx.lineWidth = 1;
+          ctx.beginPath();
+          ctx.moveTo(sx, ty);
+          ctx.lineTo(sx, ty + yOff);
+          ctx.stroke();
+
+          // Signal housing
+          ctx.fillStyle = '#180A0D';
+          ctx.strokeStyle = 'rgba(184,146,100,0.35)';
+          ctx.lineWidth = 1;
+          ctx.fillRect(sx - 7, ty + yOff - (sig.track===1?16:0), 14, 16);
+          ctx.strokeRect(sx - 7, ty + yOff - (sig.track===1?16:0), 14, 16);
+
+          // Light
+          var col = sig.state === 'green' ? '#50DC78'
+                  : sig.state === 'yellow' ? '#E0C040'
+                  : '#E05050';
+          // blink on red
+          var show = true;
+          if (sig.state === 'red') {
+            show = Math.sin(tick * 0.08) > 0;
+          }
+          if (show) {
+            ctx.shadowBlur = 8;
+            ctx.shadowColor = col;
+            ctx.beginPath();
+            ctx.arc(sx, ty + yOff - (sig.track===1?8:8), 4, 0, Math.PI * 2);
+            ctx.fillStyle = col;
+            ctx.fill();
+            ctx.shadowBlur = 0;
+          }
+
+          // ID label
+          ctx.fillStyle = 'rgba(184,146,100,0.4)';
+          ctx.font = '500 7px "JetBrains Mono", monospace';
+          ctx.textAlign = 'center';
+          ctx.textBaseline = sig.track===1 ? 'bottom' : 'top';
+          ctx.fillText(sig.id, sx, ty + yOff - (sig.track===1?20:-4));
+        });
+      }
+
+      function drawTrains() {
+        trains.forEach(function (t) {
+          var tx = t.pos * W;
+          var ty = t.track === 1 ? TRACK1_Y : TRACK2_Y;
+          var isSelected = (selectedTrain && selectedTrain.id === t.id);
+
+          if (tx < -30 || tx > W + 30) return;
+
+          // Body glow
+          if (isSelected) {
+            ctx.shadowBlur = 14;
+            ctx.shadowColor = '#B89264';
+          }
+
+          // Train body
+          ctx.fillStyle = t.stopped ? '#5A1520' : '#7A1F2E';
+          ctx.fillRect(tx - 20, ty - 8, 40, 16);
+
+          // Cab end
+          ctx.fillStyle = '#4E0F1A';
+          ctx.fillRect(t.track===1 ? tx + 17 : tx - 21, ty - 7, 4, 14);
+
+          // Windows
+          ctx.fillStyle = 'rgba(255,200,100,0.6)';
+          for (var w = 0; w < 3; w++) {
+            ctx.fillRect(tx - 14 + w * 10, ty - 5, 5, 5);
+          }
+
+          // Headlight glow
+          var hx = t.track === 1 ? tx + 22 : tx - 22;
+          ctx.shadowBlur = 10;
+          ctx.shadowColor = 'rgba(255,210,120,0.8)';
+          ctx.fillStyle = 'rgba(255,210,120,0.5)';
+          ctx.beginPath();
+          ctx.arc(hx, ty, 4, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.shadowBlur = 0;
+
+          // Train ID
+          ctx.fillStyle = isSelected ? '#FFD980' : '#B89264';
+          ctx.font = '600 8px "JetBrains Mono", monospace';
+          ctx.textAlign = 'center';
+          ctx.textBaseline = t.track === 1 ? 'bottom' : 'top';
+          ctx.fillText(t.id, tx, ty + (t.track===1 ? -10 : 10));
+
+          // Stopped indicator
+          if (t.stopped) {
+            ctx.fillStyle = 'rgba(220,70,70,0.85)';
+            ctx.font = '700 7px "JetBrains Mono", monospace';
+            ctx.fillText('■ HOLD', tx, ty + (t.track===1 ? -20 : 20));
+          }
+        });
+      }
+
+      function drawMovementAuthority() {
+        // Draw movement authority (MA) beam ahead of each train
+        trains.forEach(function (t) {
+          var tx = t.pos * W;
+          var ty = t.track === 1 ? TRACK1_Y : TRACK2_Y;
+          if (t.stopped) return;
+          if (tx < -30 || tx > W + 30) return;
+
+          // Find nearest red signal ahead
+          var maEnd = t.track === 1 ? tx + 140 : tx - 140;
+          signals.forEach(function (sig) {
+            if (sig.track !== t.track) return;
+            if (sig.state !== 'red') return;
+            var sigPx = sig.x * W;
+            var ahead = t.track === 1 ? sigPx > tx : sigPx < tx;
+            if (ahead) {
+              if (t.track === 1 && sigPx < maEnd) maEnd = sigPx - 10;
+              if (t.track === 2 && sigPx > maEnd) maEnd = sigPx + 10;
+            }
+          });
+
+          var grd = ctx.createLinearGradient(tx, 0, maEnd, 0);
+          grd.addColorStop(0, 'rgba(80,220,120,0.22)');
+          grd.addColorStop(1, 'rgba(80,220,120,0.0)');
+          ctx.fillStyle = grd;
+          if (t.track === 1) {
+            ctx.fillRect(tx, ty - 3, maEnd - tx, 6);
+          } else {
+            ctx.fillRect(maEnd, ty - 3, tx - maEnd, 6);
+          }
+        });
+      }
+
+      var lastTime = 0;
+      function render(ts) {
+        var dt = Math.min(ts - lastTime, 50);
+        lastTime = ts;
+        tick++;
+
+        updateSignals();
+        updateTrains(dt);
+
+        drawBackground();
+        drawMovementAuthority();
+        drawTrack(TRACK1_Y, 'TRK 1 — EASTBOUND');
+        drawTrack(TRACK2_Y, 'TRK 2 — WESTBOUND');
+        drawStations();
+        drawSignals();
+        drawTrains();
+
+        requestAnimationFrame(render);
+      }
+      requestAnimationFrame(render);
+    })();
+  </script>
+</body>
+</html>
