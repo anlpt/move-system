@@ -61,6 +61,161 @@
     .stake-col ul{margin:0;padding-left:1.1rem;color:var(--ink-soft);font-size:.87rem}
     .stake-col li{margin-bottom:.35rem}
 
+    .impact-map{
+      display:grid;
+      grid-template-columns:1fr minmax(210px,280px) 1fr;
+      grid-template-areas:
+        "schools hub students"
+        "parents hub authorities"
+        "business business business";
+      gap:1rem;
+      align-items:stretch;
+      position:relative;
+    }
+    .impact-map::before,
+    .impact-map::after{
+      content:"";
+      position:absolute;
+      left:50%;
+      top:14%;
+      bottom:16%;
+      width:1px;
+      background:linear-gradient(180deg,transparent,rgba(122,31,46,.34),transparent);
+      pointer-events:none;
+    }
+    .impact-map::after{
+      left:8%;
+      right:8%;
+      top:50%;
+      bottom:auto;
+      width:auto;
+      height:1px;
+      background:linear-gradient(90deg,transparent,rgba(122,31,46,.24),transparent);
+    }
+    .impact-hub{
+      grid-area:hub;
+      background:linear-gradient(160deg,var(--burgundy),var(--burgundy-dark));
+      color:var(--cream);
+      border:1px solid rgba(184,146,100,.5);
+      display:flex;
+      flex-direction:column;
+      justify-content:center;
+      min-height:330px;
+      padding:1.6rem;
+      text-align:center;
+      position:relative;
+      z-index:1;
+      box-shadow:0 24px 50px -36px rgba(78,18,28,.6);
+    }
+    .impact-hub .hub-kicker{
+      font-family:var(--font-mono);
+      font-size:.66rem;
+      letter-spacing:.18em;
+      text-transform:uppercase;
+      color:rgba(245,242,238,.68);
+      margin-bottom:.45rem;
+    }
+    .impact-hub h3{
+      color:var(--cream);
+      font-size:1.25rem;
+      margin:0 0 .55rem;
+    }
+    .impact-hub p{
+      margin:0;
+      color:rgba(245,242,238,.78);
+      font-size:.86rem;
+      line-height:1.6;
+    }
+    .impact-metric{
+      display:grid;
+      grid-template-columns:repeat(3,1fr);
+      gap:1px;
+      margin-top:1.1rem;
+      background:rgba(245,242,238,.18);
+      border:1px solid rgba(245,242,238,.18);
+    }
+    .impact-metric span{
+      padding:.55rem .35rem;
+      background:rgba(245,242,238,.08);
+      font-family:var(--font-mono);
+      font-size:.64rem;
+      letter-spacing:.1em;
+      text-transform:uppercase;
+      color:rgba(245,242,238,.8);
+    }
+    .impact-card{
+      background:rgba(255,253,250,.82);
+      border:1px solid rgba(122,31,46,.16);
+      padding:1rem 1.05rem;
+      position:relative;
+      z-index:1;
+      transition:border-color .2s, transform .2s, box-shadow .2s;
+    }
+    .impact-card:hover{
+      border-color:rgba(122,31,46,.46);
+      transform:translateY(-2px);
+      box-shadow:0 18px 36px -28px rgba(122,31,46,.3);
+    }
+    .impact-card.schools{grid-area:schools}
+    .impact-card.students{grid-area:students}
+    .impact-card.parents{grid-area:parents}
+    .impact-card.authorities{grid-area:authorities}
+    .impact-card.business{grid-area:business}
+    .impact-card-head{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:.8rem;
+      margin-bottom:.7rem;
+    }
+    .impact-card h3{
+      color:var(--burgundy);
+      margin:0;
+      font-size:1rem;
+    }
+    .impact-code{
+      font-family:var(--font-mono);
+      font-size:.66rem;
+      color:var(--burgundy);
+      border:1px solid rgba(122,31,46,.18);
+      background:rgba(122,31,46,.05);
+      padding:.22rem .42rem;
+    }
+    .impact-role{
+      font-family:var(--font-mono);
+      font-size:.62rem;
+      letter-spacing:.12em;
+      text-transform:uppercase;
+      color:var(--muted);
+      margin-bottom:.55rem;
+    }
+    .impact-card ul{
+      margin:0;
+      padding-left:1rem;
+      color:var(--ink-soft);
+      font-size:.82rem;
+      line-height:1.55;
+    }
+    .impact-card li{margin-bottom:.32rem}
+    @media(max-width:900px){
+      .impact-map{
+        grid-template-columns:1fr 1fr;
+        grid-template-areas:
+          "hub hub"
+          "schools students"
+          "parents authorities"
+          "business business";
+      }
+      .impact-map::before,.impact-map::after{display:none}
+      .impact-hub{min-height:auto}
+    }
+    @media(max-width:620px){
+      .impact-map{
+        grid-template-columns:1fr;
+        grid-template-areas:"hub" "schools" "students" "parents" "authorities" "business";
+      }
+    }
+
     .grid-5{display:grid;grid-template-columns:repeat(5,1fr);gap:1rem}
     @media (max-width:1000px){.grid-5{grid-template-columns:repeat(2,1fr)}}
     @media (max-width:520px){.grid-5{grid-template-columns:1fr}}
@@ -260,6 +415,109 @@
       margin:0;font-size:.8rem;color:var(--ink-soft);line-height:1.55;
     }
 
+    /* ---- R2S Roadmap ---- */
+    .roadmap-board{
+      border:1px solid rgba(122,31,46,.16);
+      background:rgba(255,253,250,.72);
+      padding:1.4rem;
+      display:grid;
+      gap:1.1rem;
+    }
+    .roadmap-track{
+      display:grid;
+      grid-template-columns:repeat(4,1fr);
+      gap:.8rem;
+      position:relative;
+    }
+    .roadmap-track::before{
+      content:"";
+      position:absolute;
+      left:10%;
+      right:10%;
+      top:26px;
+      height:2px;
+      background:linear-gradient(90deg,var(--burgundy),var(--gold));
+      opacity:.35;
+    }
+    .roadmap-phase{
+      position:relative;
+      background:var(--cream);
+      border:1px solid rgba(122,31,46,.18);
+      padding:1rem;
+      min-height:210px;
+    }
+    .roadmap-phase::before{
+      content:"";
+      width:14px;
+      height:14px;
+      border-radius:50%;
+      background:var(--burgundy);
+      border:3px solid var(--cream);
+      box-shadow:0 0 0 1px rgba(122,31,46,.35);
+      position:absolute;
+      top:20px;
+      left:1rem;
+      z-index:1;
+    }
+    .roadmap-year{
+      font-family:var(--font-mono);
+      font-size:.68rem;
+      letter-spacing:.14em;
+      color:var(--muted);
+      margin:0 0 .9rem 1.7rem;
+    }
+    .roadmap-phase h3{
+      color:var(--burgundy);
+      font-size:1rem;
+      margin:0 0 .25rem;
+    }
+    .roadmap-phase .roadmap-tag{
+      display:inline-block;
+      font-family:var(--font-mono);
+      font-size:.64rem;
+      letter-spacing:.12em;
+      text-transform:uppercase;
+      color:var(--cream);
+      background:var(--burgundy);
+      padding:.18rem .45rem;
+      margin-bottom:.65rem;
+    }
+    .roadmap-phase p{
+      color:var(--ink-soft);
+      font-size:.84rem;
+      line-height:1.55;
+      margin:0;
+    }
+    .roadmap-deliverables{
+      display:grid;
+      grid-template-columns:repeat(4,1fr);
+      gap:.8rem;
+    }
+    .roadmap-output{
+      border-left:3px solid var(--gold);
+      background:rgba(184,146,100,.08);
+      padding:.75rem .85rem;
+      font-size:.78rem;
+      color:var(--ink-soft);
+      line-height:1.45;
+    }
+    .roadmap-output strong{
+      display:block;
+      color:var(--burgundy);
+      font-size:.74rem;
+      letter-spacing:.08em;
+      text-transform:uppercase;
+      margin-bottom:.2rem;
+    }
+    @media(max-width:900px){
+      .roadmap-track,.roadmap-deliverables{grid-template-columns:1fr 1fr}
+      .roadmap-track::before{display:none}
+    }
+    @media(max-width:560px){
+      .roadmap-track,.roadmap-deliverables{grid-template-columns:1fr}
+      .roadmap-board{padding:1rem}
+    }
+
     /* ---- PhD Platform ---- */
     .phd-intro{
       display:grid;grid-template-columns:1fr 2fr;gap:2rem;align-items:start;
@@ -317,6 +575,10 @@
       overflow:hidden;
       background:#faf9f7;
       position:relative;
+      margin:0 calc(50% - 50vw);
+      border-left:none;
+      border-right:none;
+      border-radius:0;
     }
     .phd-iframe-header{
       background:var(--burgundy);
@@ -331,6 +593,14 @@
     }
     .phd-iframe-header .dot.active{background:#a8d47a}
     .phd-iframe-header span{font-family:var(--font-mono);font-size:.72rem;opacity:.8}
+    .phd-iframe-wrap iframe{
+      width:100%;
+      height:calc(100vh - 42px);
+      min-height:860px;
+      border:none;
+      display:block;
+      background:#080d16;
+    }
 
   </style>
 </head>
@@ -891,12 +1161,39 @@
       <h2>Four Work Packages — Sense, Engage, Evolve, Extended</h2>
       <p>The LELP platform is built across four sequenced work packages, each translating behavioural observation into evidence and technology, culminating in a cross-city living lab by 2030.</p>
     </div>
-    <div style="margin:0 -2rem">
-      <img
-        src="../../../Design/r2s_roadmap.jpg"
-        alt="R2S roadmap — four packages: Sense 2026-2027, Engage 2027-2028, Evolve 2028, Extended 2029-2030"
-        style="width:100%;height:auto;display:block;object-fit:contain"
-      />
+    <div class="roadmap-board" aria-label="R2S roadmap — four packages: Sense 2026-2027, Engage 2027-2028, Evolve 2028, Extended 2029-2030">
+      <div class="roadmap-track">
+        <article class="roadmap-phase">
+          <div class="roadmap-year">2026 — 2027</div>
+          <span class="roadmap-tag">Package 1 · Sense</span>
+          <h3>R2S Education</h3>
+          <p>Gamified e-learning, baseline surveys, school pilots, and first measurement of students' traffic-safety knowledge and behaviours.</p>
+        </article>
+        <article class="roadmap-phase">
+          <div class="roadmap-year">2027 — 2028</div>
+          <span class="roadmap-tag">Package 2 · Engage</span>
+          <h3>R2S VR Cycling</h3>
+          <p>Hybrid VR simulator for hazard perception, scanning, signalling, and safe route practice in realistic urban traffic scenarios.</p>
+        </article>
+        <article class="roadmap-phase">
+          <div class="roadmap-year">2028</div>
+          <span class="roadmap-tag">Package 3 · Evolve</span>
+          <h3>R2S Map</h3>
+          <p>Spatial analytics connecting school catchments, crash clusters, walkability audits, and LELP location data for route-level insight.</p>
+        </article>
+        <article class="roadmap-phase">
+          <div class="roadmap-year">2029 — 2030</div>
+          <span class="roadmap-tag">Package 4 · Extended</span>
+          <h3>Problem-Solution Mapping</h3>
+          <p>Cross-city living lab expansion across Vietnam and partner contexts, turning local evidence into comparable policy guidance.</p>
+        </article>
+      </div>
+      <div class="roadmap-deliverables">
+        <div class="roadmap-output"><strong>Learning</strong> Student modules, quizzes, certificates, and school-based implementation evidence.</div>
+        <div class="roadmap-output"><strong>Behaviour</strong> VR performance, hazard response, eye-tracking, and transfer-to-road indicators.</div>
+        <div class="roadmap-output"><strong>Spatial Data</strong> Dashboard layers for risks, school zones, safe routes, and behavioural hotspots.</div>
+        <div class="roadmap-output"><strong>Policy</strong> Replicable intervention toolkit for cities, agencies, schools, and regional partners.</div>
+      </div>
     </div>
   </div>
 </section>
@@ -1306,85 +1603,96 @@
          ecosystem gets something measurable back.</p>
     </div>
 
-    <!-- Interactive stakeholder network diagram + expandable cards -->
-    <div id="stakeViz" style="margin-bottom:2.5rem">
-      <svg viewBox="0 0 900 260" style="width:100%;height:auto;display:block;max-height:260px" aria-hidden="true">
-        <defs>
-          <radialGradient id="nodeGlow" cx="50%" cy="50%" r="50%">
-            <stop offset="0%" stop-color="#7A1F2E" stop-opacity=".7"/>
-            <stop offset="100%" stop-color="#7A1F2E" stop-opacity="0"/>
-          </radialGradient>
-        </defs>
-        <!-- Central node -->
-        <circle cx="450" cy="130" r="44" fill="#7A1F2E" stroke="#B89264" stroke-width="2"/>
-        <text x="450" y="126" text-anchor="middle" fill="#F5F2EE" font-size="10" font-weight="700" font-family="Inter,sans-serif">SEE</text>
-        <text x="450" y="141" text-anchor="middle" fill="#B89264" font-size="8.5" font-family="'JetBrains Mono',monospace" letter-spacing="1">LIVING LAB</text>
-        <!-- Connector lines -->
-        <line x1="406" y1="130" x2="110" y2="80"  stroke="rgba(122,31,46,.3)" stroke-width="1.5" stroke-dasharray="5,4"/>
-        <line x1="420" y1="110" x2="240" y2="36"  stroke="rgba(122,31,46,.3)" stroke-width="1.5" stroke-dasharray="5,4"/>
-        <line x1="450" y1="86"  x2="450" y2="20"  stroke="rgba(122,31,46,.3)" stroke-width="1.5" stroke-dasharray="5,4"/>
-        <line x1="480" y1="110" x2="660" y2="36"  stroke="rgba(122,31,46,.3)" stroke-width="1.5" stroke-dasharray="5,4"/>
-        <line x1="494" y1="130" x2="790" y2="80"  stroke="rgba(122,31,46,.3)" stroke-width="1.5" stroke-dasharray="5,4"/>
-        <!-- Stakeholder nodes -->
-        <circle class="stake-node" data-id="schools" cx="110" cy="70" r="36" fill="rgba(122,31,46,.12)" stroke="rgba(122,31,46,.4)" stroke-width="1.5" style="cursor:pointer"/>
-        <text x="110" y="67" text-anchor="middle" fill="#7A1F2E" font-size="12" font-weight="700" font-family="Inter,sans-serif" style="pointer-events:none">🏫</text>
-        <text x="110" y="82" text-anchor="middle" fill="#7A1F2E" font-size="8.5" font-weight="600" font-family="Inter,sans-serif" style="pointer-events:none">Schools</text>
-
-        <circle class="stake-node" data-id="students" cx="240" cy="28" r="36" fill="rgba(122,31,46,.12)" stroke="rgba(122,31,46,.4)" stroke-width="1.5" style="cursor:pointer"/>
-        <text x="240" y="25" text-anchor="middle" fill="#7A1F2E" font-size="12" font-weight="700" font-family="Inter,sans-serif" style="pointer-events:none">👨‍🎓</text>
-        <text x="240" y="40" text-anchor="middle" fill="#7A1F2E" font-size="8.5" font-weight="600" font-family="Inter,sans-serif" style="pointer-events:none">Students</text>
-
-        <circle class="stake-node" data-id="parents" cx="450" cy="14" r="36" fill="rgba(122,31,46,.12)" stroke="rgba(122,31,46,.4)" stroke-width="1.5" style="cursor:pointer"/>
-        <text x="450" y="11" text-anchor="middle" fill="#7A1F2E" font-size="12" font-weight="700" font-family="Inter,sans-serif" style="pointer-events:none">👨‍👩‍👧</text>
-        <text x="450" y="26" text-anchor="middle" fill="#7A1F2E" font-size="8.5" font-weight="600" font-family="Inter,sans-serif" style="pointer-events:none">Parents</text>
-
-        <circle class="stake-node" data-id="authorities" cx="660" cy="28" r="36" fill="rgba(122,31,46,.12)" stroke="rgba(122,31,46,.4)" stroke-width="1.5" style="cursor:pointer"/>
-        <text x="660" y="25" text-anchor="middle" fill="#7A1F2E" font-size="12" font-weight="700" font-family="Inter,sans-serif" style="pointer-events:none">🏛️</text>
-        <text x="660" y="40" text-anchor="middle" fill="#7A1F2E" font-size="8.5" font-weight="600" font-family="Inter,sans-serif" style="pointer-events:none">Authorities</text>
-
-        <circle class="stake-node" data-id="business" cx="790" cy="70" r="36" fill="rgba(122,31,46,.12)" stroke="rgba(122,31,46,.4)" stroke-width="1.5" style="cursor:pointer"/>
-        <text x="790" y="67" text-anchor="middle" fill="#7A1F2E" font-size="12" font-weight="700" font-family="Inter,sans-serif" style="pointer-events:none">🤝</text>
-        <text x="790" y="82" text-anchor="middle" fill="#7A1F2E" font-size="8.5" font-weight="600" font-family="Inter,sans-serif" style="pointer-events:none">Business</text>
-      </svg>
-
-      <!-- Detail cards — shown on click -->
-      <div id="stakeDetail" style="display:none;margin-top:1.5rem;padding:1.4rem 1.6rem;border:1px solid rgba(122,31,46,.2);background:rgba(255,253,250,.7);position:relative">
-        <button onclick="document.getElementById('stakeDetail').style.display='none'" style="position:absolute;top:.7rem;right:.9rem;background:none;border:none;color:var(--muted);cursor:pointer;font-size:1.1rem">✕</button>
-        <div id="stakeDetailIcon" style="font-size:2rem;margin-bottom:.5rem"></div>
-        <h4 id="stakeDetailTitle" style="color:var(--burgundy);margin:0 0 .7rem;font-size:1.1rem"></h4>
-        <ul id="stakeDetailList" style="margin:0;padding-left:1.2rem;color:var(--ink-soft);font-size:.92rem;line-height:1.7"></ul>
+    <div class="impact-map">
+      <div class="impact-hub">
+        <div class="hub-kicker">SEE Living Lab</div>
+        <h3>Shared Road Safety Infrastructure</h3>
+        <p>One platform connects learning, behavioural evidence, spatial analytics, and policy action for the school-zone ecosystem.</p>
+        <div class="impact-metric">
+          <span>Learn</span>
+          <span>Measure</span>
+          <span>Act</span>
+        </div>
       </div>
 
-      <p style="text-align:center;color:var(--muted);font-size:.78rem;margin-top:.8rem;letter-spacing:.05em">Click any stakeholder node to see their benefits</p>
-    </div>
+      <article class="impact-card schools">
+        <div class="impact-card-head">
+          <div>
+            <h3>Schools</h3>
+          </div>
+          <span class="impact-code">SC</span>
+        </div>
+        <div class="impact-role">Implementation sites</div>
+        <ul>
+          <li>Higher quality extracurricular activities</li>
+          <li>Flexible technology-supported safety education</li>
+          <li>Track students' travel behaviour over time</li>
+          <li>Long-term research cooperation and certificates</li>
+        </ul>
+      </article>
 
-    <script>
-    (function(){
-      var data = {
-        schools:     { icon:'🏫', title:'Schools', items:['Higher quality extracurricular activities','Apply scientific achievements with EU/VN experts','Flexible time, advanced technology integration','Track students\' travel behaviour on roads','Long-term research cooperation','Certificate of achievement'] },
-        students:    { icon:'👨‍🎓', title:'Students', items:['Enhanced knowledge of traffic rules','Experience with advanced VR technology','Long-term traffic safety awareness','Reduced personal accident risk','Certificate of achievement'] },
-        parents:     { icon:'👨‍👩‍👧', title:'Parents', items:['Track and evaluate children\'s learning progress from home','Peace of mind about children\'s road safety behaviours'] },
-        authorities: { icon:'🏛️', title:'Authorities', items:['Evidence-based policy-making to reduce traffic crashes','Improved public health outcomes','Reduced social and economic burden of road accidents'] },
-        business:    { icon:'🤝', title:'Business / NGOs', items:['Corporate social responsibility positioning','Commercialization and revenue sharing opportunities'] }
-      };
-      document.querySelectorAll('.stake-node').forEach(function(node){
-        node.addEventListener('click', function(){
-          var d = data[node.dataset.id];
-          if(!d) return;
-          document.getElementById('stakeDetailIcon').textContent  = d.icon;
-          document.getElementById('stakeDetailTitle').textContent = d.title;
-          document.getElementById('stakeDetailList').innerHTML = d.items.map(function(i){ return '<li>'+i+'</li>'; }).join('');
-          var det = document.getElementById('stakeDetail');
-          det.style.display = 'block';
-          node.setAttribute('fill','rgba(122,31,46,.28)');
-          node.setAttribute('stroke','var(--burgundy)');
-          document.querySelectorAll('.stake-node').forEach(function(n){
-            if(n !== node){ n.setAttribute('fill','rgba(122,31,46,.12)'); n.setAttribute('stroke','rgba(122,31,46,.4)'); }
-          });
-        });
-      });
-    })();
-    </script>
+      <article class="impact-card students">
+        <div class="impact-card-head">
+          <div>
+            <h3>Students</h3>
+          </div>
+          <span class="impact-code">ST</span>
+        </div>
+        <div class="impact-role">Road users</div>
+        <ul>
+          <li>Stronger traffic-rule knowledge</li>
+          <li>Practice with VR and hazard perception tools</li>
+          <li>Long-term safety awareness</li>
+          <li>Reduced personal crash risk</li>
+        </ul>
+      </article>
+
+      <article class="impact-card parents">
+        <div class="impact-card-head">
+          <div>
+            <h3>Parents</h3>
+          </div>
+          <span class="impact-code">PA</span>
+        </div>
+        <div class="impact-role">Home support</div>
+        <ul>
+          <li>Monitor learning progress from home</li>
+          <li>Understand road-risk exposure around school routes</li>
+          <li>Support safer daily mobility habits</li>
+        </ul>
+      </article>
+
+      <article class="impact-card authorities">
+        <div class="impact-card-head">
+          <div>
+            <h3>Authorities</h3>
+          </div>
+          <span class="impact-code">AU</span>
+        </div>
+        <div class="impact-role">Policy actors</div>
+        <ul>
+          <li>Evidence-based policy design</li>
+          <li>School-zone risk and hotspot intelligence</li>
+          <li>Improved public health outcomes</li>
+          <li>Reduced social and economic crash burden</li>
+        </ul>
+      </article>
+
+      <article class="impact-card business">
+        <div class="impact-card-head">
+          <div>
+            <h3>Business / NGOs</h3>
+          </div>
+          <span class="impact-code">NG</span>
+        </div>
+        <div class="impact-role">Scaling partners</div>
+        <ul>
+          <li>Corporate social responsibility positioning</li>
+          <li>Commercialization and revenue-sharing potential</li>
+          <li>Support for regional replication and outreach</li>
+        </ul>
+      </article>
+    </div>
   </div>
 </section>
 
@@ -1498,44 +1806,13 @@
       </div>
       <iframe
         src="../phd-dashboard/out/index.html"
-        style="width:100%;height:820px;border:none;display:block;"
         title="PhD Research Platform — LELP"
         loading="lazy"
         id="lelpFrame"
       ></iframe>
     </div>
-
-    <!-- Fallback note if iframe doesn't load (shown when setup script hasn't been run yet) -->
-    <div id="lelpFallback" style="display:none;margin-top:1rem;padding:1.2rem 1.4rem;
-         background:rgba(122,31,46,.06);border:1px solid rgba(122,31,46,.18);border-radius:8px;
-         font-size:.88rem;color:var(--ink-soft)">
-      <strong style="color:var(--burgundy);display:block;margin-bottom:.5rem">⚙️ Dashboard setup required</strong>
-      The LELP PhD Research Platform needs to be built once before it appears here.
-      Run the following command from the <code style="font-family:var(--font-mono);font-size:.8rem">move-website/</code> folder:
-      <pre style="background:rgba(0,0,0,.06);padding:.6rem .9rem;border-radius:5px;margin:.6rem 0 .4rem;font-size:.82rem;font-family:var(--font-mono);overflow-x:auto">bash setup-phd-dashboard.sh</pre>
-      This copies and builds the dashboard as a static site — no separate server needed afterward.
-      Once built, simply refresh this page.
-    </div>
   </div>
 </section>
-<script>
-  // Show fallback if the iframe fails to load (e.g., file path not resolved)
-  (function(){
-    var frame = document.getElementById('lelpFrame');
-    var fb    = document.getElementById('lelpFallback');
-    if (!frame || !fb) return;
-    frame.addEventListener('error', function(){ fb.style.display='block'; });
-    // Also detect blank/empty load after 2s
-    setTimeout(function(){
-      try {
-        var doc = frame.contentDocument || frame.contentWindow.document;
-        if (!doc || doc.body === null || doc.body.innerHTML.trim() === '') {
-          fb.style.display = 'block';
-        }
-      } catch(e) { /* cross-origin — assume it loaded */ }
-    }, 2500);
-  })();
-</script>
 
 <!-- ========================= Footer ========================= -->
 <footer class="footer">
