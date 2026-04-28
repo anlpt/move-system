@@ -78,7 +78,7 @@
       "funding.flow4":      "Postdoc recruitment",
 
       "tech.eyebrow":       "TECHNOLOGY & TOOLS",
-      "tech.title":         "Methods stack",
+      "tech.title":         "Technology & Tools",
       "tech.items":         "Digital Twin · Hologram · AR / VR · Agent-based Models · Machine Learning, AI · Big Data",
 
       "contact.visit":      "Visit the ISCM website",
@@ -226,7 +226,7 @@
       "funding.flow4":      "Tuyển dụng postdoc",
 
       "tech.eyebrow":       "CÔNG NGHỆ & CÔNG CỤ",
-      "tech.title":         "Bộ phương pháp",
+      "tech.title":         "Công nghệ & Công cụ",
       "tech.items":         "Digital Twin · Hologram · AR / VR · Mô hình dựa trên tác tử · Học máy, AI · Dữ liệu lớn",
 
       "contact.visit":      "Truy cập website ISCM",
