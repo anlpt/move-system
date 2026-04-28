@@ -13,7 +13,7 @@ SRC="/Users/lptan/Documents/ISCM/An_Career/PhD/LELP Platform - PhD/dashboard"
 DEST="$(dirname "$0")/project/phd-dashboard"
 OUT="$DEST/out"
 EMBED="$(dirname "$0")/project/labs/see.html"
-DASHBOARD_BASE="/move-website/project/phd-dashboard/out"
+DASHBOARD_BASE="/move-system/phd-dashboard/out"
 
 echo "==> Checking source directory..."
 if [ ! -d "$SRC" ]; then

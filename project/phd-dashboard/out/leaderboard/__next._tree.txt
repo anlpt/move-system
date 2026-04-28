@@ -1,2 +1,2 @@
-:HL["/move-website/project/phd-dashboard/out/_next/static/chunks/0xn_xt92hgm.y.css","style"]
-0:{"tree":{"name":"","param":null,"prefetchHints":16,"slots":{"children":{"name":"leaderboard","param":null,"prefetchHints":0,"slots":{"children":{"name":"__PAGE__","param":null,"prefetchHints":0,"slots":null}}}}},"staleTime":300,"buildId":"OlA5m5a4VMz2bCaB5ewBK"}
+:HL["/move-system/phd-dashboard/out/_next/static/chunks/0xn_xt92hgm.y.css","style"]
+0:{"tree":{"name":"","param":null,"prefetchHints":16,"slots":{"children":{"name":"leaderboard","param":null,"prefetchHints":0,"slots":{"children":{"name":"__PAGE__","param":null,"prefetchHints":0,"slots":null}}}}},"staleTime":300,"buildId":"kEaUG8kT3Irw74lymswFg"}

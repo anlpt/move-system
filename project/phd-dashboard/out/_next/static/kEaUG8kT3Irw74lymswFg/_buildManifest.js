@@ -3,7 +3,7 @@ self.__BUILD_MANIFEST = {
     "afterFiles": [],
     "beforeFiles": [
       {
-        "source": "/move-website/project/phd-dashboard/out/_next/:path+",
+        "source": "/move-system/phd-dashboard/out/_next/:path+",
         "destination": "/_next/:path+"
       }
     ],

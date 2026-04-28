@@ -111,7 +111,7 @@ export default function OverviewPage() {
             <div style={{ fontWeight: 600, fontSize: 14 }}>Recent Detections</div>
             <div style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 2 }}>Live feed from cameras and student submissions</div>
           </div>
-          <a href="/move-website/project/phd-dashboard/out/review/" style={{ fontSize: 12, color: 'var(--accent)', textDecoration: 'none', fontWeight: 500 }}>View queue →</a>
+          <a href="/move-system/phd-dashboard/out/review/" style={{ fontSize: 12, color: 'var(--accent)', textDecoration: 'none', fontWeight: 500 }}>View queue →</a>
         </div>
         <table className="data-table">
           <thead><tr><th>Behavior</th><th>School</th><th>Confidence</th><th>Status</th><th>Time</th></tr></thead>
