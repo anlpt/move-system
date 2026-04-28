@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>MOVE System — ISCM · UEH</title>
+  <meta name="description"
+    content="Mobility-oriented, Operations, Visualization & Environment System — a flagship research platform by the Institute of Smart City and Management at UEH." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <style>
+    /* ── Hero (cream / site theme) ────────────────────────────────────── */
+    .hero {
+      background: var(--cream, #F5F2EE);
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- ========================= Top Nav ========================= -->
+  <nav class="nav">
+    <a class="nav-brand" href="index.html">
+      <span class="logo-box">ISCM</span>
+      <span>
+        <div style="font-weight:700;font-size:.86rem;color:var(--burgundy)">MOVE System</div>
+        <div class="logo-caption">INSTITUTE OF SMART CITY &amp; MANAGEMENT</div>
+      </span>
+    </a>
+    <div class="nav-links" id="navLinks">
+      <a href="#about" data-i18n="nav.about">About</a>
+      <a href="#structure" data-i18n="nav.structure">Structure</a>
+      <a href="#people" data-i18n="nav.people">People</a>
+      <a href="#funding" data-i18n="nav.funding">Funding</a>
+      <a href="#tech" data-i18n="nav.tech">Technology</a>
+    </div>
+    <div class="nav-right">
+      <div class="lang-toggle">
+        <button data-lang="en" class="active">EN</button>
+        <button data-lang="vi">VI</button>
+      </div>
+      <button class="burger" id="burger" aria-label="menu">☰</button>
+    </div>
+  </nav>
+
+  <!-- ========================= Hero (3D city) ========================= -->
+  <section class="hero">
+    <div id="hub3d"></div>
+
+    <!-- Centre text overlay -->
+    <div class="hero-content">
+      <div class="eyebrow" data-i18n="hero.eyebrow">INSTITUTE OF SMART CITY &amp; MANAGEMENT · UEH</div>
+      <h1 class="hero-title" data-i18n="hero.title">MOVE <em>System</em></h1>
+      <p class="hero-sub" data-i18n="hero.sub">Mobility-oriented, Operations, Visualization &amp; Environment System — a
+        flagship research and innovation platform advancing traffic safety, net-zero transport, and smart city
+        development in Vietnam.</p>
+    </div>
+
+    <div class="hero-hint">Drag to orbit · Scroll to zoom · Click a district to explore</div>
+  </section>
+
+  <!-- ========================= About ========================= -->
+  <section id="about">
+    <div class="container">
+
+      <!-- Slide 2 design: two-column layout -->
+      <div class="about-two-col">
+        <!-- Left column -->
+        <div class="about-col-left" style="padding-right:3rem;padding-top:.5rem">
+          <div class="eyebrow" data-i18n="about.eyebrow" style="margin-bottom:1rem">ABOUT</div>
+          <h2 data-i18n="about.title"
+            style="font-size:clamp(1.9rem,4vw,2.8rem);line-height:1.15;margin:0 0 .6rem;color:var(--burgundy)">MOVE
+            System</h2>
+          <p style="font-size:1.05rem;color:var(--muted);margin:0 0 2rem;letter-spacing:.02em">
+            Mobility-oriented, Operations,<br>Visualization &amp; Environment System
+          </p>
+          <p data-i18n="about.body3"
+            style="font-size:.95rem;color:var(--ink-soft);line-height:1.75;border-left:2px solid var(--burgundy);padding-left:1.2rem">
+            MOVE advances traffic safety, net-zero emissions, and smart city development in line with UEH's 2025–2030
+            Strategy, strengthening UEH's role as a leading University-City Innovation Hub in Asia.
+          </p>
+        </div>
+        <!-- Divider -->
+        <div class="about-divider" style="background:rgba(122,31,46,.15);align-self:stretch"></div>
+        <!-- Right column -->
+        <div class="about-col-right" style="padding-left:3rem">
+          <p data-i18n="about.body1"
+            style="font-size:.97rem;color:var(--ink-soft);line-height:1.78;margin-bottom:1.4rem">
+            A flagship integrated research and innovation platform developed by the Institute of Smart City and
+            Management (ISCM) at the University of Economics Ho Chi Minh City (UEH).
+          </p>
+          <p data-i18n="about.body2" style="font-size:.97rem;color:var(--ink-soft);line-height:1.78">
+            MOVE System's core objectives are to conduct applied research in <span
+              style="color:var(--burgundy);font-weight:600">road safety, urban mobility, rail systems, and low carbon
+              transition</span>. The System supports project-based education and develops fit-for-purpose technological
+            solutions to generate robust, evidence-based insights that directly support decision-making and policymaking
+            at city and national levels.
+          </p>
+        </div>
+      </div>
+
+      <!-- Arch diagram — actual image, full width, big -->
+      <div style="margin:0 -2rem;position:relative">
+        <img src="../../Design/Structure_5Apr.jpg"
+          alt="MOVE System architecture — four integrated laboratories within the Urban System"
+          style="width:100%;height:auto;display:block;min-height:420px;object-fit:contain;background:#f8f6f3" />
+      </div>
+
+      <!-- Caption -->
+      <p style="text-align:center;color:var(--muted,#6E6760);font-size:.82rem;margin-top:1rem;letter-spacing:.04em">
+        Four integrated laboratories &nbsp;·&nbsp; ISCM &nbsp;·&nbsp; University of Economics Ho Chi Minh City
+      </p>
+
+    </div>
+  </section>
+
+  <!-- ========================= Structure / Labs ========================= -->
+  <section id="structure" style="background:linear-gradient(180deg,transparent, rgba(122,31,46,0.03));">
+    <div class="container">
+      <div class="section-head">
+        <div class="eyebrow" data-i18n="structure.eyebrow">STRUCTURE</div>
+        <h2 data-i18n="structure.title">Four integrated laboratories</h2>
+        <p data-i18n="structure.sub"></p>
+      </div>
+      <div class="grid-4">
+        <a class="lab-card" href="labs/see.html">
+          <div class="num">LAB · 01 / SEE</div>
+          <h3 data-i18n="lab.see.name">SEE Living Lab</h3>
+          <p>Road safety research for Vietnamese road users — using gamification, immersive VR, eye-tracking, and
+            machine learning to build hazard perception, safe behaviours, and evidence-based policy insights.</p>
+          <span class="arrow">→</span>
+        </a>
+        <a class="lab-card" href="labs/smart.html">
+          <div class="num">LAB · 02 / SML</div>
+          <h3 data-i18n="lab.smart.name">Smart Mobility Lab</h3>
+          <p>Intelligent transport and sustainable urban mobility — integrating TOD planning, MaaS, smart traffic
+            operations, and last-mile EV micro-mobility through AI-driven simulation and real-world pilots.</p>
+          <span class="arrow">→</span>
+        </a>
+        <a class="lab-card" href="labs/rail.html">
+          <div class="num">LAB · 03 / RAIL</div>
+          <h3 data-i18n="lab.rail.name">CE-Rail@UEH</h3>
+          <p>Rail systems capacity-building through simulation testbeds — rolling stock mock-ups, signalling simulators,
+            PTC/CBTC modules, and SCADA systems for modern rail operations and maintenance.</p>
+          <span class="arrow">→</span>
+        </a>
+        <a class="lab-card" href="labs/ctrlab.html">
+          <div class="num">LAB · 04 / CTR</div>
+          <h3 data-i18n="lab.ctr.name">CtrLab</h3>
+          <p>Carbon transition science — quantifying and controlling emissions through air quality modelling, urban
+            digital twin, and energy efficiency analytics toward net-zero urban mobility in Vietnam.</p>
+          <span class="arrow">→</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================= People ========================= -->
+  <section id="people">
+    <div class="container">
+      <div class="section-head">
+        <div class="eyebrow" data-i18n="people.eyebrow">PEOPLE</div>
+        <h2 data-i18n="people.title">The team behind MOVE</h2>
+        <p data-i18n="people.sub"></p>
+      </div>
+      <div class="grid-3">
+        <div class="person-card">
+          <div class="person-avatar" style="overflow:hidden;padding:0;">
+            <img src="../../Design/slide44_img2.png"
+              style="width:100%;height:100%;object-fit:cover;object-position:top center;" alt="Tu Anh Trinh">
+          </div>
+          <div class="role">Director of ISCM</div>
+          <h4>Assoc. Prof. Tu Anh Trinh</h4>
+          <div class="email">trinhtuanh@ueh.edu.vn</div>
+        </div>
+        <div class="person-card">
+          <div class="person-avatar" style="overflow:hidden;padding:0;">
+            <img src="../../Design/slide44_img11.png"
+              style="width:100%;height:100%;object-fit:cover;object-position:top center;" alt="Phan Le Truong An">
+          </div>
+          <div class="role">Senior Researcher</div>
+          <h4>Phan Le Truong An, PhD Candidate</h4>
+          <div class="email">anlpt@ueh.edu.vn</div>
+        </div>
+        <div class="person-card">
+          <div class="person-avatar" style="overflow:hidden;padding:0;">
+            <img src="../../Design/slide44_img10.png"
+              style="width:100%;height:100%;object-fit:cover;object-position:top center;" alt="Vo Dao Chi">
+          </div>
+          <div class="role">Lecturer</div>
+          <h4>Vo Dao Chi, PhD</h4>
+          <div class="email">chivd@ueh.edu.vn</div>
+        </div>
+        <div class="person-card">
+          <div class="person-avatar" style="overflow:hidden;padding:0;">
+            <img src="../../Design/slide44_img7.png"
+              style="width:100%;height:100%;object-fit:cover;object-position:top center;" alt="Pham Nguyen Hoai">
+          </div>
+          <div class="role">Director of BMOM</div>
+          <h4>Pham Nguyen Hoai, PhD</h4>
+          <div class="email">hoaipm@ueh.edu.vn</div>
+        </div>
+        <div class="person-card">
+          <div class="person-avatar" style="overflow:hidden;padding:0;">
+            <img src="../../Design/slide44_img29.png"
+              style="width:100%;height:100%;object-fit:cover;object-position:top center;" alt="Quang Tran Vuong">
+          </div>
+          <div class="role">Lecturer — Environment Science &amp; Eng.</div>
+          <h4>Quang Tran Vuong, PhD</h4>
+          <div class="email">quangvt@ueh.edu.vn</div>
+        </div>
+        <div class="person-card">
+          <div class="person-avatar">AL</div>
+          <div class="role">Researcher</div>
+          <h4>An Le, PhD Candidate</h4>
+          <div class="email">le.an@ueh.edu.vn</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================= Funding ========================= -->
+  <section id="funding" style="background:linear-gradient(180deg,transparent, rgba(122,31,46,0.03));">
+    <div class="container">
+      <div class="section-head">
+        <div class="eyebrow" data-i18n="funding.eyebrow">FUNDING</div>
+        <h2 data-i18n="funding.title">Potential funds for 2026+</h2>
+      </div>
+      <div class="grid-3">
+        <div>
+          <h3 data-i18n="funding.intl">International joint research</h3>
+          <p class="muted" data-i18n="funding.intl.list"></p>
+        </div>
+        <div>
+          <h3 data-i18n="funding.national">National grants</h3>
+          <p class="muted" data-i18n="funding.national.list"></p>
+        </div>
+        <div>
+          <h3 data-i18n="funding.private">Private</h3>
+          <p class="muted" data-i18n="funding.private.list"></p>
+        </div>
+      </div>
+      <div class="divider"></div>
+      <p class="mono" style="text-align:center;color:var(--burgundy);font-size:.85rem;letter-spacing:.08em"
+        data-i18n="funding.purpose"></p>
+    </div>
+  </section>
+
+  <!-- ========================= Tech & Tools ========================= -->
+  <section id="tech">
+    <div class="container">
+      <div class="section-head">
+        <div class="eyebrow" data-i18n="tech.eyebrow">TECHNOLOGY &amp; TOOLS</div>
+        <h2 data-i18n="tech.title">Methods &amp; Skills Stack</h2>
+        <p style="color:var(--ink-soft);font-size:1.05rem;margin:0">
+          The integrated toolkit that powers MOVE's four labs — from low-level data collection to high-level policy
+          visualisation.
+        </p>
+      </div>
+
+      <div class="tech-grid">
+
+        <div class="tech-group">
+          <div class="tech-group-label">
+            <span class="tech-group-icon">⌨</span> Programming &amp; Data
+          </div>
+          <div class="tech-pills">
+            <span class="pill dark">Python</span>
+            <span class="pill">R / RStudio</span>
+            <span class="pill">MATLAB</span>
+            <span class="pill">SQL</span>
+            <span class="pill">JavaScript</span>
+            <span class="pill">Machine Learning</span>
+            <span class="pill">Deep Learning</span>
+            <span class="pill">scikit-learn</span>
+            <span class="pill">TensorFlow / PyTorch</span>
+            <span class="pill">Big Data (Spark)</span>
+            <span class="pill">Statistical Modelling</span>
+            <span class="pill">Agent-based Models</span>
+          </div>
+        </div>
+
+        <div class="tech-group">
+          <div class="tech-group-label">
+            <span class="tech-group-icon">🗺</span> Visualisation &amp; GIS
+          </div>
+          <div class="tech-pills">
+            <span class="pill dark">D3.js</span>
+            <span class="pill">Three.js</span>
+            <span class="pill">ArcGIS / QGIS</span>
+            <span class="pill">Kepler.gl</span>
+            <span class="pill">Mapbox GL</span>
+            <span class="pill">Tableau / Power BI</span>
+            <span class="pill">GeoPandas</span>
+            <span class="pill">Plotly / Seaborn</span>
+            <span class="pill">Digital Twin</span>
+            <span class="pill">Hologram</span>
+            <span class="pill">AR / VR</span>
+            <span class="pill">Unity / Unreal</span>
+          </div>
+        </div>
+
+        <div class="tech-group">
+          <div class="tech-group-label">
+            <span class="tech-group-icon">⚙</span> Simulation &amp; Modelling
+          </div>
+          <div class="tech-pills">
+            <span class="pill dark">VISSIM / AIMSUN</span>
+            <span class="pill">SUMO</span>
+            <span class="pill">WRF-CMAQ</span>
+            <span class="pill">NetLogo (ABM)</span>
+            <span class="pill">PTC / CBTC</span>
+            <span class="pill">SCADA</span>
+            <span class="pill">Traffic Micro-simulation</span>
+            <span class="pill">Urban Heat Modelling</span>
+            <span class="pill">Emission Inventory</span>
+            <span class="pill">OpenStreetMap APIs</span>
+          </div>
+        </div>
+
+        <div class="tech-group">
+          <div class="tech-group-label">
+            <span class="tech-group-icon">📡</span> Sensing &amp; Hardware
+          </div>
+          <div class="tech-pills">
+            <span class="pill dark">Eye-tracking</span>
+            <span class="pill">AI Traffic Camera</span>
+            <span class="pill">GPS Trackers</span>
+            <span class="pill">GoPro / 360° Camera</span>
+            <span class="pill">LiDAR</span>
+            <span class="pill">PM2.5 Sensors</span>
+            <span class="pill">VR Headsets (Quest / Varjo)</span>
+            <span class="pill">Physical Bicycle + VR Env.</span>
+            <span class="pill">Rolling Stock Mock-up</span>
+            <span class="pill">Signalling Simulator</span>
+            <span class="pill">PTC/CBTC Training Devices</span>
+            <span class="pill">SCADA Sandbox</span>
+          </div>
+        </div>
+
+        <div class="tech-group">
+          <div class="tech-group-label">
+            <span class="tech-group-icon">🧠</span> Survey &amp; Behavioural Science
+          </div>
+          <div class="tech-pills">
+            <span class="pill dark">Stated Preference / SP Surveys</span>
+            <span class="pill">Hazard Perception Tasks</span>
+            <span class="pill">Gamification (Route2School)</span>
+            <span class="pill">Location-based Experiential Learning</span>
+            <span class="pill">Structural Equation Modelling</span>
+            <span class="pill">Expectancy-Value Framework</span>
+            <span class="pill">Risk Assessment Models</span>
+            <span class="pill">Intersectional Equity Analysis</span>
+            <span class="pill">TOD &amp; Land Value Capture</span>
+            <span class="pill">WRF-CMAQ Air Quality Modelling</span>
+            <span class="pill">Emission Inventory</span>
+            <span class="pill">PPP / Green Finance Structuring</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ========================= Footer ========================= -->
+  <footer class="footer">
+    <div class="container grid-2">
+      <div>
+        <div class="eyebrow" style="margin-bottom:.5rem">ISCM · UEH</div>
+        <div data-i18n="contact.address">232/6 Vo Thi Sau, Xuan Hoa Ward, Ho Chi Minh City</div>
+        <div style="margin-top:.4rem">
+          <span data-i18n="contact.phone">(+84) 283 930 9589</span> ·
+          <a href="mailto:iscm@ueh.edu.vn" data-i18n="contact.email">iscm@ueh.edu.vn</a>
+        </div>
+        <div class="tiny">
+          <a href="https://iscm.ueh.edu.vn" target="_blank" data-i18n="contact.visit">Visit the ISCM website</a>
+        </div>
+      </div>
+      <div style="text-align:right">
+        <div class="eyebrow" style="margin-bottom:.5rem">MOVE SYSTEM</div>
+        <div>Mobility-oriented, Operations,<br />Visualization &amp; Environment System</div>
+        <div class="tiny mono">ISCM · University of Economics Ho Chi Minh City · 2026</div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Three.js + scene -->
+  <script src="js/i18n.js"></script>
+  <script src="js/hub3d.js?v=15"></script>
+  <script>
+    // Apply translations on load
+    I18N.apply();
+
+    // Language toggle wiring
+    document.querySelectorAll(".lang-toggle button").forEach(btn => {
+      btn.addEventListener("click", () => I18N.setLang(btn.dataset.lang));
+    });
+
+    // Mobile burger
+    const burger = document.getElementById("burger");
+    const links = document.getElementById("navLinks");
+    burger && burger.addEventListener("click", () => links.classList.toggle("open"));
+    links.querySelectorAll("a").forEach(a => a.addEventListener("click", () => links.classList.remove("open")));
+
+    // Active nav link on scroll
+    const sections = ["about", "structure", "people", "funding", "tech"].map(id => document.getElementById(id));
+    const navA = Object.fromEntries(["about", "structure", "people", "funding", "tech"].map(id => [id, document.querySelector(`.nav-links a[href="#${id}"]`)]));
+    function updActive() {
+      const y = window.scrollY + 120;
+      let cur = null;
+      sections.forEach(s => { if (s && s.offsetTop <= y) cur = s.id; });
+      Object.entries(navA).forEach(([id, el]) => { if (el) el.classList.toggle("active", id === cur); });
+    }
+    window.addEventListener("scroll", updActive);
+    updActive();
+  </script>
+</body>
+
+</html>
