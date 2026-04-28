@@ -6,7 +6,7 @@ import {
   ShieldAlert, Activity
 } from 'lucide-react'
 
-const DASHBOARD_BASE = '/move-website/project/phd-dashboard/out'
+const DASHBOARD_BASE = '/move-system/phd-dashboard/out'
 
 const NAV = [
   { href: '/',            exportHref: `${DASHBOARD_BASE}/`,             icon: LayoutDashboard, label: 'Overview'       },

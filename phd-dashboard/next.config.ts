@@ -4,7 +4,7 @@ const nextConfig: NextConfig = {
   output: 'export',
   trailingSlash: true,
   images: { unoptimized: true },
-  assetPrefix: '/move-website/project/phd-dashboard/out',
+  assetPrefix: '/move-system/phd-dashboard/out',
   /* config options here */
 };
 
