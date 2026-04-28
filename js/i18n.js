@@ -308,7 +308,7 @@
   let lang = (typeof localStorage !== "undefined" && localStorage.getItem(KEY)) || "en";
 
   function t(k){
-    return (DICT[lang] && DICT[lang][k]) || (DICT.en[k]) || k;
+    return (DICT[lang] && DICT[lang][k]) || (DICT.en[k]);
   }
 
   function apply(root){
@@ -317,6 +317,7 @@
     root.querySelectorAll("[data-i18n]").forEach(el => {
       const k = el.getAttribute("data-i18n");
       const v = t(k);
+      if (typeof v === "undefined") return;
       // allow simple <em> in translations
       if (v.indexOf("<") !== -1) el.innerHTML = v;
       else el.textContent = v;
@@ -325,7 +326,8 @@
       const pairs = el.getAttribute("data-i18n-attr").split(";");
       pairs.forEach(p => {
         const [attr,key] = p.split(":").map(s => s.trim());
-        if (attr && key) el.setAttribute(attr, t(key));
+        const v = key && t(key);
+        if (attr && typeof v !== "undefined") el.setAttribute(attr, v);
       });
     });
     // active state on lang toggles
