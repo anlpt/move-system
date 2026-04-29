@@ -398,7 +398,8 @@ section {
   align-items: center;
   gap: .7rem;
   font-weight: 600;
-  font-size: .92rem
+  font-size: .92rem;
+  flex-shrink: 0;
 }
 
 .nav-brand .logo-box {
@@ -419,7 +420,9 @@ section {
 
 .nav-links {
   display: flex;
-  gap: clamp(1rem, 3vw, 2.3rem)
+  gap: clamp(1rem, 3vw, 2.3rem);
+  flex: 1;
+  justify-content: center;
 }
 
 .nav-links a {
