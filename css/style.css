@@ -1198,8 +1198,7 @@ section {
 .tech-bento {
   display: grid;
   grid-template-columns: 3fr 2fr;
-  grid-template-rows: 300px 280px;
-  grid-auto-rows: auto;
+  grid-template-rows: 300px 280px 270px;
   gap: .75rem;
   margin-top: 2rem;
 }
@@ -1271,14 +1270,14 @@ section {
   color: rgba(245, 242, 238, .72);
 }
 
-/* ML/AI card: white-bg infographic on dark navy with blend */
+/* ML/AI card: invert the white-bg infographic for a dark-theme look */
 .tech-tile--ai {
-  background: #08122a;
+  background: #0a0f1a;
 }
 
 .tech-tile--ai .tech-tile-media img {
-  mix-blend-mode: multiply;
-  opacity: .88;
+  filter: invert(1) brightness(.85);
+  opacity: .92;
 }
 
 /* Digital Twin full-width layout */
@@ -1296,6 +1295,7 @@ section {
   gap: 3px;
   background: #0e060a;
   overflow: hidden;
+  height: 100%;
 }
 
 .tech-tile-images img {
