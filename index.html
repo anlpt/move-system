@@ -12,7 +12,7 @@
   <link
     href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap"
     rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=20260430-nav" />
+  <link rel="stylesheet" href="css/style.css?v=20260501-tech" />
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <style>
     /* ── Hero (cream / site theme) ────────────────────────────────────── */
@@ -304,16 +304,17 @@
         </p>
       </div>
 
-      <div class="tech-showcase" aria-label="MOVE technology and tools from the research deck">
-        <article class="tech-feature tech-feature--agent">
-          <div class="tech-media">
-            <img src="Design/tech/image47.gif" alt="Agent-based Model simulation visual" loading="lazy">
+      <div class="tech-bento" aria-label="MOVE technology and tools from the research deck">
+
+        <!-- 01 ABM — hero, spans both rows on the left -->
+        <article class="tech-tile tech-tile--abm">
+          <div class="tech-tile-media">
+            <img src="Design/tech/image47.gif" alt="Agent-based Model simulation" loading="lazy">
           </div>
-          <div class="tech-copy">
+          <div class="tech-tile-overlay">
             <span class="tech-index">01</span>
             <h3>Agent-based Model</h3>
-            <p>Urban and mobility behaviour simulation for testing service adoption, interaction effects, and policy
-              scenarios before field deployment.</p>
+            <p>Urban and mobility behaviour simulation for testing service adoption, interaction effects, and policy scenarios before field deployment.</p>
             <div class="tech-tools">
               <span>NetLogo / ABM</span>
               <span>Scenario logic</span>
@@ -322,15 +323,15 @@
           </div>
         </article>
 
-        <article class="tech-feature tech-feature--ai">
-          <div class="tech-media">
-            <img src="Design/tech/image48.jpg" alt="Machine Learning AI and Big Data visual" loading="lazy">
+        <!-- 02 ML / AI — top right -->
+        <article class="tech-tile tech-tile--ai">
+          <div class="tech-tile-media">
+            <img src="Design/tech/image48.jpg" alt="Machine Learning AI and Big Data" loading="lazy">
           </div>
-          <div class="tech-copy">
+          <div class="tech-tile-overlay">
             <span class="tech-index">02</span>
-            <h3>Machine Learning, AI - Big Data</h3>
-            <p>Data-driven prediction, classification, and insight generation across safety, mobility demand,
-              environmental monitoring, and rail operations.</p>
+            <h3>Machine Learning, AI – Big Data</h3>
+            <p>Data-driven prediction, classification, and insight generation across safety, mobility demand, and rail operations.</p>
             <div class="tech-tools">
               <span>Machine learning</span>
               <span>AI analytics</span>
@@ -339,35 +340,15 @@
           </div>
         </article>
 
-        <article class="tech-feature tech-feature--twin">
-          <div class="tech-image-stack tech-image-stack--three">
-            <img src="Design/tech/image27.png" alt="Digital Twin and Hologram platform image" loading="lazy">
-            <img src="Design/tech/image28.png" alt="Digital Twin interaction image" loading="lazy">
-            <img src="Design/tech/image29.png" alt="Hologram demonstration image" loading="lazy">
+        <!-- 04 AR/VR — bottom right -->
+        <article class="tech-tile tech-tile--immersive">
+          <div class="tech-tile-media">
+            <img src="Design/tech/image31.png" alt="AR VR and Hologram training environment" loading="lazy">
           </div>
-          <div class="tech-copy">
-            <span class="tech-index">03</span>
-            <h3>Digital Twin, Hologram</h3>
-            <p>Shared spatial models for explaining network operations, street experiments, environmental risk, and
-              infrastructure decisions in a more tangible format.</p>
-            <div class="tech-tools">
-              <span>Digital twin</span>
-              <span>Hologram</span>
-              <span>Spatial visualisation</span>
-            </div>
-          </div>
-        </article>
-
-        <article class="tech-feature tech-feature--immersive">
-          <div class="tech-image-stack tech-image-stack--two">
-            <img src="Design/tech/image30.png" alt="AR VR immersive system image" loading="lazy">
-            <img src="Design/tech/image31.png" alt="VR and Hologram training environment image" loading="lazy">
-          </div>
-          <div class="tech-copy">
+          <div class="tech-tile-overlay">
             <span class="tech-index">04</span>
             <h3>AR, VR and Hologram</h3>
-            <p>Immersive training and interactive simulation for hazard perception, driver response, smart corridor
-              testing, and professional capacity building.</p>
+            <p>Immersive training and interactive simulation for hazard perception, driver response, smart corridor testing, and professional capacity building.</p>
             <div class="tech-tools">
               <span>Unity / Unreal</span>
               <span>Eye-tracking</span>
@@ -376,6 +357,26 @@
             </div>
           </div>
         </article>
+
+        <!-- 03 Digital Twin — full width, image mosaic + text panel -->
+        <article class="tech-tile tech-tile--twin">
+          <div class="tech-tile-images">
+            <img src="Design/tech/image27.png" alt="Digital Twin hologram table model" loading="lazy">
+            <img src="Design/tech/image28.png" alt="Digital Twin interactive platform" loading="lazy">
+            <img src="Design/tech/image29.png" alt="Hologram demonstration" loading="lazy">
+          </div>
+          <div class="tech-tile-twin-copy">
+            <span class="tech-index">03</span>
+            <h3>Digital Twin, Hologram</h3>
+            <p>Shared spatial models for explaining network operations, street experiments, environmental risk, and infrastructure decisions in a more tangible format.</p>
+            <div class="tech-tools">
+              <span>Digital twin</span>
+              <span>Hologram</span>
+              <span>Spatial visualisation</span>
+            </div>
+          </div>
+        </article>
+
       </div>
 
       <div class="tech-facilities">
